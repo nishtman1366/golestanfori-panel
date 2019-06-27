@@ -42,6 +42,11 @@ class AddNews extends Component {
         open: false,
         snackbarMessage: ""
       },
+      tags: undefined,
+      tag: [],
+      FilterTags: undefined,
+      isLoadingtags: true,
+      newTag: [],
       isLoadingPostType: true,
       isLoadingCategories: true,
       isLoadingKhabarnegar: true,
@@ -58,7 +63,7 @@ class AddNews extends Component {
         userId: "", // khabarnegar,
         groupId: "", //grouhe khabar,
         groupPosition: "",
-        homePage: false,
+        homePage: 0,
         lead: "", //lead
         title: "", //titr khabr
         preTitle: "", //roo titir
@@ -67,7 +72,11 @@ class AddNews extends Component {
         galleryImages: [],
         body: "",
         videos: [],
-        template: ""
+        template: "",
+        photographer: "",
+        code: "",
+        tag: [],
+        source: ""
       },
       newsImage: null,
       galleryImages: [],
@@ -115,6 +124,31 @@ class AddNews extends Component {
     this.fetchPublisher();
     this.fetchPostCreateType();
     this.fetchGroups();
+    this.fetchTags();
+  };
+
+  fetchTags = () => {
+    console.log("res");
+    ItookApi.fetchTags().then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data) {
+          console.log("res", res);
+
+          this.setState({
+            tags: res.data,
+            isLoadingtags: false
+          });
+        } else {
+          this.setState({ postType: undefined, isLoadingtags: false });
+        }
+      },
+      err => {
+        this.setState({});
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
   };
 
   fetchPostType = () => {
@@ -310,7 +344,23 @@ class AddNews extends Component {
     formData.append("preTitle", this.state.news.preTitle);
     formData.append("postTitle", this.state.news.postTitle);
     formData.append("testImage", this.state.newsImage);
+    formData.append("code", this.state.news.code);
+    formData.append("source", this.state.news.source);
+    formData.append("template", this.state.news.template);
+    formData.append("homePage", this.state.news.homePage);
+    formData.append("groupId", this.state.news.groupId);
+    formData.append("groupPosition", this.state.news.groupPosition);
     formData.append("body", this.state.news.body);
+    formData.append("photographer", this.state.news.photographer);
+    // formData.append("tags", this.state.tag);
+
+    for (var k in this.state.news.tag) {
+      if (this.state.news.tag.hasOwnProperty(k)) {
+        if (this.state.news.tag[k] !== "") {
+          formData.append("tags[" + k + "]", this.state.news.tag[k]);
+        }
+      }
+    }
 
     for (var k in this.state.galleryImages) {
       if (this.state.galleryImages.hasOwnProperty(k)) {
@@ -361,6 +411,7 @@ class AddNews extends Component {
             snackbarMessage: "عملیات با موفقیت انجام شد",
             isSnackOpen: true,
             openModal: false
+            // tag: []
             // news: {
             //   categoryId: "", //dastebandi
             //   editorId: "", //virastar
@@ -672,6 +723,113 @@ class AddNews extends Component {
     );
   };
 
+  handleAddNewTag = () => {
+    var newTag = this.state.newTag;
+    var tag = this.state.news.tag;
+    tag.push(newTag);
+
+    this.setState(
+      {
+        tag,
+        newTag: []
+      },
+      () => {
+        console.log("tag", this.state.news.tag);
+      }
+    );
+  };
+
+  /**
+   * @description : search in products data
+   *
+   * @author Ali Aryani
+   */
+  handleSuggestFildeSearch = event => {
+    console.log("event", event);
+
+    var data = this.state.tags;
+    var filteredData = [];
+
+    if (event === "") {
+      filteredData = [];
+      // this.setState({
+      //   OpenedProduct: "",
+      //   // openedFestival: { ...this.state.openedFestival, itemName: "", item: "" }
+      // });
+    } else if (data) {
+      filteredData = data.filter(d => {
+        return d.name.indexOf(event) >= 0;
+      });
+    }
+
+    this.setState(
+      {
+        FilterTags: filteredData,
+
+        newTag: event
+        // OpenedProduct: {
+        //   ...this.OpenedProduct,
+        //   title: event
+        // }
+        // searchText: event
+      },
+      () => console.log("newTag", this.state.newTag)
+    );
+  };
+
+  /**
+   * @description : callback when one product is touch
+   *
+   * @author Ali Aryani
+   */
+  handleClicTag = (event, id) => {
+    console.log("id", id);
+    console.log("FilterTags", this.state.FilterTags);
+
+    var data = this.state.FilterTags;
+    var tag = this.state.tag;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        tag.push(data[i].name);
+      }
+    }
+    this.setState(
+      {
+        news: {
+          ...this.state.news,
+          tag: [...this.state.news.tag, ...tag]
+        },
+        newTag: []
+      },
+      () => {
+        console.log("tag", this.state.news);
+      }
+    );
+  };
+
+  handleDeleteChip = index => {
+    console.log("index", index);
+    var tag = this.state.tag;
+    tag.splice(index, 1);
+    // for(var i=0; i<galleryImages.length;i++)
+    // {
+    //   if(galleryImages[i]===index)
+    //   {
+
+    //   }
+    // }
+
+    this.setState(
+      {
+        news: {
+          ...this.state.news,
+          tag: [...this.state.news.tag, ...tag]
+        }
+      },
+      () => console.log("tag", this.state.tag)
+    );
+  };
+
   handleRemoveImage = index => {
     console.log("index", index);
     var galleryImages = this.state.news.galleryImages;
@@ -699,7 +857,10 @@ class AddNews extends Component {
     console.log("event", event.target.checked);
     this.setState(
       {
-        news: { ...this.state.news, homePage: event.target.checked }
+        news: {
+          ...this.state.news,
+          homePage: event.target.checked === true ? 1 : 0
+        }
       },
       () => console.log("news", this.state.news)
     );
@@ -754,6 +915,7 @@ class AddNews extends Component {
         </div>
       );
     } else {
+      console.log("tagssss", this.state.tag);
       component = (
         <AddNewsUI
           busy={this.state.busy}
@@ -776,6 +938,12 @@ class AddNews extends Component {
           onChangeAgeCheckbox={this.handleChangeAgeCheckbox}
           onRemoveImage={this.handleRemoveImage}
           onRemoveVideos={this.handleRemoveVideos}
+          onDeleteChip={this.handleDeleteChip}
+          SuggestSearch={this.handleSuggestFildeSearch}
+          OnClicTag={this.handleClicTag}
+          tag={this.state.tag}
+          FilterTags={this.state.FilterTags}
+          onAddNewTag={this.handleAddNewTag}
         />
       );
     }

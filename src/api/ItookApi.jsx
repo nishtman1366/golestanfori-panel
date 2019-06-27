@@ -79,7 +79,6 @@ var ItookApi = {
   },
 
   loginByCookie(token) {
-    console.log("toke", token);
     return axios
       .get(API_URL + "/user", {
         headers: {
@@ -131,7 +130,48 @@ var ItookApi = {
    */
   fetchUserProfile() {
     return axios
-      .get(API_URL + "/users/profile")
+      .get(API_URL + "/user")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchTags() {
+    return axios
+      .get(API_URL + "/tags")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  newsPublish(id) {
+    console.log("id", id);
+    return axios
+      .get(API_URL + "/posts/" + id + "/publish")
       .then(response => {
         return response;
       })
@@ -240,9 +280,50 @@ var ItookApi = {
    * @return server response object
    */
 
-  fetchNews() {
+  fetchNews(filter) {
+    console.log("filter", filter);
     return axios
-      .get(API_URL + "/posts")
+      .post(API_URL + "/posts/list", filter)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchAdvertise() {
+    return axios
+      .get(API_URL + "/advertisement")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchPosition() {
+    return axios
+      .get(API_URL + "/advertisement/positions")
       .then(response => {
         return response;
       })
@@ -277,6 +358,30 @@ var ItookApi = {
   },
 
   /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addAdvertise(advertisement) {
+    for (var pair of advertisement.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/advertisement", advertisement)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
    * @description : edit category data to databse
    *
    * @author Ali Aryani
@@ -294,6 +399,55 @@ var ItookApi = {
       .then(response => {
         console.log(response);
 
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : edit category data to databse
+   *
+   * @author Ali Aryani
+   *
+   * @return server response
+   */
+  EditAdvertise(id, advertisement) {
+    console.log("id", id);
+    for (var pair of advertisement.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/advertisement/" + id, advertisement)
+      .then(response => {
+        console.log(response);
+
+        return response;
+      })
+      .catch(error => {
+        console.log(error.response);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeAdvertise(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/advertisement", params)
+      .then(response => {
+        console.log("Response : " + response);
         return response;
       })
       .catch(error => {
@@ -602,9 +756,11 @@ var ItookApi = {
    *
    * @return server response as object
    */
-  fetchUsers() {
+  fetchUsers(filter) {
+    console.log("filter", filter);
+
     return axios
-      .post(API_URL + "/users")
+      .post(API_URL + "/users", filter)
       .then(response => {
         return response;
       })
@@ -706,10 +862,58 @@ var ItookApi = {
    *
    * @return server response as object
    */
-  fetchComments() {
+  fetchComments(id) {
+    console.log("id", id);
+    var url;
+    if (id !== undefined) {
+      url = "/posts/" + id + "/comments";
+    } else {
+      url = "/comments";
+    }
     return axios
-      .get(API_URL + "/comments")
+      .get(API_URL + url)
       .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+  /**
+   * @description : Sends a request to fetch fetchMatchsConfigList from the server
+   *
+   * @author Ali Aryani
+   *
+   * @return server response as object
+   */
+  EditComment(id) {
+    return axios
+      .put(API_URL + "/comments/" + id)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeComments(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+
+    return axios
+      .delete(API_URL + "/comments", params)
+      .then(response => {
+        console.log("Response : " + response);
         return response;
       })
       .catch(error => {

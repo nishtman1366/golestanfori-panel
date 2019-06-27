@@ -12,13 +12,15 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Remove, AddMedia } from "components/Icons";
+import { Remove, AddMedia, Close } from "components/Icons";
 import { connect } from "react-redux";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactPlayer from "react-player";
-
+import Chip from "@material-ui/core/Chip";
+import FaceIcon from "@material-ui/icons/Face";
+import DoneIcon from "@material-ui/icons/Done";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const styles = theme => ({
@@ -30,7 +32,6 @@ const styles = theme => ({
   formControl: {
     // margin: theme.spacing.unit,
     marginTop: 8,
-    minWidth: 120,
     right: 0,
     left: "auto"
   },
@@ -61,6 +62,10 @@ const styles = theme => ({
     fontFamily: "iransans",
     fontSize: ".9rem"
   },
+  lable: {
+    fontFamily: "iransans",
+    fontSize: ".9rem"
+  },
   textFieldForm: {
     fontFamily: "iransans",
     fontSize: ".9rem"
@@ -85,23 +90,25 @@ class AddNewsUI extends Component {
     this.setState({ [name]: event.target.checked });
   };
   render() {
-    console.log("data", this.props.openModal);
+    console.log("tags", this.props.tag);
+
     return <div>{this.renderFormHeader()}</div>;
   }
 
   renderFormHeader = () => {
-    console.log("formats", this.props.formats);
+    console.log("tags", this.props.tag);
     const { classes } = this.props;
     return (
       <div>
         <Grid container className={classes.root} justify="center" spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
+                    style={{ minWidth: 100 }}
                     error={this.props.errors.postsTypeId}
                   >
                     <InputLabel
@@ -111,7 +118,7 @@ class AddNewsUI extends Component {
                         fontSize: ".9rem"
                       }}
                     >
-                      نوع{" "}
+                      نوع خبر{" "}
                     </InputLabel>
                     <Select
                       value={this.props.news.postsTypeId}
@@ -147,8 +154,11 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
-                  <FormControl className={classes.formControl}>
+                <Grid item xs={6} md={3}>
+                  <FormControl
+                    className={classes.formControl}
+                    style={{ minWidth: 100 }}
+                  >
                     <InputLabel
                       htmlFor="type"
                       style={{
@@ -177,8 +187,9 @@ class AddNewsUI extends Component {
                     {this.props.errors.categoryId}
                   </FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
+                    style={{ minWidth: 100 }}
                     className={classes.formControl}
                     error={this.props.errors.postsCreateTypeId}
                   >
@@ -225,11 +236,33 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
+                <Grid item xs={6} md={3}>
+                  <TextField
+                    error={this.props.errors.code}
+                    helperText={this.props.errors.code}
+                    required
+                    // id="required"
+                    type="text"
+                    label="کد خبر"
+                    value={this.props.news.code}
+                    onChange={e => {
+                      this.props.onChangeTextFieldData("code", e.target.value);
+                    }}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    InputProps={{
+                      className: classes.textFieldForm
+                    }}
+                    margin="normal"
+                    style={{ width: "100%", marginTop: 9 }}
+                  />
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
 
-          <Grid item xs={7}>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>
               اطلاعات افراد
             </p>
@@ -237,6 +270,7 @@ class AddNewsUI extends Component {
               <Grid container justify="center" spacing={2}>
                 <Grid item xs={6} md={3}>
                   <FormControl
+                    style={{ minWidth: 100 }}
                     className={classes.formControl}
                     error={this.props.errors.userId}
                   >
@@ -283,6 +317,7 @@ class AddNewsUI extends Component {
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <FormControl
+                    style={{ minWidth: 100 }}
                     className={classes.formControl}
                     error={this.props.errors.editorId}
                   >
@@ -331,6 +366,7 @@ class AddNewsUI extends Component {
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <FormControl
+                    style={{ minWidth: 100 }}
                     className={classes.formControl}
                     error={this.props.errors.publisherId}
                   >
@@ -379,15 +415,18 @@ class AddNewsUI extends Component {
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <TextField
-                    error={this.props.errors.lead}
-                    helperText={this.props.errors.lead}
+                    error={this.props.errors.photographer}
+                    helperText={this.props.errors.photographer}
                     required
                     // id="required"
                     type="text"
                     label="عکاس"
-                    value={this.props.news.lead}
+                    value={this.props.news.photographer}
                     onChange={e => {
-                      this.props.onChangeTextFieldData("lead", e.target.value);
+                      this.props.onChangeTextFieldData(
+                        "photographer",
+                        e.target.value
+                      );
                     }}
                     InputLabelProps={{
                       className: classes.textFieldFormLabel
@@ -510,16 +549,19 @@ class AddNewsUI extends Component {
 
                 <Grid item xs={4}>
                   <TextField
-                    error={this.props.errors.lead}
-                    helperText={this.props.errors.lead}
+                    error={this.props.errors.source}
+                    helperText={this.props.errors.source}
                     required
                     // id="required"
                     type="text"
                     label="منبع"
                     multiline
-                    value={this.props.news.lead}
+                    value={this.props.news.source}
                     onChange={e => {
-                      this.props.onChangeTextFieldData("lead", e.target.value);
+                      this.props.onChangeTextFieldData(
+                        "source",
+                        e.target.value
+                      );
                     }}
                     InputLabelProps={{
                       className: classes.textFieldFormLabel
@@ -768,12 +810,13 @@ class AddNewsUI extends Component {
             void 0
           )}
 
-          <Grid item xs={8}>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
                 <Grid item xs={6} md={3}>
                   <FormControl
+                    style={{ minWidth: 100 }}
                     className={classes.formControl}
                     error={this.props.errors.groups}
                   >
@@ -819,7 +862,10 @@ class AddNewsUI extends Component {
                   </FormControl>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                  <FormControl className={classes.formControl}>
+                  <FormControl
+                    className={classes.formControl}
+                    style={{ minWidth: 100 }}
+                  >
                     <InputLabel
                       htmlFor="type"
                       style={{
@@ -854,7 +900,10 @@ class AddNewsUI extends Component {
                 </Grid>
 
                 <Grid item xs={6} md={3}>
-                  <FormControl className={classes.formControl}>
+                  <FormControl
+                    style={{ minWidth: 100 }}
+                    className={classes.formControl}
+                  >
                     <InputLabel
                       htmlFor="type"
                       style={{
@@ -902,18 +951,118 @@ class AddNewsUI extends Component {
                   </FormControl>
                   <FormHelperText>{this.props.errors.template}</FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={6}>
-                  <FormControlLabel
-                    style={{ direction: "rtl", marginTop: 20 }}
-                    label="نمایش در صفحه اول"
-                    control={
-                      <Checkbox
-                        checked={this.props.news.homePage}
-                        onChange={this.props.onChangeAgeCheckbox}
-                        value={this.props.news.homePage}
+                <Grid item xs={6} md={3}>
+                  <div style={{ marginTop: 24 }}>
+                    <FormControlLabel
+                      style={{
+                        direction: "rtl",
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                        // marginTop: 24
+                      }}
+                      className={classes.textFieldForm}
+                      // label="نمایش در صفحه اول"
+                      control={
+                        <Checkbox
+                          checked={
+                            this.props.news.homePage === 0 ? false : true
+                          }
+                          onChange={this.props.onChangeAgeCheckbox}
+                          value={this.props.news.homePage === 0 ? false : true}
+                        />
+                      }
+                    />
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        display: "inline-Block",
+                        fontSize: 12,
+                        marginRight: 8
+                        // marginTop: 24
+                      }}
+                    >
+                      نمایش در صفحه اول
+                    </span>
+                  </div>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12}>
+            <p style={{ fontWeight: "bold", color: "#2196F3" }}>برچسب ها</p>
+            <Paper className={classes.root}>
+              <Grid container justify="center" spacing={2}>
+                <Grid item xs={6} md={4}>
+                  <div>
+                    <div>
+                      <TextField
+                        id="search"
+                        label="جستجو"
+                        type="search"
+                        // value={this.props.tag}
+                        className={classes.textField}
+                        InputLabelProps={{
+                          className: classes.textFieldFormLabel
+                        }}
+                        onChange={e => {
+                          this.props.SuggestSearch(e.target.value);
+                        }}
+                        margin="normal"
                       />
-                    }
-                  />
+                    </div>
+                    <Button
+                      disabled={this.props.busy}
+                      onClick={this.props.onAddNewTag}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem",
+                        background: "#2196F3",
+                        color: "#fff"
+                      }}
+                    >
+                      افزودن
+                    </Button>
+
+                    <div>
+                      {this.props.FilterTags
+                        ? this.props.FilterTags.map(r => {
+                            return (
+                              <p
+                                style={{ cursor: "pointer" }}
+                                onClick={event =>
+                                  this.props.OnClicTag(event, r.id)
+                                }
+                                key={r.id}
+                              >
+                                {r.name}
+                              </p>
+                            );
+                          })
+                        : void 0}
+                    </div>
+                  </div>
+                </Grid>
+                <Grid item xs={8}>
+                  {/* {this.props.tag
+                        ? this.props.tag.map(n => {
+                            return (
+                              <Chip
+                              icon={<Close onClick={() => alert()} />}
+                              style={{ margin: 4, padding: 20, cursor: "pointer" }}
+                              label="Deletable Primary Chip"
+                              onDelete={this.props.handleDelete}
+                              color="primary"
+                            />
+                            );
+                          })
+                        : void 0} */}
+                  <Grid container justify="center" spacing={2}>
+                    {console.log("tags", this.props.tag)}
+                    {this.props.tag.length > 0
+                      ? this.renderTagsChip(this.props.tag)
+                      : void 0}
+                  </Grid>
                 </Grid>
               </Grid>
             </Paper>
@@ -922,7 +1071,7 @@ class AddNewsUI extends Component {
           <Grid
             item
             xs={12}
-            md={12}
+            md={6}
             style={{
               textAlign: "center",
               marginBottom: 16,
@@ -939,13 +1088,33 @@ class AddNewsUI extends Component {
                 color: "#fff"
               }}
             >
-              تایید
+              ثبت
             </Button>
           </Grid>
         </Grid>
       </div>
     );
   };
+
+  renderTagsChip(tags) {
+    console.log("tags", tags);
+    var tag = [];
+    const { classes } = this.props;
+    for (let i = 0; i < tags.length; i++) {
+      tag.push(
+        <Grid item xs={6} md={3}>
+          <Chip
+            // icon={<Close onClick={this.props.onDeleteChip} />}
+            style={{ padding: 12, cursor: "pointer" }}
+            label={tags[i]}
+            onDelete={this.props.onDeleteChip}
+            color="primary"
+          />
+        </Grid>
+      );
+    }
+    return tag;
+  }
 
   renderNameOfVideos(videos) {
     var str = "";

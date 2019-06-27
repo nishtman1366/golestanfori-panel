@@ -20,19 +20,7 @@ class Profile extends Component {
         open: false,
         snackbarMessage: ""
       },
-      user: {
-        first_name: "",
-        last_name: "",
-        meli: "",
-        username: "",
-        mobile: "",
-        email: "",
-        avatarPath: "",
-        tell: "",
-        password: "",
-
-        address: ""
-      },
+      user: undefined,
       isLoading: true,
       isUpdating: false,
       errors: {
@@ -62,19 +50,6 @@ class Profile extends Component {
       // onPasswordDialogClose: this.handlePasswordDialogClose
     };
 
-    this.data = {
-      editableFields: [
-        "avatarPath",
-        "first_name",
-        "last_name",
-        "gender",
-        "mobile",
-        "email",
-        "password",
-        "tell"
-      ]
-    };
-
     this.state = this.DEFAULT_STATES;
   }
 
@@ -99,9 +74,7 @@ class Profile extends Component {
    */
   handleEnterData = (key, data) => {
     console.log("ali", data);
-    if (key === "mobile" && data.length > this.MOBILE_LENGTH) {
-      return;
-    }
+
     this.setState(
       {
         user: { ...this.state.user, [key]: data },
@@ -146,7 +119,7 @@ class Profile extends Component {
           // console.log("tokeeen", res.data.token);
 
           this.setState({
-            user: { ...res.data.user },
+            user: res.data,
             isLoading: false
           });
         } else if (res && res.status && res.status === 500) {

@@ -55,11 +55,11 @@ class Main extends Component {
 
       browserHistory.replace("/login");
     } else if (this.props.user.isLoggedIn) {
-      console.log("todasdasdasdken", this.props.user);
+      // console.log("todasdasdasdken", this.props.user);
 
       this.setState({ isUserLoggedIn: true });
     } else {
-      console.log("loginByCookie");
+      // console.log("loginByCookie");
 
       this.loginByCookie(cookie);
     }
@@ -123,7 +123,7 @@ class Main extends Component {
     }
   }
   getCookie(cname) {
-    console.log("cname", cname);
+    // console.log("cname", cname);
 
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -143,7 +143,7 @@ class Main extends Component {
   loginByCookie(token) {
     ItookApi.loginByCookie(token).then(res => {
       if (res && res.status && res.status === 200 && res.data) {
-        console.log("reserror", res);
+        // console.log("reserror", res);
 
         axios.defaults.headers.common["Authorization"] = res.data.token;
         this.props.dispatch(

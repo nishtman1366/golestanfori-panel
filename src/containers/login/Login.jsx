@@ -201,7 +201,7 @@ class Login extends Component {
 
     ItookApi.login(username, password).then(
       res => {
-        console.log("token", res);
+        console.log("res", res);
 
         // console.log("token", res.data.user.accessToken);
         if (res && res.status && res.status === 200 && res.data) {
@@ -216,7 +216,7 @@ class Login extends Component {
             })
           );
 
-          console.log("document.cookie", document.cookie);
+          // console.log("document.cookie", document.cookie);
 
           this.props.dispatch(
             actions.updateUser({ ...uData, isLoggedIn: true })

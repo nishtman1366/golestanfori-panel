@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import Badge from "@material-ui/core/Badge";
 import MailIcon from "@material-ui/icons/Mail";
+import Grid from "@material-ui/core/Grid";
 
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -41,7 +42,7 @@ import {
   User,
   Categpry,
   Reports,
-  Products,
+  Advertise,
   // ManagementUsers,
   DriversManagement,
   Help,
@@ -156,7 +157,7 @@ const styles = theme => ({
   },
   drawerHeader: {
     position: "relative",
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
     justifyContent: "flex-end",
     ...theme.mixins.toolbar
@@ -281,7 +282,7 @@ class AppLayout extends React.Component {
   render() {
     const { anchorEl } = this.state;
     const { classes } = this.props;
-
+    console.log("user", this.props.user);
     const drawer = (
       <div>
         <div className={classes.drawerHeader}>
@@ -297,7 +298,9 @@ class AppLayout extends React.Component {
                   position: "relative",
                   margin: "auto",
                   width: 48,
-                  height: 48
+                  height: 48,
+                  marginRight: 16,
+                  marginLeft: 16
                   // cursor: "pointer"
                 }}
               />
@@ -311,9 +314,11 @@ class AppLayout extends React.Component {
                 margin: "auto",
                 width: 48,
                 height: 48,
-                background: "#fff",
-                color: "#000",
-                // cursor: "pointer",
+                background: "#000",
+                color: "#fff",
+
+                marginRight: 16,
+                marginLeft: 16, // cursor: "pointer",
                 fontFamily: "iransans",
                 fontSize: ".9rem"
               }}
@@ -323,7 +328,7 @@ class AppLayout extends React.Component {
                 : "ن"}
             </Avatar>
           )}
-          <p style={{ color: "#000", fontWeight: "bold" }}>
+          <p style={{ color: "#fff", fontWeight: "bold" }}>
             {/* {this.props.user.firstName + " " + this.props.user.lastName} */}
             علی آریانی
           </p>
@@ -492,6 +497,24 @@ class AppLayout extends React.Component {
             />
           </MenuItem>
         </Link>
+        <Link
+          to="/advertise"
+          style={{ textDecoration: "none" }}
+          activeClassName="active"
+          activeStyle={{ fontWeight: "bold" }}
+        >
+          <MenuItem className={classes.menuItem}>
+            <ListItemIcon className={classes.icon}>
+              <Advertise />
+            </ListItemIcon>
+            <ListItemText
+              className={classes.ListItemText}
+              classes={{ primary: classes.secondary }}
+              inset
+              primary="تبلیغات"
+            />
+          </MenuItem>
+        </Link>
       </div>
     );
 
@@ -507,49 +530,59 @@ class AppLayout extends React.Component {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              variant="title"
-              color="inherit"
-              noWrap
-              style={{
-                fontFamily: "iransans"
-                // fontSize: ".9rem"
-              }}
-            >
-              {this.props.title}
-            </Typography>
-            <div
-              style={{
-                position: "absolute",
-                top: 8,
-                left: 8,
-                direction: "ltr"
-              }}
-            >
-              <React.Fragment>
-                <Badge
-                  style={{ margin: 8, marginRight: 12 }}
-                  // className={classess.margin}
-                  badgeContent={99}
+            <Grid container spacing={1}>
+              <Grid item xs={2}>
+                <p
+                  variant="title"
+                  color="inherit"
+                  noWrap
+                  style={{
+                    fontFamily: "iransans"
+                    // fontSize: ".9rem"
+                  }}
                 >
-                  <MailIcon />
-                </Badge>
-                <Badge
-                  // className={classess.margin}
-                  badgeContent={100}
-                  style={{ margin: 8, marginRight: 12 }}
+                  {this.props.title}
+                </p>
+              </Grid>
+              <Grid item xs={10}>
+                <div
+                  style={{
+                    // position: "absolute",
+                    // top: 8,
+                    // left: 8,
+                    direction: "ltr",
+                    width: "100%"
+                  }}
                 >
-                  <Notification />
-                </Badge>
-              </React.Fragment>
-              {this.props.actionButtons.map(button => {
-                return (
-                  <div style={{ display: "inline-block" }} key={Math.random()}>
-                    {button}
-                  </div>
-                );
-              })}
-            </div>
+                  <React.Fragment>
+                    <Badge
+                      style={{ margin: 8, marginRight: 12 }}
+                      // className={classess.margin}
+                      badgeContent={99}
+                    >
+                      <MailIcon />
+                    </Badge>
+                    <Badge
+                      // className={classess.margin}
+                      badgeContent={100}
+                      style={{ margin: 8, marginRight: 12 }}
+                    >
+                      <Notification />
+                    </Badge>
+                  </React.Fragment>
+                  {this.props.actionButtons.map(button => {
+                    return (
+                      <div
+                        style={{ display: "inline-block" }}
+                        key={Math.random()}
+                      >
+                        {button}
+                      </div>
+                    );
+                  })}
+                </div>
+              </Grid>
+            </Grid>
           </Toolbar>
         </AppBar>
         <Hidden mdUp>

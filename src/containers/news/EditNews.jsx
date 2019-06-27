@@ -322,6 +322,13 @@ class EditNews extends Component {
     formData.append("title", this.state.newsData.title);
     formData.append("preTitle", this.state.newsData.preTitle);
     formData.append("postTitle", this.state.newsData.postTitle);
+    formData.append("code", this.state.newsData.code);
+    formData.append("source", this.state.newsData.source);
+    formData.append("template", this.state.newsData.template);
+    formData.append("homePage", this.state.newsData.homePage);
+    formData.append("groupId", this.state.newsData.groupId);
+    formData.append("groupPosition", this.state.newsData.groupPosition);
+
     formData.append("testImage", this.state.newsImage);
     formData.append("body", this.state.newsData.body);
     formData.append("deleteImages", this.state.deleteImages);
@@ -630,6 +637,19 @@ class EditNews extends Component {
     );
   };
 
+  handleChangeAgeCheckbox = event => {
+    console.log("event", event.target.checked);
+    this.setState(
+      {
+        newsData: {
+          ...this.state.newsData,
+          homePage: event.target.checked === true ? 1 : 0
+        }
+      },
+      () => console.log("news", this.state.news)
+    );
+  };
+
   /**
    * @description : Callback for form text fields data change
    *
@@ -754,6 +774,34 @@ class EditNews extends Component {
     );
   };
 
+  handlePublish = () => {
+    console.log("res");
+    ItookApi.newsPublish(this.props.routeParams.id).then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data) {
+          console.log("res", res);
+          this.load();
+          // this.setState({
+          //   groups: res.data
+          // });
+        } else {
+          console.log("res", res);
+          this.setState({
+            isLoadingCategories: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
+        }
+      },
+      err => {
+        this.setState({});
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
   renderHelperComponents = () => {
     return (
       <div>
@@ -816,6 +864,7 @@ class EditNews extends Component {
           onRemoveLocalVideos={this.handleRemoveLocalVideos}
           localImages={this.state.localImages}
           localVideos={this.state.localVideos}
+          onPublish={this.handlePublish}
         />
       );
     }

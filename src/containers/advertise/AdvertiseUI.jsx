@@ -19,7 +19,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
+import Select from "@material-ui/core/Select";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -27,13 +27,14 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
 import { USERS } from "components/StatesIcons";
 import {
   Edit,
   Warning,
   AddCategory,
-  AddUserIcon,
+  EditUser,
   Enseraf,
   Tik
 } from "components/Icons";
@@ -151,11 +152,11 @@ const styles = theme => ({
     margin: theme.spacing(1)
   },
   dialogPaper: {
-    maxHeight: "500px",
-    width: "400px"
+    maxHeight: "700px",
+    width: "700"
   }
 });
-class UsersUI extends Component {
+class AdvertiseUI extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -182,7 +183,7 @@ class UsersUI extends Component {
         {this.renderUI()}
         {this.renderFabButton()}
         {this.renderAddDialog()}
-        {this.props.openedUser !== undefined ? (
+        {this.props.openedAdvertise !== undefined ? (
           <div>{this.renderEditDialog()}</div>
         ) : null}
         {this.renderDeleteDialog()}
@@ -196,9 +197,81 @@ class UsersUI extends Component {
 
     return (
       <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl>
+        <Grid
+          container
+          // className={classes.root}
+          justify="center"
+          alignItems="center"
+          spacing={2}
+        >
+          {/* <form onSubmit={this.props.OnAddCategory}> */}
+          {/* <Grid container spacing={8} alignItems="center" justify="center"> */}
+          <Grid container item xs={12} alignItems="center" justify="center">
+            <input
+              style={{ display: "none" }}
+              ref="image"
+              accept=".png,.jpg,.jpeg"
+              className={classes.input}
+              id="raised-pic1-file"
+              multiple
+              type="file"
+              onChange={event => {
+                this.props.OnPictureChange(event);
+                this.refs.image.value = "";
+              }}
+            />
+            {this.props.advertise.image ? (
+              <div>
+                <label htmlFor="raised-pic1-file">
+                  <Card
+                    style={{
+                      width: 400,
+                      height: 300
+                    }}
+                  >
+                    <CardMedia
+                      // alt="Adelle Charles"
+                      image={this.props.advertise.image}
+                      style={{
+                        position: "relative",
+                        margin: "auto",
+                        width: "100%",
+                        height: "100%",
+                        cursor: "pointer"
+                      }}
+                    />
+                  </Card>
+                </label>
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="raised-pic1-file">
+                  <Card
+                    style={{
+                      width: 400,
+                      height: 300
+                    }}
+                  >
+                    <CardMedia
+                      // alt="Adelle Charles"
+                      image="/images/empty.png"
+                      style={{
+                        position: "relative",
+                        margin: "auto",
+                        width: "100%",
+                        height: "100%",
+                        cursor: "pointer",
+                        textAlign: "center"
+                      }}
+                    />
+                  </Card>
+                </label>
+              </div>
+            )}
+          </Grid>
+
+          <Grid item xs={6}>
+            <FormControl style={{ margin: 4, minWidth: 60 }}>
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -206,18 +279,17 @@ class UsersUI extends Component {
                   fontSize: ".9rem"
                 }}
               >
-                سمت
+                جایگاه
               </InputLabel>
               <Select
-                autoFocus
-                value={this.props.person.groupId}
+                value={this.props.advertise.positionId}
                 // error={this.props.errors.type.length > 0}
-                formhelpertext={this.props.errors.type}
-                onChange={this.props.OnTypeChange}
+                // formhelpertext={this.props.errors.type}
+                onChange={this.props.OnPositionChange}
                 input={<Input id="type" />}
               >
-                {this.props.GroupUsers
-                  ? this.props.GroupUsers.map(n => {
+                {this.props.positions
+                  ? this.props.positions.map(n => {
                       return (
                         <MenuItem
                           value={n.id}
@@ -227,7 +299,7 @@ class UsersUI extends Component {
                             fontSize: ".9rem"
                           }}
                         >
-                          {n.displayName}
+                          {n.name}
                         </MenuItem>
                       );
                     })
@@ -236,80 +308,60 @@ class UsersUI extends Component {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.firstName}
-              helperText={this.props.errors.firstName}
-              required
-              id="required"
-              label="نام"
-              value={this.props.person.firstName}
-              onChange={e => {
-                this.props.onFormDataChange("firstName", e.target.value);
-              }}
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              margin="normal"
-            />
+          <Grid item xs={6}>
+            <FormControl style={{ margin: 4, minWidth: 90 }}>
+              <InputLabel
+                htmlFor="type"
+                style={{
+                  fontFamily: "iransans",
+                  fontSize: ".9rem"
+                }}
+              >
+                پنچره هدف
+              </InputLabel>
+              <Select
+                value={this.props.advertise.target}
+                // error={this.props.errors.type.length > 0}
+                // formhelpertext={this.props.errors.type}
+                onChange={this.props.OnTargetChange}
+                input={<Input id="type" />}
+              >
+                <MenuItem
+                  value="_blank"
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem"
+                  }}
+                >
+                  پنجره جدید
+                </MenuItem>
+                <MenuItem
+                  value="_self"
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem"
+                  }}
+                >
+                  همان پنجره
+                </MenuItem>
+                );
+              </Select>
+            </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item={12} md={6}>
             <TextField
-              error={this.props.errors.lastName}
-              helperText={this.props.errors.lastName}
+              error={this.props.errors.name}
+              helperText={this.props.errors.name}
               required
-              id="required"
-              label="نام خانوادگی"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              value={this.props.person.lastName}
-              onChange={e => {
-                this.props.onFormDataChange("lastName", e.target.value);
-              }}
-              margin="normal"
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <TextField
+              // id="required"
               type="text"
-              error={this.props.errors.username}
-              helperText={this.props.errors.username}
-              required
-              id="required"
-              label="نام کاربری"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              value={this.props.person.username}
+              style={{ width: "100%" }}
+              label="عنوان"
+              multiline
+              value={this.props.advertise.name}
               onChange={e => {
-                this.props.onFormDataChange("username", e.target.value);
-              }}
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.password}
-              helperText={this.props.errors.password}
-              required
-              label="رمز عبور"
-              id="required"
-              type="password"
-              value={this.props.person.password}
-              onChange={e => {
-                this.props.onFormDataChange("password", e.target.value);
+                this.props.onFormDataChange("name", e.target.value);
               }}
               InputLabelProps={{
                 className: classes.textFieldFormLabel
@@ -320,51 +372,52 @@ class UsersUI extends Component {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item={12} md={6}>
             <TextField
-              error={this.props.errors.mobile}
-              helperText={this.props.errors.mobile}
+              error={this.props.errors.destinationUrl}
+              helperText={this.props.errors.destinationUrl}
               required
-              id="required"
-              label="تلفن همراه"
+              // id="required"
+              type="text"
+              label="لینک"
+              style={{ width: "100%" }}
+              multiline
+              value={this.props.advertise.destinationUrl}
+              onChange={e => {
+                this.props.onFormDataChange("destinationUrl", e.target.value);
+              }}
               InputLabelProps={{
                 className: classes.textFieldFormLabel
               }}
               InputProps={{
                 className: classes.textFieldForm
-              }}
-              type="number"
-              value={this.props.person.mobile}
-              onChange={e => {
-                this.props.onFormDataChange("mobile", e.target.value);
-              }}
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.email}
-              helperText={this.props.errors.email}
-              required
-              id="required"
-              label="ایمیل"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              type="test"
-              value={this.props.person.email}
-              onChange={e => {
-                this.props.onFormDataChange("email", e.target.value);
               }}
               margin="normal"
             />
           </Grid>
 
-          <button type="submit" hidden />
+          {/* <input
+              style={{ display: "none" }}
+              ref="image"
+              accept=".png,.jpg,.jpeg"
+              className={classes.input}
+              id="raised-image-file"
+              multiple
+              type="file"
+              onChange={event => {
+                this.props.OnPictureChange(event);
+                this.refs.image.value = "";
+              }}
+            />
+            <label htmlFor="raised-image-file">
+              <Button variant="raised" component="span">
+                بارگزاری عکس
+              </Button>
+            </label> */}
         </Grid>
+        <button type="submit" hidden />
+        {/* </form> */}
+        {/* </Grid> */}
       </div>
     );
   };
@@ -374,9 +427,81 @@ class UsersUI extends Component {
 
     return (
       <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl>
+        <Grid
+          container
+          // className={classes.root}
+          justify="center"
+          alignItems="center"
+          spacing={2}
+        >
+          {/* <form onSubmit={this.props.OnAddCategory}> */}
+          {/* <Grid container spacing={8} alignItems="center" justify="center"> */}
+          <Grid container item xs={12} alignItems="center" justify="center">
+            <input
+              style={{ display: "none" }}
+              ref="image"
+              accept=".png,.jpg,.jpeg"
+              className={classes.input}
+              id="raised-pic1-file"
+              multiple
+              type="file"
+              onChange={event => {
+                this.props.OnEditPictureChange(event);
+                this.refs.image.value = "";
+              }}
+            />
+            {this.props.openedAdvertise.image ? (
+              <div>
+                <label htmlFor="raised-pic1-file">
+                  <Card
+                    style={{
+                      width: 400,
+                      height: 300
+                    }}
+                  >
+                    <CardMedia
+                      // alt="Adelle Charles"
+                      image={this.props.openedAdvertise.image}
+                      style={{
+                        position: "relative",
+                        margin: "auto",
+                        width: "100%",
+                        height: "100%",
+                        cursor: "pointer"
+                      }}
+                    />
+                  </Card>
+                </label>
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="raised-pic1-file">
+                  <Card
+                    style={{
+                      width: 400,
+                      height: 300
+                    }}
+                  >
+                    <CardMedia
+                      // alt="Adelle Charles"
+                      image="/images/empty.png"
+                      style={{
+                        position: "relative",
+                        margin: "auto",
+                        width: "100%",
+                        height: "100%",
+                        cursor: "pointer",
+                        textAlign: "center"
+                      }}
+                    />
+                  </Card>
+                </label>
+              </div>
+            )}
+          </Grid>
+
+          <Grid item xs={6}>
+            <FormControl style={{ margin: 4, minWidth: 60 }}>
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -384,18 +509,17 @@ class UsersUI extends Component {
                   fontSize: ".9rem"
                 }}
               >
-                سمت
+                جایگاه
               </InputLabel>
               <Select
-                autoFocus
-                value={this.props.openedUser.groupId}
+                value={this.props.openedAdvertise.positionId}
                 // error={this.props.errors.type.length > 0}
-                formhelpertext={this.props.errors.type}
-                onChange={this.props.OnTypeEditChange}
+                // formhelpertext={this.props.errors.type}
+                onChange={this.props.OnEditPositionChange}
                 input={<Input id="type" />}
               >
-                {this.props.GroupUsers
-                  ? this.props.GroupUsers.map(n => {
+                {this.props.positions
+                  ? this.props.positions.map(n => {
                       return (
                         <MenuItem
                           value={n.id}
@@ -405,7 +529,7 @@ class UsersUI extends Component {
                             fontSize: ".9rem"
                           }}
                         >
-                          {n.displayName}
+                          {n.name}
                         </MenuItem>
                       );
                     })
@@ -414,81 +538,61 @@ class UsersUI extends Component {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.firstName}
-              helperText={this.props.errors.firstName}
-              required
-              id="required"
-              label="نام"
-              value={this.props.openedUser.firstName}
-              onChange={e => {
-                this.props.OnEditFormDataChange("firstName", e.target.value);
-              }}
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              margin="normal"
-            />
+          <Grid item xs={6}>
+            <FormControl style={{ margin: 4, minWidth: 90 }}>
+              <InputLabel
+                htmlFor="type"
+                style={{
+                  fontFamily: "iransans",
+                  fontSize: ".9rem"
+                }}
+              >
+                پنچره هدف
+              </InputLabel>
+              <Select
+                value={this.props.openedAdvertise.target}
+                // error={this.props.errors.type.length > 0}
+                // formhelpertext={this.props.errors.type}
+                onChange={this.props.OnEditTargetChange}
+                input={<Input id="type" />}
+              >
+                <MenuItem
+                  value="_blank"
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem"
+                  }}
+                >
+                  پنجره جدید
+                </MenuItem>
+                <MenuItem
+                  value="_self"
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem"
+                  }}
+                >
+                  همان پنجره
+                </MenuItem>
+                );
+              </Select>
+            </FormControl>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item={12} md={6}>
             <TextField
-              error={this.props.errors.lastName}
-              helperText={this.props.errors.lastName}
+              error={this.props.errors.name}
+              helperText={this.props.errors.name}
               required
-              id="required"
-              label="نام خانوادگی"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              value={this.props.openedUser.lastName}
-              onChange={e => {
-                this.props.OnEditFormDataChange("lastName", e.target.value);
-              }}
-              margin="normal"
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <TextField
+              // id="required"
               type="text"
-              error={this.props.errors.username}
-              helperText={this.props.errors.username}
-              required
-              id="required"
-              label="نام کاربری"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              value={this.props.openedUser.username}
+              label="عنوان"
+              multiline
+              value={this.props.openedAdvertise.name}
               onChange={e => {
-                this.props.OnEditFormDataChange("username", e.target.value);
+                this.props.OnEditFormDataChange("name", e.target.value);
               }}
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.password}
-              helperText={this.props.errors.password}
-              required
-              label="رمز عبور"
-              id="required"
-              type="password"
-              value={this.props.openedUser.password}
-              onChange={e => {
-                this.props.OnEditFormDataChange("password", e.target.value);
-              }}
+              style={{ width: "100%" }}
               InputLabelProps={{
                 className: classes.textFieldFormLabel
               }}
@@ -498,51 +602,55 @@ class UsersUI extends Component {
               margin="normal"
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item={12} md={6}>
             <TextField
-              error={this.props.errors.mobile}
-              helperText={this.props.errors.mobile}
+              error={this.props.errors.destinationUrl}
+              helperText={this.props.errors.destinationUrl}
               required
-              id="required"
-              label="تلفن همراه"
+              // id="required"
+              type="text"
+              label="لینک"
+              multiline
+              value={this.props.openedAdvertise.destinationUrl}
+              onChange={e => {
+                this.props.OnEditFormDataChange(
+                  "destinationUrl",
+                  e.target.value
+                );
+              }}
+              style={{ width: "100%" }}
               InputLabelProps={{
                 className: classes.textFieldFormLabel
               }}
               InputProps={{
                 className: classes.textFieldForm
-              }}
-              type="number"
-              value={this.props.openedUser.mobile}
-              onChange={e => {
-                this.props.OnEditFormDataChange("mobile", e.target.value);
-              }}
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              error={this.props.errors.email}
-              helperText={this.props.errors.email}
-              required
-              id="required"
-              label="ایمیل"
-              InputLabelProps={{
-                className: classes.textFieldFormLabel
-              }}
-              InputProps={{
-                className: classes.textFieldForm
-              }}
-              type="test"
-              value={this.props.openedUser.email}
-              onChange={e => {
-                this.props.OnEditFormDataChange("email", e.target.value);
               }}
               margin="normal"
             />
           </Grid>
 
-          <button type="submit" hidden />
+          {/* <input
+            style={{ display: "none" }}
+            ref="image"
+            accept=".png,.jpg,.jpeg"
+            className={classes.input}
+            id="raised-image-file"
+            multiple
+            type="file"
+            onChange={event => {
+              this.props.OnPictureChange(event);
+              this.refs.image.value = "";
+            }}
+          />
+          <label htmlFor="raised-image-file">
+            <Button variant="raised" component="span">
+              بارگزاری عکس
+            </Button>
+          </label> */}
         </Grid>
+        <button type="submit" hidden />
+        {/* </form> */}
+        {/* </Grid> */}
       </div>
     );
   };
@@ -577,7 +685,7 @@ class UsersUI extends Component {
         aria-labelledby="responsive-dialog-title"
       >
         <DialogTitle id="add" style={{ textAlign: "center" }}>
-          <AddUserIcon />
+          <AddCategory />
         </DialogTitle>
         <DialogContent>{this.renderAddDialogBody()}</DialogContent>
         <Grid
@@ -604,7 +712,7 @@ class UsersUI extends Component {
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnAddUser}
+              onClick={this.props.OnAddAdvertise}
               style={{
                 color: "#fff",
 
@@ -613,7 +721,7 @@ class UsersUI extends Component {
                 background: "#4caf50"
               }}
             >
-              تایید
+              بلی
               <Tik style={{ marginRight: 8 }} />
             </Button>
           )}
@@ -661,7 +769,7 @@ class UsersUI extends Component {
               <CircularProgress size={30} />
             ) : (
               <Button
-                onClick={this.props.OnEditUser}
+                onClick={this.props.OnEditAdvertise}
                 style={{
                   color: "#fff",
 
@@ -670,7 +778,7 @@ class UsersUI extends Component {
                   background: "#4caf50"
                 }}
               >
-                تایید
+                بلی
                 <Tik style={{ marginRight: 8 }} />
               </Button>
             )}
@@ -719,7 +827,7 @@ class UsersUI extends Component {
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnDeleteUser}
+              onClick={this.props.OnDeleteAdvertise}
               style={{
                 color: "#fff",
 
@@ -815,17 +923,11 @@ class UsersUI extends Component {
                         <CustomTableCell style={{ textAlign: "right" }}>
                           نام
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          نام کاربری
+                        <CustomTableCell style={{ textAlign: "center" }}>
+                          جایگاه
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          موبایل
-                        </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          ایمیل
-                        </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          سمت
+                        <CustomTableCell style={{ textAlign: "center" }}>
+                          پنجره هدف
                         </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
@@ -884,27 +986,19 @@ class UsersUI extends Component {
                               </CustomTableCell>
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right", padding: "0" }}
+                                style={{ textAlign: "center", padding: "0" }}
                               >
-                                {n.username}
-                              </CustomTableCell>
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: "0" }}
-                              >
-                                {n.mobile}
-                              </CustomTableCell>
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: "0" }}
-                              >
-                                {n.email}
+                                {n.position ? n.position.name : void 0}
                               </CustomTableCell>
                               <CustomTableCell
                                 numeric
                                 style={{ textAlign: "center", padding: "0" }}
                               >
-                                {n.groupText}
+                                {n.target === "_blank"
+                                  ? "پنجره جدید"
+                                  : n.target === "_self"
+                                  ? "همان پنجره"
+                                  : "نامشخص"}
                               </CustomTableCell>
 
                               <CustomTableCell
@@ -963,7 +1057,7 @@ class UsersUI extends Component {
           <p
             style={{ fontSize: ".8rem", color: "#999999", textAlign: "center" }}
           >
-            لیست کاربران ها خالی است
+            لیست گروه ها خالی است
           </p>
         </div>
       );
@@ -977,5 +1071,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(UsersUI)
+  })(AdvertiseUI)
 );

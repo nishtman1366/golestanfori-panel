@@ -24,31 +24,52 @@ import AppLayout from "components/appLayout/AppLayout";
 import ItookApi from "api/ItookApi";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
-import { Delete } from "components/Icons";
+import { Delete, Filter, Enseraf, Tik } from "components/Icons";
 import Loading from "containers/Loading";
 import Snackbar from "@material-ui/core/Snackbar";
 import { OPERATION_FAILED } from "components/StatesIcons";
 import Grid from "@material-ui/core/Grid";
 import { browserHistory } from "react-router";
-
+import { withStyles } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import Paper from "@material-ui/core/Paper";
+import InputBase from "@material-ui/core/InputBase";
+import Divider from "@material-ui/core/Divider";
+import SearchIcon from "@material-ui/icons/Search";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 import UsersUI from "./UsersUI";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 class Users extends Component {
   constructor(props) {
     super(props);
-
     this.DEFAULT_STATE = {
       snack: {
         open: false,
         snackbarMessage: ""
       },
+      filter: {
+        groupId: "",
+        searchQuery: "",
+        status: ""
+      },
       openModal: false,
       OpenDeleteModal: false,
       OpenEditModal: false,
       isLoading: true,
-
+      OpenFilterModal: false,
       data: undefined,
       selected: [],
+      filteredData: undefined,
+
       busy: false,
       appType: "all",
       GroupUsers: undefined,
@@ -87,32 +108,7 @@ class Users extends Component {
   load = () => {
     this.setState(this.DEFAULT_STATE);
 
-    ItookApi.fetchUsers().then(
-      res => {
-        this.setState({ isLoading: false });
-
-        console.log("res", res);
-
-        if (res && res.status && res.status === 200 && res.data) {
-          var rowNumber = 1;
-          var users = res.data.users;
-          for (var i = 0; i < users.length; i++) users[i].row = rowNumber++;
-
-          this.setState({
-            data: users,
-            // filteredData: this.filterData(res.data.group, "CUSTOMER"),
-            isLoading: false
-          });
-          this.fetchGroupUsers();
-        } else {
-          this.setState({ data: undefined, isLoading: false });
-        }
-      },
-      err => {
-        this.setState({ isLoading: false });
-        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
-      }
-    );
+    this.fetchUsers();
   };
 
   fetchGroupUsers = () => {
@@ -138,6 +134,213 @@ class Users extends Component {
     );
   };
 
+  fetchUsers = () => {
+    ItookApi.fetchUsers(this.state.filter).then(
+      res => {
+        this.setState({ isLoading: false });
+
+        console.log("res", res);
+
+        if (res && res.status && res.status === 200 && res.data) {
+          var rowNumber = 1;
+          var users = res.data.users;
+          for (var i = 0; i < users.length; i++) users[i].row = rowNumber++;
+
+          this.setState({
+            data: users,
+            filteredData: users,
+            OpenFilterModal: false,
+            // filteredData: this.filterData(res.data.group, "CUSTOMER"),
+            isLoading: false,
+            filter: {
+              groupId: "",
+              searchQuery: "",
+              status: ""
+            }
+          });
+          this.fetchGroupUsers();
+        } else {
+          this.setState({ data: undefined, isLoading: false });
+        }
+      },
+      err => {
+        this.setState({ isLoading: false });
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
+  renderFilterBody = () => {
+    return (
+      <div>
+        <DialogContent>
+          <DialogContentText
+            id="alert-dialog-description"
+            style={{
+              fontFamily: "iransans",
+              fontSize: ".9rem",
+              margin: "8px"
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <FormControl style={{ margin: 4, minWidth: 60 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    سمت
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.groupId}
+                    // error={this.props.errors.type.length > 0}
+                    // formhelpertext={this.props.errors.type}
+                    onChange={this.OnFilterChange}
+                    input={<Input id="type" />}
+                  >
+                    <MenuItem
+                      value=""
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
+                    {this.state.GroupUsers
+                      ? this.state.GroupUsers.map(n => {
+                          return (
+                            <MenuItem
+                              value={n.id}
+                              key={n.id}
+                              style={{
+                                fontFamily: "iransans",
+                                fontSize: ".9rem"
+                              }}
+                            >
+                              {n.displayName}
+                            </MenuItem>
+                          );
+                        })
+                      : void 0}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl style={{ margin: 4, minWidth: 60 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    وضعیت
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.status}
+                    // error={this.props.errors.type.length > 0}
+                    // formhelpertext={this.props.errors.type}
+                    onChange={this.OnFilterStatusChange}
+                    input={<Input id="type" />}
+                  >
+                    <MenuItem
+                      value=""
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
+                    <MenuItem
+                      value={1}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      فعال
+                    </MenuItem>
+                    <MenuItem
+                      value={2}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      غیر فعال
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </DialogContentText>
+        </DialogContent>
+      </div>
+    );
+  };
+
+  renderFilterDialog = () => {
+    const { fullScreen } = this.props;
+
+    return (
+      <Dialog
+        fullScreen={fullScreen}
+        open={this.state.OpenFilterModal}
+        // onClose={this.props.OnCloseModalDelete}
+        aria-labelledby="responsive-title"
+      >
+        {/* <DialogTitle id="delet" style={{ textAlign: "center" }}>
+          <Warning />
+        </DialogTitle> */}
+
+        <DialogContent>{this.renderFilterBody()}</DialogContent>
+        <Grid
+          container
+          alignItems="center"
+          justify="space-around"
+          style={{ marginBottom: "8px" }}
+        >
+          <Button
+            disabled={this.state.busy}
+            onClick={this.handleCloseDelete}
+            style={{
+              fontFamily: "iransans",
+              color: "#fff",
+              fontSize: ".9rem",
+              background: "#f44336"
+            }}
+          >
+            بستن
+            <Enseraf style={{ marginRight: 8 }} />
+          </Button>
+
+          {this.state.busy ? (
+            <CircularProgress size={30} />
+          ) : (
+            <Button
+              onClick={() => this.fetchUsers()}
+              style={{
+                color: "#fff",
+
+                fontFamily: "iransans",
+                fontSize: ".9rem",
+                background: "#4caf50"
+              }}
+            >
+              اعمال
+              <Tik style={{ marginRight: 8 }} />
+            </Button>
+          )}
+        </Grid>
+      </Dialog>
+    );
+  };
+
   renderHelperComponents = () => {
     return (
       <div>
@@ -152,6 +355,7 @@ class Users extends Component {
             this.setState({ isSnackOpen: false });
           }}
         />
+        {this.renderFilterDialog()}
       </div>
     );
   };
@@ -164,8 +368,21 @@ class Users extends Component {
     console.log("open");
     this.setState({ OpenDeleteModal: true });
   };
+  handleClickFilterOpen = () => {
+    console.log("open");
+    this.setState({ OpenFilterModal: true });
+  };
+
   handleCloseDelete = () => {
-    this.setState({ OpenDeleteModal: false });
+    this.setState({
+      OpenDeleteModal: false,
+      OpenFilterModal: false,
+      filter: {
+        groupId: "",
+        searchQuery: "",
+        status: ""
+      }
+    });
   };
   handleClose = () => {
     this.setState({
@@ -431,6 +648,46 @@ class Users extends Component {
     );
   };
 
+  handleTypeEditChange = event => {
+    this.setState({ type: event.target.value });
+
+    this.setState(
+      {
+        openedUser: { ...this.state.openedUser, groupId: event.target.value },
+        errors: { ...this.state.errors, groupId: "" }
+      },
+      () => {
+        console.log("tyyyypee", this.state.person);
+      }
+    );
+  };
+
+  OnFilterChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, groupId: event.target.value },
+        errors: { ...this.state.errors, groupId: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
+      }
+    );
+  };
+
+  OnFilterStatusChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, status: event.target.value },
+        errors: { ...this.state.errors, status: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
+      }
+    );
+  };
+
   handleChange = event => {
     this.setState({ type: event.target.value });
 
@@ -442,6 +699,30 @@ class Users extends Component {
       () => {
         console.log("tyyyypee", this.state.person);
       }
+    );
+  };
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  search = event => {
+    console.log("event", event);
+    this.setState(
+      {
+        errors: { ...this.state.errors, event: "" },
+
+        filter: {
+          ...this.state.filter,
+          searchQuery: event
+        }
+      },
+      () => this.fetchUsers()
     );
   };
 
@@ -522,6 +803,66 @@ class Users extends Component {
         </IconButton>
       );
     }
+
+    // actionButtons.push(
+    //   <IconButton
+    //     onClick={this.handleClickFilterOpen}
+    //     style={{ marginLeft: 80 }}
+    //   >
+    //     <Filter />
+    //   </IconButton>
+    // );
+
+    actionButtons.push(
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          const { searchQuery } = e.currentTarget.elements;
+          console.log("sd", searchQuery.value);
+          this.search(searchQuery.value);
+        }}
+      >
+        <Paper
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+            marginLeft: 180
+          }}
+        >
+          <IconButton style={{ padding: 10 }} aria-label="Search" type="submit">
+            <SearchIcon />
+          </IconButton>
+
+          <InputBase
+            name="searchQuery"
+            style={{
+              marginLeft: 8,
+              flex: 1,
+              direction: "rtl",
+              fontFamily: "iransans",
+              fontSize: ".9rem"
+            }}
+            // value={this.state.filter.searchQuery}
+            // onChange={e => {
+            //   this.search(e.target.value);
+            // }}
+            placeholder="جستجو"
+          />
+
+          <Divider style={{ width: 1, height: 28, margin: 4 }} />
+          <IconButton
+            color="primary"
+            onClick={this.handleClickFilterOpen}
+            style={{ padding: 10 }}
+            aria-label="Directions"
+          >
+            <Filter />
+          </IconButton>
+        </Paper>
+      </form>
+    );
+
     return actionButtons;
   };
   render() {
@@ -558,8 +899,9 @@ class Users extends Component {
           OpenDeleteModal={this.state.OpenDeleteModal}
           person={this.state.person}
           OnTypeChange={this.handleChange}
+          OnTypeEditChange={this.handleTypeEditChange}
           busy={this.state.busy}
-          data={this.state.data}
+          data={this.state.filteredData}
           OnEditUser={this.handleEditUser}
           OnCloseModal={this.handleClose}
           OnCloseEdit={this.handleEditClose}

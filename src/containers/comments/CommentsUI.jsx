@@ -247,9 +247,7 @@ class CommentsUI extends Component {
               textJustify: "center"
             }}
           >
-            {this.props.openedComment && this.props.openedComment.user
-              ? this.props.openedComment.user.name
-              : void 0}
+            {this.props.openedComment ? this.props.openedComment.name : void 0}
           </DialogContentText>
           <Divider />
           <DialogContentText
@@ -380,15 +378,20 @@ class CommentsUI extends Component {
                   <CustomTableCell style={{ textAlign: "right" }}>
                     ردیف
                   </CustomTableCell>
-                  <CustomTableCell style={{ textAlign: "right" }}>
-                    نام صاحب اثر
-                  </CustomTableCell>
+
                   <CustomTableCell style={{ textAlign: "right" }}>
                     فرستنده
                   </CustomTableCell>
                   <CustomTableCell style={{ textAlign: "right" }}>
+                    کد خبر
+                  </CustomTableCell>
+                  <CustomTableCell style={{ textAlign: "right" }}>
+                    ایمیل
+                  </CustomTableCell>
+                  <CustomTableCell style={{ textAlign: "right" }}>
                     وضعیت
                   </CustomTableCell>
+
                   <CustomTableCell style={{ textAlign: "right" }}>
                     تاریخ
                   </CustomTableCell>
@@ -431,17 +434,20 @@ class CommentsUI extends Component {
                           {rowNumber++}
                         </CustomTableCell>
                         <CustomTableCell numeric style={{ textAlign: "right" }}>
-                          {n.file && n.file.user ? n.file.user.name : void 0}
+                          {n.name}
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          {n.user.name}
+                          {n.postId}
+                        </CustomTableCell>
+                        <CustomTableCell style={{ textAlign: "right" }}>
+                          {n.email}
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
                           {n.statusText}
                         </CustomTableCell>
 
                         <CustomTableCell numeric style={{ textAlign: "right" }}>
-                          {n.jalaliDate}
+                          {n.jData}
                         </CustomTableCell>
                       </TableRow>
                     );

@@ -46,7 +46,7 @@ class Comments extends Component {
     console.log("REdddS");
     this.setState(this.DEFAULT_STATE);
 
-    ItookApi.fetchComments().then(
+    ItookApi.fetchComments(this.props.routeParams.id).then(
       res => {
         var state = null;
 

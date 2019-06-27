@@ -69,6 +69,10 @@ const Profile = Loadable({
   loader: () => import("./containers/profile/Profile"),
   loading: Loading
 });
+const Advertise = Loadable({
+  loader: () => import("./containers/advertise/Advertise"),
+  loading: Loading
+});
 
 const theme = createMuiTheme({
   direction: "rtl",
@@ -111,6 +115,12 @@ const theme = createMuiTheme({
       expandIcon: {
         left: 8,
         right: "auto"
+      }
+    },
+    MuiTypography: {
+      body: {
+        fontFamily: "iransans",
+        fontSize: ".9rem"
       }
     }
   }
@@ -180,8 +190,10 @@ ReactDOM.render(
 
           <Route path="groups" component={Groups} />
           <Route path="users" component={Users} />
-          <Route path="comments" component={Comments} />
+          <Route path="comments(/:id)" component={Comments} />
           <Route path="profile" component={Profile} />
+
+          <Route path="advertise" component={Advertise} />
 
           <Route path="Groups/:id/posts" component={GroupPosts} />
         </Route>

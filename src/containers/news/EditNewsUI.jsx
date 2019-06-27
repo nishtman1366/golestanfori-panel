@@ -99,16 +99,26 @@ class EditNewsUI extends Component {
   }
 
   renderFormHeader = () => {
-    console.log("formats", this.props.newsData.images);
+    console.log("formats", this.props.newsData);
     const { classes } = this.props;
     return (
       <div>
         <Grid container className={classes.root} justify="center" spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={12}>
+            <Button
+              href={"/comments/" + this.props.newsData.id}
+              variant="outlined"
+              color="primary"
+              className={classes.button}
+            >
+              مشاهده نظرات
+            </Button>
+          </Grid>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.postsTypeId}
@@ -156,7 +166,7 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.categoryId}
@@ -187,7 +197,7 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.postsCreateTypeId}
@@ -235,11 +245,33 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
+                <Grid item xs={6} md={3}>
+                  <TextField
+                    error={this.props.errors.code}
+                    helperText={this.props.errors.code}
+                    required
+                    // id="required"
+                    type="text"
+                    label="کد خبر"
+                    value={this.props.newsData.code}
+                    onChange={e => {
+                      this.props.onChangeTextFieldData("code", e.target.value);
+                    }}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    InputProps={{
+                      className: classes.textFieldForm
+                    }}
+                    margin="normal"
+                    style={{ width: "100%", marginTop: 9 }}
+                  />
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
 
-          <Grid item xs={7}>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>
               اطلاعات افراد
             </p>
@@ -389,15 +421,18 @@ class EditNewsUI extends Component {
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <TextField
-                    error={this.props.errors.lead}
-                    helperText={this.props.errors.lead}
+                    error={this.props.errors.photographer}
+                    helperText={this.props.errors.photographer}
                     required
                     // id="required"
                     type="text"
                     label="عکاس"
-                    value={this.props.newsData.lead}
+                    value={this.props.newsData.photographer}
                     onChange={e => {
-                      this.props.onChangeTextFieldData("lead", e.target.value);
+                      this.props.onChangeTextFieldData(
+                        "photographer",
+                        e.target.value
+                      );
                     }}
                     InputLabelProps={{
                       className: classes.textFieldFormLabel
@@ -791,7 +826,7 @@ class EditNewsUI extends Component {
             void 0
           )}
 
-          <Grid item xs={6}>
+          <Grid item xs={10}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
@@ -924,26 +959,37 @@ class EditNewsUI extends Component {
                   </FormControl>
                   <FormHelperText>{this.props.errors.template}</FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={6}>
-                  <FormControlLabel
-                    style={{ direction: "rtl", marginTop: 20 }}
-                    label="نمایش در صفحه اول"
-                    control={
-                      <Checkbox
-                        checked={this.props.newsData.homePage}
-                        onChange={this.props.onChangeAgeCheckbox}
-                        value={this.props.newsData.homePage}
-                      />
-                    }
-                  />
+                <Grid item xs={6} md={3}>
+                  <div style={{ marginTop: 24 }}>
+                    <FormControlLabel
+                      style={{ direction: "rtl" }}
+                      // label="نمایش در صفحه اول"
+                      control={
+                        <Checkbox
+                          checked={this.props.newsData.homePage}
+                          onChange={this.props.onChangeAgeCheckbox}
+                          value={this.props.newsData.homePage}
+                        />
+                      }
+                    />
+                    <p
+                      style={{
+                        fontWeight: "bold",
+                        display: "inline-Block",
+                        fontSize: 12,
+                        marginRight: 8
+                      }}
+                    >
+                      نمایش در صفحه اول
+                    </p>
+                  </div>
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
           <Grid
             item
-            xs={12}
-            md={12}
+            xs={3}
             style={{
               textAlign: "center",
               marginBottom: 16,
@@ -961,6 +1007,28 @@ class EditNewsUI extends Component {
               }}
             >
               بروزرسانی
+            </Button>
+          </Grid>
+          <Grid
+            item
+            xs={3}
+            style={{
+              textAlign: "center",
+              marginBottom: 16,
+              marginTop: 16
+            }}
+          >
+            <Button
+              disabled={this.props.busy}
+              onClick={this.props.onPublish}
+              style={{
+                fontFamily: "iransans",
+                fontSize: ".9rem",
+                background: "#2196F3",
+                color: "#fff"
+              }}
+            >
+              {this.props.newsData.status === 1 ? "لغو انتشار" : "انتشار"}
             </Button>
           </Grid>
         </Grid>

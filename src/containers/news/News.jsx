@@ -24,11 +24,26 @@ import AppLayout from "components/appLayout/AppLayout";
 import ItookApi from "api/ItookApi";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
-import { Delete, AddBox } from "components/Icons";
+import { Delete, AddBox, Filter, Enseraf, Tik } from "components/Icons";
+import Grid from "@material-ui/core/Grid";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import Paper from "@material-ui/core/Paper";
+import InputBase from "@material-ui/core/InputBase";
+import Divider from "@material-ui/core/Divider";
+import SearchIcon from "@material-ui/icons/Search";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Loading from "containers/Loading";
 import Snackbar from "@material-ui/core/Snackbar";
 import { OPERATION_FAILED } from "components/StatesIcons";
-import Grid from "@material-ui/core/Grid";
 import { browserHistory } from "react-router";
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -43,13 +58,20 @@ class News extends Component {
         open: false,
         snackbarMessage: ""
       },
+      filter: {
+        categoryId: "",
+        searchQuery: "",
+        status: ""
+      },
+      OpenFilterModal: false,
+
       groups: undefined,
       OpenDeleteModal: false,
       OpenAddToGroupModal: false,
       isLoading: true,
       news: undefined,
       links: undefined,
-
+      categories: undefined,
       selected: [],
       busy: false,
 
@@ -68,8 +90,11 @@ class News extends Component {
    */
   load = () => {
     this.setState(this.DEFAULT_STATE);
+    this.fetchNews();
+  };
 
-    ItookApi.fetchNews().then(
+  fetchNews = () => {
+    ItookApi.fetchNews(this.state.filter).then(
       res => {
         this.setState({ isLoading: false });
 
@@ -87,10 +112,16 @@ class News extends Component {
             links,
             // filteredData: transactions,
             // filteredData: this.filterData(res.data.match, "CUSTOMER"),
-            isLoading: false
+            isLoading: false,
+            filter: {
+              categoryId: "",
+              searchQuery: "",
+              status: ""
+            }
           });
 
           this.fetchGroups();
+          this.fetchCategories();
         } else {
           this.setState({ data: undefined, isLoading: false });
         }
@@ -124,6 +155,262 @@ class News extends Component {
       }
     );
   };
+  fetchCategories = () => {
+    console.log("res");
+    ItookApi.fetchCategries().then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data) {
+          console.log("res", res);
+
+          this.setState({
+            categories: res.data,
+            isLoadingCategories: false
+          });
+        } else {
+          this.setState({ categories: undefined, isLoadingCategories: false });
+        }
+      },
+      err => {
+        this.setState({});
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
+  renderFilterBody = () => {
+    return (
+      <div>
+        <DialogContent
+          style={{
+            paddingtop: 24,
+            paddingBottom: 24,
+            paddingLeft: 34,
+            paddingRight: 34
+          }}
+        >
+          <DialogContentText
+            id="alert-dialog-description"
+            style={{
+              fontFamily: "iransans",
+              fontSize: ".9rem",
+              margin: "16px"
+            }}
+          >
+            <Grid container spacing={6}>
+              <Grid item xs={6}>
+                <FormControl style={{ margin: 4, minWidth: 90 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    دسته بندی
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.categoryId}
+                    // error={this.props.errorsProducts.unitType}
+                    // formhelpertext={this.props.errorsProducts.unitType}
+                    onChange={this.OnFilterChange}
+                    input={<Input id="type" />}
+                  >
+                    {this.renderCategories(this.state.categories)}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6}>
+                <FormControl style={{ margin: 4, minWidth: 60 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    وضعیت
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.status}
+                    // error={this.props.errors.type.length > 0}
+                    // formhelpertext={this.props.errors.type}
+                    onChange={this.OnFilterStatusChange}
+                    input={<Input id="type" />}
+                  >
+                    <MenuItem
+                      value=""
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
+                    <MenuItem
+                      value={1}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      فعال
+                    </MenuItem>
+                    <MenuItem
+                      value={2}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      غیر فعال
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </DialogContentText>
+        </DialogContent>
+      </div>
+    );
+  };
+
+  renderCategories(categories) {
+    var rows = null;
+
+    if (
+      categories === undefined ||
+      categories === null ||
+      categories.length === 0
+    ) {
+      return rows; // null
+    }
+
+    rows = this.createCategoryList(categories)
+      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      .map(n => {
+        return (
+          <MenuItem
+            value={n.id}
+            key={n.id}
+            style={{
+              fontFamily: "iransans",
+              fontSize: ".9rem"
+            }}
+          >
+            {n.name}
+          </MenuItem>
+        );
+      });
+
+    return rows;
+  }
+  /**
+   * @description : halghe mizane bar rooye category ha va misazeshoon va harkodam ke zir majmooe dasht zir majmooeye anha ham sakhte mishe
+   *
+   * @author Ali Aryani
+   */
+  createCategoryList(categories) {
+    var categoriesBundle = [];
+
+    if (categories === undefined || categories === null) {
+      return categoriesBundle;
+    }
+
+    categories.map(category => {
+      categoriesBundle.push({
+        id: category.id,
+        productCount: category.productCount,
+
+        name: this.createCategoryNameByLevel(category.name, category.level),
+        postsCount: this.createCategoryNameByLevel(category.postsCount)
+      });
+      if (category.subCategories != null && category.subCategories.length > 0) {
+        categoriesBundle = [
+          ...categoriesBundle,
+          ...this.createCategoryList(category.subCategories)
+        ];
+      }
+      return void 0;
+    });
+
+    return categoriesBundle;
+  }
+
+  /**
+   * @description : bad az sakhte shodan category ha ba in tabe anha ra ba khate tire joda karde
+   *
+   * @author Ali Aryani
+   */
+  createCategoryNameByLevel(name, level) {
+    if (level === 1) {
+      return name;
+    }
+    var newName = "";
+    for (var i = 0; i < level - 1; i++) {
+      newName += "  |  ";
+    }
+    return newName + " ---- " + name;
+  }
+
+  renderFilterDialog = () => {
+    const { fullScreen } = this.props;
+
+    return (
+      <Dialog
+        // style={{ maxHeight: "500px", width: "400px" }}
+        open={this.state.OpenFilterModal}
+        // onClose={this.props.OnCloseModalDelete}
+        aria-labelledby="responsive-title"
+      >
+        {/* <DialogTitle id="delet" style={{ textAlign: "center" }}>
+          <Warning />
+        </DialogTitle> */}
+
+        <DialogContent>{this.renderFilterBody()}</DialogContent>
+        <Grid
+          container
+          alignItems="center"
+          justify="space-around"
+          style={{ marginBottom: "8px" }}
+        >
+          <Button
+            disabled={this.state.busy}
+            onClick={this.handleCloseDelete}
+            style={{
+              fontFamily: "iransans",
+              color: "#fff",
+              fontSize: ".9rem",
+              background: "#f44336"
+            }}
+          >
+            بستن
+            <Enseraf style={{ marginRight: 8 }} />
+          </Button>
+
+          {this.state.busy ? (
+            <CircularProgress size={30} />
+          ) : (
+            <Button
+              onClick={() => this.fetchNews()}
+              style={{
+                color: "#fff",
+
+                fontFamily: "iransans",
+                fontSize: ".9rem",
+                background: "#4caf50"
+              }}
+            >
+              اعمال
+              <Tik style={{ marginRight: 8 }} />
+            </Button>
+          )}
+        </Grid>
+      </Dialog>
+    );
+  };
 
   renderHelperComponents = () => {
     return (
@@ -139,6 +426,7 @@ class News extends Component {
             this.setState({ isSnackOpen: false });
           }}
         />
+        {this.renderFilterDialog()}
       </div>
     );
   };
@@ -148,7 +436,19 @@ class News extends Component {
     this.setState({ OpenDeleteModal: true });
   };
   handleCloseDelete = () => {
-    this.setState({ OpenDeleteModal: false });
+    this.setState({
+      OpenDeleteModal: false,
+      OpenFilterModal: false,
+      filter: {
+        categoryId: "",
+        searchQuery: "",
+        status: ""
+      }
+    });
+  };
+  handleClickFilterOpen = () => {
+    console.log("open");
+    this.setState({ OpenFilterModal: true });
   };
 
   handleClickAddToGroupOpen = () => {
@@ -289,6 +589,56 @@ class News extends Component {
     );
   };
 
+  OnFilterChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, categoryId: event.target.value },
+        errors: { ...this.state.errors, categoryId: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
+      }
+    );
+  };
+
+  OnFilterStatusChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, status: event.target.value },
+        errors: { ...this.state.errors, status: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
+      }
+    );
+  };
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  search = event => {
+    console.log("event", event);
+    this.setState(
+      {
+        errors: { ...this.state.errors, event: "" },
+
+        filter: {
+          ...this.state.filter,
+          searchQuery: event
+        }
+      },
+      () => this.fetchNews()
+    );
+  };
+
   /**
    * @description : Sends a request to remove news
    *
@@ -374,6 +724,55 @@ class News extends Component {
         </div>
       );
     }
+    actionButtons.push(
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          const { searchQuery } = e.currentTarget.elements;
+          console.log("sd", searchQuery.value);
+          this.search(searchQuery.value);
+        }}
+      >
+        <Paper
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+            marginLeft: 180
+          }}
+        >
+          <IconButton style={{ padding: 10 }} aria-label="Search" type="submit">
+            <SearchIcon />
+          </IconButton>
+          <InputBase
+            name="searchQuery"
+            style={{
+              marginLeft: 8,
+              flex: 1,
+              direction: "rtl",
+              fontFamily: "iransans",
+              fontSize: ".9rem"
+            }}
+            // value={this.state.filter.searchQuery}
+            // onChange={e => {
+            //   this.search(e.target.value);
+            // }}
+            placeholder="جستجو"
+          />
+
+          <Divider style={{ width: 1, height: 28, margin: 4 }} />
+          <IconButton
+            color="primary"
+            onClick={this.handleClickFilterOpen}
+            style={{ padding: 10 }}
+            aria-label="Directions"
+          >
+            <Filter />
+          </IconButton>
+        </Paper>
+      </form>
+    );
+
     return actionButtons;
   };
   render() {
