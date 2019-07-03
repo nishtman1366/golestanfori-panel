@@ -74,6 +74,16 @@ const Advertise = Loadable({
   loading: Loading
 });
 
+const Acces = Loadable({
+  loader: () => import("./containers/acces/Groups"),
+  loading: Loading
+});
+
+const UserAcces = Loadable({
+  loader: () => import("./containers/acces/UserAcces"),
+  loading: Loading
+});
+
 const theme = createMuiTheme({
   direction: "rtl",
   fontFamily: "iransans",
@@ -194,6 +204,8 @@ ReactDOM.render(
           <Route path="profile" component={Profile} />
 
           <Route path="advertise" component={Advertise} />
+          <Route path="acces" component={Acces} />
+          <Route path="permissions/:type/:id/acces" component={UserAcces} />
 
           <Route path="Groups/:id/posts" component={GroupPosts} />
         </Route>

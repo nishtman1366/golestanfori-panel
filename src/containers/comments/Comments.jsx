@@ -58,7 +58,12 @@ class Comments extends Component {
             isLoading: false
           };
         } else {
-          state = { comments: undefined, isLoading: false };
+          state = {
+            comments: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          };
         }
         this.setState({ ...this.state, ...state }, () =>
           console.log(this.state)

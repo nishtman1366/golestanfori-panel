@@ -27,6 +27,8 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import { USERS } from "components/StatesIcons";
@@ -152,7 +154,7 @@ const styles = theme => ({
     margin: theme.spacing(1)
   },
   dialogPaper: {
-    maxHeight: "700px",
+    maxHeight: "600px",
     width: "700"
   }
 });
@@ -181,7 +183,9 @@ class AdvertiseUI extends Component {
     return (
       <div>
         {this.renderUI()}
-        {this.renderFabButton()}
+        {this.props.user.permissions["write-ads"] === true
+          ? this.renderFabButton()
+          : void 0}{" "}
         {this.renderAddDialog()}
         {this.props.openedAdvertise !== undefined ? (
           <div>{this.renderEditDialog()}</div>
@@ -206,30 +210,46 @@ class AdvertiseUI extends Component {
         >
           {/* <form onSubmit={this.props.OnAddCategory}> */}
           {/* <Grid container spacing={8} alignItems="center" justify="center"> */}
-          <Grid container item xs={12} alignItems="center" justify="center">
-            <input
-              style={{ display: "none" }}
-              ref="image"
-              accept=".png,.jpg,.jpeg"
-              className={classes.input}
-              id="raised-pic1-file"
-              multiple
-              type="file"
-              onChange={event => {
-                this.props.OnPictureChange(event);
-                this.refs.image.value = "";
-              }}
-            />
-            {this.props.advertise.image ? (
-              <div>
-                <label htmlFor="raised-pic1-file">
-                  <Card
-                    style={{
-                      width: 400,
-                      height: 300
-                    }}
-                  >
-                    <CardMedia
+          <div style={{ marginTop: 4 }}>
+            <Grid container item xs={12} alignItems="center" justify="center">
+              <input
+                style={{ display: "none" }}
+                ref="image"
+                accept=".png,.jpg,.jpeg"
+                className={classes.input}
+                id="raised-pic1-file"
+                multiple
+                type="file"
+                onChange={event => {
+                  this.props.OnPictureChange(event);
+                  this.refs.image.value = "";
+                }}
+              />
+              {this.props.advertise.image ? (
+                <div>
+                  <label htmlFor="raised-pic1-file">
+                    <Card
+                      style={{
+                        width: 400,
+                        height: 300,
+                        position: "relative"
+                      }}
+                    >
+                      <img
+                        src={this.props.advertise.image}
+                        alt=""
+                        style={{
+                          maxHeight: "100%",
+                          maxWidth: "100%",
+                          position: "absolute",
+                          margin: "auto",
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0
+                        }}
+                      />
+                      {/* <CardMedia
                       // alt="Adelle Charles"
                       image={this.props.advertise.image}
                       style={{
@@ -239,39 +259,45 @@ class AdvertiseUI extends Component {
                         height: "100%",
                         cursor: "pointer"
                       }}
-                    />
-                  </Card>
-                </label>
-              </div>
-            ) : (
-              <div>
-                <label htmlFor="raised-pic1-file">
-                  <Card
-                    style={{
-                      width: 400,
-                      height: 300
-                    }}
-                  >
-                    <CardMedia
-                      // alt="Adelle Charles"
-                      image="/images/empty.png"
+                    /> */}
+                    </Card>
+                  </label>
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="raised-pic1-file">
+                    <Card
                       style={{
-                        position: "relative",
-                        margin: "auto",
-                        width: "100%",
-                        height: "100%",
-                        cursor: "pointer",
-                        textAlign: "center"
+                        width: 400,
+                        height: 300
                       }}
-                    />
-                  </Card>
-                </label>
-              </div>
-            )}
-          </Grid>
-
+                    >
+                      <CardMedia
+                        // alt="Adelle Charles"
+                        image="/images/empty.png"
+                        style={{
+                          position: "relative",
+                          margin: "auto",
+                          width: "100%",
+                          height: "100%",
+                          cursor: "pointer",
+                          textAlign: "center"
+                        }}
+                      />
+                    </Card>
+                  </label>
+                </div>
+              )}
+            </Grid>{" "}
+            <FormHelperText style={{ color: "red" }}>
+              {this.props.errors.image}
+            </FormHelperText>
+          </div>
           <Grid item xs={6}>
-            <FormControl style={{ margin: 4, minWidth: 60 }}>
+            <FormControl
+              style={{ margin: 4, minWidth: 60 }}
+              error={this.props.errors.target}
+            >
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -305,11 +331,17 @@ class AdvertiseUI extends Component {
                     })
                   : void 0}
               </Select>
+              <FormHelperText style={{ color: "red" }}>
+                {this.props.errors.target}
+              </FormHelperText>
             </FormControl>
           </Grid>
 
           <Grid item xs={6}>
-            <FormControl style={{ margin: 4, minWidth: 90 }}>
+            <FormControl
+              style={{ margin: 4, minWidth: 90 }}
+              error={this.props.errors.target}
+            >
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -346,6 +378,9 @@ class AdvertiseUI extends Component {
                 </MenuItem>
                 );
               </Select>
+              <FormHelperText style={{ color: "red" }}>
+                {this.props.errors.target}
+              </FormHelperText>
             </FormControl>
           </Grid>
 
@@ -436,72 +471,85 @@ class AdvertiseUI extends Component {
         >
           {/* <form onSubmit={this.props.OnAddCategory}> */}
           {/* <Grid container spacing={8} alignItems="center" justify="center"> */}
-          <Grid container item xs={12} alignItems="center" justify="center">
-            <input
-              style={{ display: "none" }}
-              ref="image"
-              accept=".png,.jpg,.jpeg"
-              className={classes.input}
-              id="raised-pic1-file"
-              multiple
-              type="file"
-              onChange={event => {
-                this.props.OnEditPictureChange(event);
-                this.refs.image.value = "";
-              }}
-            />
-            {this.props.openedAdvertise.image ? (
-              <div>
-                <label htmlFor="raised-pic1-file">
-                  <Card
-                    style={{
-                      width: 400,
-                      height: 300
-                    }}
-                  >
-                    <CardMedia
-                      // alt="Adelle Charles"
-                      image={this.props.openedAdvertise.image}
+          <div style={{ marginTop: 4 }}>
+            <Grid container item xs={12} alignItems="center" justify="center">
+              <input
+                disabled={this.props.user.permissions["edit-ads"] === false}
+                style={{ display: "none" }}
+                ref="image"
+                accept=".png,.jpg,.jpeg"
+                className={classes.input}
+                id="raised-pic1-file"
+                multiple
+                type="file"
+                onChange={event => {
+                  this.props.OnEditPictureChange(event);
+                  this.refs.image.value = "";
+                }}
+              />
+              {this.props.openedAdvertise.image ? (
+                <div>
+                  <label htmlFor="raised-pic1-file">
+                    <Card
                       style={{
-                        position: "relative",
-                        margin: "auto",
-                        width: "100%",
-                        height: "100%",
-                        cursor: "pointer"
+                        width: 400,
+                        height: 300,
+                        position: "relative"
                       }}
-                    />
-                  </Card>
-                </label>
-              </div>
-            ) : (
-              <div>
-                <label htmlFor="raised-pic1-file">
-                  <Card
-                    style={{
-                      width: 400,
-                      height: 300
-                    }}
-                  >
-                    <CardMedia
-                      // alt="Adelle Charles"
-                      image="/images/empty.png"
+                    >
+                      <img
+                        src={this.props.openedAdvertise.image}
+                        alt=""
+                        style={{
+                          maxHeight: "100%",
+                          maxWidth: "100%",
+                          position: "absolute",
+                          margin: "auto",
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0
+                        }}
+                      />
+                    </Card>
+                  </label>
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="raised-pic1-file">
+                    <Card
                       style={{
-                        position: "relative",
-                        margin: "auto",
-                        width: "100%",
-                        height: "100%",
-                        cursor: "pointer",
-                        textAlign: "center"
+                        width: 400,
+                        height: 300
                       }}
-                    />
-                  </Card>
-                </label>
-              </div>
-            )}
-          </Grid>
+                    >
+                      <CardMedia
+                        // alt="Adelle Charles"
+                        image="/images/empty.png"
+                        style={{
+                          position: "relative",
+                          margin: "auto",
+                          width: "100%",
+                          height: "100%",
+                          cursor: "pointer",
+                          textAlign: "center"
+                        }}
+                      />
+                    </Card>
+                  </label>
+                </div>
+              )}
+            </Grid>
 
+            <FormHelperText style={{ color: "red" }}>
+              {this.props.errors.image}
+            </FormHelperText>
+          </div>
           <Grid item xs={6}>
-            <FormControl style={{ margin: 4, minWidth: 60 }}>
+            <FormControl
+              style={{ margin: 4, minWidth: 60 }}
+              error={this.props.errors.positionId}
+            >
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -512,6 +560,7 @@ class AdvertiseUI extends Component {
                 جایگاه
               </InputLabel>
               <Select
+                readOnly={this.props.user.permissions["edit-ads"] === false}
                 value={this.props.openedAdvertise.positionId}
                 // error={this.props.errors.type.length > 0}
                 // formhelpertext={this.props.errors.type}
@@ -535,11 +584,17 @@ class AdvertiseUI extends Component {
                     })
                   : void 0}
               </Select>
+              <FormHelperText style={{ color: "red" }}>
+                {this.props.errors.positionId}
+              </FormHelperText>
             </FormControl>
           </Grid>
 
           <Grid item xs={6}>
-            <FormControl style={{ margin: 4, minWidth: 90 }}>
+            <FormControl
+              style={{ margin: 4, minWidth: 90 }}
+              error={this.props.errors.target}
+            >
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -550,6 +605,7 @@ class AdvertiseUI extends Component {
                 پنچره هدف
               </InputLabel>
               <Select
+                readOnly={this.props.user.permissions["edit-ads"] === false}
                 value={this.props.openedAdvertise.target}
                 // error={this.props.errors.type.length > 0}
                 // formhelpertext={this.props.errors.type}
@@ -576,11 +632,15 @@ class AdvertiseUI extends Component {
                 </MenuItem>
                 );
               </Select>
+              <FormHelperText style={{ color: "red" }}>
+                {this.props.errors.target}
+              </FormHelperText>
             </FormControl>
           </Grid>
 
           <Grid item={12} md={6}>
             <TextField
+              disabled={this.props.user.permissions["edit-ads"] === false}
               error={this.props.errors.name}
               helperText={this.props.errors.name}
               required
@@ -604,6 +664,7 @@ class AdvertiseUI extends Component {
           </Grid>
           <Grid item={12} md={6}>
             <TextField
+              disabled={this.props.user.permissions["edit-ads"] === false}
               error={this.props.errors.destinationUrl}
               helperText={this.props.errors.destinationUrl}
               required
@@ -684,9 +745,9 @@ class AdvertiseUI extends Component {
         // onClose={this.props.OnCloseModal}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="add" style={{ textAlign: "center" }}>
+        {/* <DialogTitle id="add" style={{ textAlign: "center" }}>
           <AddCategory />
-        </DialogTitle>
+        </DialogTitle> */}
         <DialogContent>{this.renderAddDialogBody()}</DialogContent>
         <Grid
           container
@@ -721,7 +782,7 @@ class AdvertiseUI extends Component {
                 background: "#4caf50"
               }}
             >
-              بلی
+              تایید
               <Tik style={{ marginRight: 8 }} />
             </Button>
           )}
@@ -740,9 +801,9 @@ class AdvertiseUI extends Component {
         // onClose={this.props.OnCloseEdit}
         aria-labelledby="dialog-title"
       >
-        <DialogTitle id="edit" style={{ textAlign: "center" }}>
+        {/* <DialogTitle id="edit" style={{ textAlign: "center" }}>
           <AddCategory />
-        </DialogTitle>
+        </DialogTitle> */}
         <DialogContent>{this.renderEditDialogBody()}</DialogContent>
         <Grid
           container
@@ -760,14 +821,14 @@ class AdvertiseUI extends Component {
               background: "#f44336"
             }}
           >
-            انصراف
+            بستن
             <Enseraf style={{ marginRight: 8 }} />
           </Button>
 
           <div>
             {this.props.busy ? (
               <CircularProgress size={30} />
-            ) : (
+            ) : this.props.user.permissions["edit-ads"] === true ? (
               <Button
                 onClick={this.props.OnEditAdvertise}
                 style={{
@@ -778,9 +839,11 @@ class AdvertiseUI extends Component {
                   background: "#4caf50"
                 }}
               >
-                بلی
+                تایید
                 <Tik style={{ marginRight: 8 }} />
               </Button>
+            ) : (
+              void 0
             )}
           </div>
         </Grid>
@@ -836,7 +899,7 @@ class AdvertiseUI extends Component {
                 background: "#4caf50"
               }}
             >
-              بلی
+              تایید
               <Tik style={{ marginRight: 8 }} />
             </Button>
           )}
@@ -966,7 +1029,12 @@ class AdvertiseUI extends Component {
                                   checked={isSelected}
                                   style={{
                                     color: "#1daced",
-                                    display: "inline-flex"
+                                    display:
+                                      this.props.user.permissions[
+                                        "delete-ads"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 />
                               </TableCell>

@@ -28,15 +28,17 @@ import { connect } from "react-redux";
 import jMoment from "moment-jalaali";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
+import Fab from "@material-ui/core/Fab";
 
 const CustomTableCell = withStyles(theme => ({
   head: {
     backgroundColor: "#2196F3",
     color: theme.palette.common.white,
-    fontSize: 14
+    fontSize: 14,
+    fontFamily: "iransans"
   },
   body: {
-    // fontSize: 32
+    fontFamily: "iransans"
   }
 }))(TableCell);
 
@@ -120,6 +122,7 @@ const styles = theme => ({
   media: {
     height: 60
   },
+
   tableWrapper: {
     overflowX: "auto"
   },
@@ -143,6 +146,9 @@ const styles = theme => ({
   textFieldForm: {
     fontFamily: "iransans",
     fontSize: ".9rem"
+  },
+  fab: {
+    margin: theme.spacing(1)
   },
   dialogPaper: {
     maxHeight: "500px",
@@ -175,7 +181,7 @@ class GroupPostsUI extends Component {
       <div style={{ marginTop: 24 }}>
         {this.renderUI()}
 
-        {this.renderFabButton()}
+        {/* {this.renderFabButton()} */}
 
         {this.renderDeleteDialog()}
       </div>
@@ -255,12 +261,32 @@ class GroupPostsUI extends Component {
     );
   };
   renderFabButton = () => {
+    const { classes } = this.props;
+
     return (
-      <Button
+      // <Button
+      //   href={"/AddNews"}
+      //   variant="fab"
+      //   color="primary"
+      //   aria-label="add"
+      //   style={{
+      //     margin: 0,
+      //     top: "auto",
+      //     bottom: 20,
+      //     left: "auto",
+      //     position: "fixed",
+      //     zIndex: 999,
+      //     backgroundColor: "#2196f3",
+      //     color: "#fff"
+      //   }}
+      // >
+      //   <AddIcon />
+      // </Button>
+
+      <Fab
         href={"/AddNews"}
-        variant="fab"
         color="primary"
-        aria-label="add"
+        aria-label="Add"
         style={{
           margin: 0,
           top: "auto",
@@ -271,9 +297,10 @@ class GroupPostsUI extends Component {
           backgroundColor: "#2196f3",
           color: "#fff"
         }}
+        className={classes.fab}
       >
         <AddIcon />
-      </Button>
+      </Fab>
     );
   };
 
@@ -359,12 +386,6 @@ class GroupPostsUI extends Component {
                         <CustomTableCell
                           style={{ textAlign: "center", padding: 4 }}
                         >
-                          ویرایشگر
-                        </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
                           منتشرکننده
                         </CustomTableCell>
 
@@ -423,9 +444,11 @@ class GroupPostsUI extends Component {
                                   style={{
                                     color: "#1daced",
                                     display:
-                                      this.props.user.type !== 3
-                                        ? "inline-flex"
-                                        : "none"
+                                      this.props.user.permissions[
+                                        "delete-news"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 />
                               </TableCell>
@@ -468,12 +491,6 @@ class GroupPostsUI extends Component {
                                 {n.title}
                               </CustomTableCell>
 
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: 4 }}
-                              >
-                                {n.editor !== null ? n.editor.name : "نامشخص"}
-                              </CustomTableCell>
                               <CustomTableCell
                                 numeric
                                 style={{ textAlign: "right", padding: 4 }}

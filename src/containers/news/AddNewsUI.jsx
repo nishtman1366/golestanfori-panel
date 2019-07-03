@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import TableCell from "@material-ui/core/TableCell";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
@@ -12,7 +12,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Remove, AddMedia, Close } from "components/Icons";
+import { Remove, AddMedia, Tik } from "components/Icons";
 import { connect } from "react-redux";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -22,7 +22,10 @@ import Chip from "@material-ui/core/Chip";
 import FaceIcon from "@material-ui/icons/Face";
 import DoneIcon from "@material-ui/icons/Done";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
 const styles = theme => ({
   root: {
     overflowX: "auto",
@@ -90,22 +93,20 @@ class AddNewsUI extends Component {
     this.setState({ [name]: event.target.checked });
   };
   render() {
-    console.log("tags", this.props.tag);
-
     return <div>{this.renderFormHeader()}</div>;
   }
 
   renderFormHeader = () => {
-    console.log("tags", this.props.tag);
+    console.log("tagssss", this.props.news.tag);
     const { classes } = this.props;
     return (
       <div>
         <Grid container className={classes.root} justify="center" spacing={2}>
-          <Grid item xs={10}>
+          <Grid item xs={6}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -154,7 +155,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -166,7 +167,7 @@ class AddNewsUI extends Component {
                         fontSize: ".9rem"
                       }}
                     >
-                      دسته بندی پدر
+                      دسته بندی
                     </InputLabel>
                     <Select
                       value={this.props.news.categoryId}
@@ -187,7 +188,7 @@ class AddNewsUI extends Component {
                     {this.props.errors.categoryId}
                   </FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -236,39 +237,17 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <TextField
-                    error={this.props.errors.code}
-                    helperText={this.props.errors.code}
-                    required
-                    // id="required"
-                    type="text"
-                    label="کد خبر"
-                    value={this.props.news.code}
-                    onChange={e => {
-                      this.props.onChangeTextFieldData("code", e.target.value);
-                    }}
-                    InputLabelProps={{
-                      className: classes.textFieldFormLabel
-                    }}
-                    InputProps={{
-                      className: classes.textFieldForm
-                    }}
-                    margin="normal"
-                    style={{ width: "100%", marginTop: 9 }}
-                  />
-                </Grid>
               </Grid>
             </Paper>
           </Grid>
 
-          <Grid item xs={10}>
+          <Grid item xs={6}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>
               اطلاعات افراد
             </p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -315,7 +294,7 @@ class AddNewsUI extends Component {
                     <FormHelperText>{this.props.errors.userId}</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                {/* <Grid item xs={6} md={3}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -363,8 +342,8 @@ class AddNewsUI extends Component {
                       {this.props.errors.editorId}
                     </FormHelperText>
                   </FormControl>
-                </Grid>
-                <Grid item xs={6} md={3}>
+                </Grid> */}
+                <Grid item xs={6} md={4}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -413,7 +392,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <TextField
                     error={this.props.errors.photographer}
                     helperText={this.props.errors.photographer}
@@ -594,8 +573,15 @@ class AddNewsUI extends Component {
             {this.props.news.testImage ? (
               <div>
                 <label htmlFor="raised-pic1-file">
-                  <Card style={{ width: 250, height: 200 }}>
-                    <CardMedia
+                  <Card
+                    style={{
+                      width: 250,
+                      height: 200,
+                      position: "relative",
+                      background: "#000"
+                    }}
+                  >
+                    {/* <CardMedia
                       // alt="Adelle Charles"
                       image={this.props.news.testImage}
                       style={{
@@ -604,6 +590,21 @@ class AddNewsUI extends Component {
                         width: 250,
                         height: 250,
                         cursor: "pointer"
+                      }}
+                    /> */}
+
+                    <img
+                      src={this.props.news.testImage}
+                      alt=""
+                      style={{
+                        maxHeight: "100%",
+                        maxWidth: "100%",
+                        position: "absolute",
+                        margin: "auto",
+                        left: 0,
+                        top: 0,
+                        right: 0,
+                        bottom: 0
                       }}
                     />
                   </Card>
@@ -629,6 +630,9 @@ class AddNewsUI extends Component {
                 </label>
               </div>
             )}
+            <FormHelperText style={{ color: "red" }}>
+              {this.props.errors.testImage}
+            </FormHelperText>
           </Grid>
           <Grid item xs={9}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>متن خبر</p>
@@ -806,11 +810,50 @@ class AddNewsUI extends Component {
                 )}
               </Paper>
             </Grid>
+          ) : this.props.news.postsTypeId === 7 ? (
+            <Grid item xs={12}>
+              <p style={{ fontWeight: "bold", color: "#2196F3" }}>
+                انتخاب گرافیک ها
+              </p>
+              <Paper className={classes.root}>
+                <input
+                  ref="GraphicUpload"
+                  // accept=".png,.jpg,.jpeg"
+                  id="raised-GraphicUpload-file"
+                  multiple
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={event => {
+                    this.props.onGraphicChange(event);
+                    this.refs.GraphicUpload.value = "";
+                  }}
+                />
+
+                <div>
+                  {/* <label htmlFor="raised-galleryImages-file"> */}
+                  <div>
+                    <label htmlFor="raised-GraphicUpload-file">
+                      <AddMedia />
+                    </label>
+                  </div>
+
+                  {/* </label> */}
+                </div>
+
+                {this.props.news.graphics.length > 0 ? (
+                  <Grid container spacing={2}>
+                    {this.renderGalleryGraphics(this.props.news.graphics)}
+                  </Grid>
+                ) : (
+                  void 0
+                )}
+              </Paper>
+            </Grid>
           ) : (
             void 0
           )}
 
-          <Grid item xs={10}>
+          <Grid item xs={12}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
@@ -988,29 +1031,13 @@ class AddNewsUI extends Component {
               </Grid>
             </Paper>
           </Grid>
-
+          {console.log("tagssss", this.props.news.tag)}
           <Grid item xs={12}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>برچسب ها</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
                 <Grid item xs={6} md={4}>
-                  <div>
-                    <div>
-                      <TextField
-                        id="search"
-                        label="جستجو"
-                        type="search"
-                        // value={this.props.tag}
-                        className={classes.textField}
-                        InputLabelProps={{
-                          className: classes.textFieldFormLabel
-                        }}
-                        onChange={e => {
-                          this.props.SuggestSearch(e.target.value);
-                        }}
-                        margin="normal"
-                      />
-                    </div>
+                  <div style={{ display: "inline-block" }}>
                     <Button
                       disabled={this.props.busy}
                       onClick={this.props.onAddNewTag}
@@ -1023,49 +1050,85 @@ class AddNewsUI extends Component {
                     >
                       افزودن
                     </Button>
-
-                    <div>
-                      {this.props.FilterTags
-                        ? this.props.FilterTags.map(r => {
-                            return (
-                              <p
-                                style={{ cursor: "pointer" }}
-                                onClick={event =>
-                                  this.props.OnClicTag(event, r.id)
-                                }
-                                key={r.id}
-                              >
-                                {r.name}
-                              </p>
-                            );
-                          })
-                        : void 0}
-                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "inline-block",
+                      verticalAlign: "bottom",
+                      marginRight: 8
+                    }}
+                  >
+                    <TextField
+                      id="search"
+                      label="جستجو"
+                      type="search"
+                      value={this.props.newTag}
+                      className={classes.textField}
+                      InputLabelProps={{
+                        className: classes.textFieldFormLabel
+                      }}
+                      onChange={e => {
+                        this.props.SuggestSearch(e.target.value);
+                      }}
+                      margin="normal"
+                    />
                   </div>
                 </Grid>
                 <Grid item xs={8}>
-                  {/* {this.props.tag
-                        ? this.props.tag.map(n => {
-                            return (
-                              <Chip
-                              icon={<Close onClick={() => alert()} />}
-                              style={{ margin: 4, padding: 20, cursor: "pointer" }}
-                              label="Deletable Primary Chip"
-                              onDelete={this.props.handleDelete}
-                              color="primary"
-                            />
-                            );
-                          })
-                        : void 0} */}
                   <Grid container justify="center" spacing={2}>
                     {console.log("tags", this.props.tag)}
-                    {this.props.tag.length > 0
-                      ? this.renderTagsChip(this.props.tag)
+                    {this.props.news.tag.length > 0
+                      ? this.renderTagsChip(this.props.news.tag)
                       : void 0}
                   </Grid>
                 </Grid>
               </Grid>
             </Paper>
+            {this.props.FilterTags ? (
+              <div
+                style={{
+                  background: "#e3e3e3",
+                  width: 260,
+
+                  borderRadius: 8
+                }}
+              >
+                {this.props.FilterTags.map(r => {
+                  return (
+                    <List
+                      component="nav"
+                      style={{
+                        width: "100%",
+                        maxWidth: "360px",
+                        textAlign: "right"
+                      }}
+                      // className={classes.root}
+                      aria-label="Mailbox folders"
+                    >
+                      <ListItem
+                        style={{ textAlign: "right" }}
+                        button
+                        onClick={event => this.props.OnClicTag(event, r.id)}
+                        key={r.id}
+                      >
+                        <ListItemText primary={r.name} />
+                      </ListItem>
+                      <Divider />
+                    </List>
+
+                    // <p
+                    //   style={{ cursor: "pointer" }}
+                    //   onClick={event => this.props.OnClicTag(event, r.id)}
+                    //   key={r.id}
+                    // >
+                    //   {r.name}
+                    // </p>
+                  );
+                })}
+              </div>
+            ) : (
+              void 0
+            )}
           </Grid>
 
           <Grid
@@ -1078,18 +1141,23 @@ class AddNewsUI extends Component {
               marginTop: 16
             }}
           >
-            <Button
-              disabled={this.props.busy}
-              onClick={this.props.onAddNews}
-              style={{
-                fontFamily: "iransans",
-                fontSize: ".9rem",
-                background: "#2196F3",
-                color: "#fff"
-              }}
-            >
-              ثبت
-            </Button>
+            {this.props.busy ? (
+              <CircularProgress size={30} />
+            ) : (
+              <Button
+                disabled={this.props.busy}
+                onClick={this.props.onAddNews}
+                style={{
+                  fontFamily: "iransans",
+                  fontSize: ".9rem",
+                  background: "#2196F3",
+                  color: "#fff"
+                }}
+              >
+                ثبت
+                <Tik style={{ marginRight: 8 }} />
+              </Button>
+            )}
           </Grid>
         </Grid>
       </div>
@@ -1107,7 +1175,7 @@ class AddNewsUI extends Component {
             // icon={<Close onClick={this.props.onDeleteChip} />}
             style={{ padding: 12, cursor: "pointer" }}
             label={tags[i]}
-            onDelete={this.props.onDeleteChip}
+            onDelete={() => this.props.onDeleteChip(i)}
             color="primary"
           />
         </Grid>
@@ -1230,6 +1298,51 @@ class AddNewsUI extends Component {
       );
     }
     return galleryImages;
+  }
+
+  renderGalleryGraphics(graphics) {
+    console.log("images", graphics);
+    var galleryGraphics = [];
+    const { classes } = this.props;
+    for (let i = 0; i < graphics.length; i++) {
+      galleryGraphics.push(
+        <Grid item xs={6} md={2}>
+          <Card style={{ width: 130, height: 120, marginTop: 8 }}>
+            <CardMedia
+              // alt="Adelle Charles"
+              image={URL.createObjectURL(this.props.news.graphics[i])}
+              style={{
+                position: "relative",
+                margin: "auto",
+                width: "100%",
+                height: 90
+              }}
+            />
+            <div
+              style={{ textAlign: "center", cursor: "pointer" }}
+              onClick={() => this.props.onRemoveGraphic([i])}
+            >
+              <Remove
+                style={{ display: "inline-block", verticalAlign: "middle" }}
+              />
+              <p
+                style={{
+                  display: "inline-block",
+                  marginTop: 3,
+                  fontWeight: "bold",
+                  color: "#F44336",
+                  verticalAlign: "middle",
+                  marginRight: 4
+                }}
+              >
+                حذف
+              </p>{" "}
+            </div>
+          </Card>
+        </Grid>
+      );
+    }
+    return galleryGraphics;
   }
 
   renderCategories(categories) {

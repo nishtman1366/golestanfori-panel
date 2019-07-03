@@ -22,6 +22,7 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import Fab from "@material-ui/core/Fab";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -186,13 +187,15 @@ class CategoriesUI extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   render() {
-    console.log("category", this.props.categoryName);
+    console.log("errr", this.props.errors);
     return (
       <div>
         {this.renderTable()}
         {this.renderAddDialog()}
         {this.props.categoryName ? this.renderCategoryEditdialog() : void 0}
-        {this.renderFabButton()}
+        {this.props.user.permissions["write-categories"] === true
+          ? this.renderFabButton()
+          : void 0}
         {this.renderDeleteDialog()}
       </div>
     );
@@ -320,6 +323,7 @@ class CategoriesUI extends Component {
               </div>
             )}
           </Grid>
+          {console.log("errr", this.props.errors)}
 
           <Grid item>
             <TextField
@@ -401,13 +405,13 @@ class CategoriesUI extends Component {
               background: "#f44336"
             }}
           >
-            انصراف
+            بستن
             <Enseraf style={{ marginRight: 8 }} />
           </Button>
 
           {this.props.busy ? (
             <CircularProgress size={30} />
-          ) : (
+          ) : this.props.user.permissions["edit-categories"] === true ? (
             <Button
               onClick={this.props.OnEditCategory}
               // autoFocus
@@ -421,6 +425,8 @@ class CategoriesUI extends Component {
               تایید
               <Tik style={{ marginRight: 8 }} />
             </Button>
+          ) : (
+            void 0
           )}
         </Grid>
       </Dialog>
@@ -429,7 +435,7 @@ class CategoriesUI extends Component {
 
   renderEditDialogBody = () => {
     const { classes } = this.props;
-
+    console.log("image", this.props.categoryName);
     return (
       <div>
         <form
@@ -452,7 +458,7 @@ class CategoriesUI extends Component {
                 multiple
                 type="file"
                 onChange={event => {
-                  this.props.OnPictureChange(event);
+                  this.props.OnEditPictureChange(event);
                   this.refs.pic1.value = "";
                 }}
                 style={{ display: "none" }}
@@ -479,17 +485,18 @@ class CategoriesUI extends Component {
                 void 0
               )}
             </Grid>
+            {console.log("errr", this.props.errors)}
             <Grid container item xs={12} md={6}>
               <TextField
                 autoFocus
                 // error={this.props.states.errors.firstName.length > 0}
                 required
-                //   disabled={
-                //     this.props.user.permissions["products-write"] === false
-                //   }
+                disabled={
+                  this.props.user.permissions["edit-categories"] === false
+                }
                 error={this.props.errors.name}
                 helperText={this.props.errors.name}
-                id="firstName"
+                id="name"
                 label="نام"
                 // autocomplete="firstName"
                 value={this.props.categoryName.name}
@@ -519,6 +526,9 @@ class CategoriesUI extends Component {
                   دسته بندی پدر
                 </InputLabel>
                 <Select
+                  readOnly={
+                    this.props.user.permissions["edit-categories"] === false
+                  }
                   value={
                     this.props.categoryName.parentId !== null
                       ? this.props.categoryName.parentId
@@ -544,6 +554,7 @@ class CategoriesUI extends Component {
                     this.props.categoryName.id
                   )}
                 </Select>
+                <FormHelperText>{this.props.errors.parentId}</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -744,7 +755,10 @@ class CategoriesUI extends Component {
                         </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          افزودن زیر مجموعه
+                          {this.props.user.permissions["write-categories"] ===
+                          true
+                            ? "  افزودن زیر مجموعه"
+                            : ""}
                         </CustomTableCell>
                       </TableRow>
                     </TableHead>
@@ -806,7 +820,10 @@ class CategoriesUI extends Component {
                 checked={isSelected}
                 style={{
                   color: "#1daced",
-                  display: "inline-flex"
+                  display:
+                    this.props.user.permissions["delete-categories"] === false
+                      ? "none"
+                      : "inline-flex"
                 }}
               />
             </TableCell>
@@ -832,7 +849,14 @@ class CategoriesUI extends Component {
                 size="small"
                 aria-label="Add"
                 className={classes.margin}
-                style={{ backgroundColor: "#2196f3", color: "#fff" }}
+                style={{
+                  backgroundColor: "#2196f3",
+                  color: "#fff",
+                  display:
+                    this.props.user.permissions["write-categories"] === false
+                      ? "none"
+                      : "inline-flex"
+                }}
               >
                 <AddIcon />
               </Fab>

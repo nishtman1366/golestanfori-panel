@@ -75,7 +75,7 @@ class Groups extends Component {
   load = () => {
     this.setState(this.DEFAULT_STATE);
 
-    ItookApi.fetchgroups().then(
+    ItookApi.fetchAccessGroups().then(
       res => {
         this.setState({ isLoading: false });
 
@@ -320,7 +320,7 @@ class Groups extends Component {
         openedGroup: group
       });
     } else if (this.props.user.permissions["view-news-list"] === true) {
-      browserHistory.push("Groups/" + id + "/posts");
+      browserHistory.push("permissions/group/" + id + "/acces");
     }
   };
 
@@ -528,7 +528,7 @@ class Groups extends Component {
     return (
       <Fragment>
         <AppLayout
-          title="گروه اخبار"
+          title="گروه‌های کاربری"
           actionButtons={this.renderAppbarActionsButtons()}
         >
           <Grid>

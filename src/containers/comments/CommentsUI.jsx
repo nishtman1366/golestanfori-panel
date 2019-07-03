@@ -154,7 +154,8 @@ class CommentsUI extends Component {
     return (
       <div>
         {this.renderUI()}
-        {this.props.openedComment !== undefined ? (
+        {this.props.openedComment !== undefined &&
+        this.props.user.permissions["publish-comments"] === true ? (
           <div>{this.renderCommnetDialog()}</div>
         ) : null}
         {this.renderDeleteDialog()}
@@ -388,9 +389,9 @@ class CommentsUI extends Component {
                   <CustomTableCell style={{ textAlign: "right" }}>
                     ایمیل
                   </CustomTableCell>
-                  <CustomTableCell style={{ textAlign: "right" }}>
+                  {/* <CustomTableCell style={{ textAlign: "right" }}>
                     وضعیت
-                  </CustomTableCell>
+                  </CustomTableCell> */}
 
                   <CustomTableCell style={{ textAlign: "right" }}>
                     تاریخ
@@ -422,7 +423,12 @@ class CommentsUI extends Component {
                             checked={isSelected}
                             style={{
                               color: "#1daced",
-                              display: "inline-flex"
+                              display:
+                                this.props.user.permissions[
+                                  "delete-comments"
+                                ] === false
+                                  ? "none"
+                                  : "inline-flex"
                             }}
                           />
                         </TableCell>
@@ -442,9 +448,9 @@ class CommentsUI extends Component {
                         <CustomTableCell style={{ textAlign: "right" }}>
                           {n.email}
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
+                        {/* <CustomTableCell style={{ textAlign: "right" }}>
                           {n.statusText}
-                        </CustomTableCell>
+                        </CustomTableCell> */}
 
                         <CustomTableCell numeric style={{ textAlign: "right" }}>
                           {n.jData}

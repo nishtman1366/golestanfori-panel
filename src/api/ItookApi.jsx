@@ -11,7 +11,7 @@
 */
 
 import axios from "axios";
-var API_URL = "http://192.168.1.6/golestanFori/public/api";
+var API_URL = "http://192.168.1.6:8000/api";
 
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -131,6 +131,25 @@ var ItookApi = {
   fetchUserProfile() {
     return axios
       .get(API_URL + "/user")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch user profile
+   *
+   * @author Ali Aryani
+   *
+   * @return server response as object
+   */
+  updateUserProfile() {
+    return axios
+      .put(API_URL + "/user")
       .then(response => {
         return response;
       })
@@ -699,6 +718,39 @@ var ItookApi = {
         return error.response;
       });
   },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  SetPermissions(type, id, ids) {
+    var params = { ids };
+    var url;
+    if (type === "user") {
+      url = "/users/" + id + "/permissions";
+    } else if (type === "group") {
+      url = "/users/groups/" + id + "/permissions";
+    }
+
+    console.log("IDs are : " + ids);
+    console.log("id : " + id);
+
+    return axios
+      .post(API_URL + url, params)
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
   /** @description : Sends a request to the server to remove one or multiple users.
    *
    * @author Ali Aryani
@@ -914,6 +966,52 @@ var ItookApi = {
       .delete(API_URL + "/comments", params)
       .then(response => {
         console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+  /**
+   * @description : Sends a request to fetch fetchMatchsConfigList from the server
+   *
+   * @author Ali Aryani
+   *
+   * @return server response as object
+   */
+  fetchAccessGroups() {
+    return axios
+      .get(API_URL + "/users/groups")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch fetchMatchsConfigList from the server
+   *
+   * @author Ali Aryani
+   *
+   * @return server response as object
+   */
+  fetchGroupAcces(type, id) {
+    console.log("type", type);
+    console.log("id", id);
+
+    var url;
+    if (type === "user") {
+      url = "/users/" + id + "/permissions";
+    } else if (type === "group") {
+      url = "/users/groups/" + id + "/permissions";
+    }
+    return axios
+      .get(API_URL + url)
+      .then(response => {
         return response;
       })
       .catch(error => {

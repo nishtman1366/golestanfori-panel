@@ -38,7 +38,7 @@ class Categories extends Component {
       isLoading: true,
       errors: {
         name: "",
-        title: ""
+        parentId: ""
       }
     };
     this.state = this.DEFAULT_STATE;
@@ -60,7 +60,7 @@ class Categories extends Component {
       },
       errors: {
         name: "",
-        title: ""
+        parentId: ""
       },
       openedCategory: null
     });
@@ -71,7 +71,11 @@ class Categories extends Component {
   };
   handleEditClose = () => {
     this.setState({
-      openEditModal: false
+      openEditModal: false,
+      errors: {
+        name: "",
+        parentId: ""
+      }
     });
   };
 
@@ -113,7 +117,12 @@ class Categories extends Component {
             }
           );
         } else {
-          this.setState({ data: undefined, isLoading: false });
+          this.setState({
+            data: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
@@ -132,60 +141,123 @@ class Categories extends Component {
    */
   handlePictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          console.log("dsadsad");
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState({
+          categoryImage: e.target.files[0],
+          category: {
+            ...this.state.category,
+            image: URL.createObjectURL(e.target.files[0])
+          }
+          // categoryName: {
+          //   ...this.state.categoryName,
+          //   image: URL.createObjectURL(e.target.files[0])
+          // }
+        });
+      } else {
+        setTimeout(() => {
           this.setState({
-            categoryImage: e.target.files[0],
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            categoryImage: "",
             category: {
               ...this.state.category,
-              image: URL.createObjectURL(e.target.files[0])
+              image: null
             }
-            // categoryName: {
-            //   ...this.state.categoryName,
-            //   image: URL.createObjectURL(e.target.files[0])
-            // }
           });
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              categoryImage: "",
-              category: {
-                ...this.state.category,
-                image: null
-              }
-            });
-          }, 100);
-        }
-      } else {
-        console.log("payam");
-        // alert("warning");
-        setTimeout(() => {
-          this.setState(
-            {
-              categoryImage: "",
-              category: {
-                ...this.state.category,
-                image: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
         }, 100);
       }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            categoryImage: "",
+            category: {
+              ...this.state.category,
+              image: null
+            },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
+    }
+  };
+
+  /**
+   * @description : Callback for file of file browsing
+   *
+   * @author Ali Aryani
+   *
+   * @param event (object) : An event with file data
+   *
+   */
+  handleEditPictureChange = e => {
+    if (e.target.files[0]) {
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState({
+          categoryImage: e.target.files[0],
+          categoryName: {
+            ...this.state.categoryName,
+            image: URL.createObjectURL(e.target.files[0])
+          }
+          // categoryName: {
+          //   ...this.state.categoryName,
+          //   image: URL.createObjectURL(e.target.files[0])
+          // }
+        });
+      } else {
+        setTimeout(() => {
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            categoryImage: ""
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: null
+            // }
+          });
+        }, 100);
+      }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            categoryImage: "",
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: null
+            // },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
     }
   };
 
@@ -316,6 +388,14 @@ class Categories extends Component {
       event.preventDefault();
     }
 
+    if (this.state.category.name === "") {
+      this.setState({
+        snackbarMessage: "نام دسته بندی را وارد کنید ",
+        isSnackOpen: true
+      });
+      return false;
+    }
+
     this.setState({ busy: true });
 
     ItookApi.addCategries(this.createFormData()).then(
@@ -414,6 +494,13 @@ class Categories extends Component {
   handleEditCategory = event => {
     if (event !== undefined) {
       event.preventDefault();
+    }
+    if (this.state.categoryName.name === "") {
+      this.setState({
+        snackbarMessage: "نام دسته بندی را وارد کنید ",
+        isSnackOpen: true
+      });
+      return false;
     }
     console.log("handleEditCategory");
 
@@ -671,6 +758,7 @@ class Categories extends Component {
   }
 
   renderMainUI = () => {
+    console.log("errr", this.state.errors.name);
     return (
       <div>
         <CategoriesUI
@@ -687,9 +775,11 @@ class Categories extends Component {
           OnClickDeleteOpen={this.handleClickDeleteOpen}
           category={this.state.category}
           errors={this.state.errors}
+          busy={this.state.busy}
           OnCategoryTitleChange={this.handleCategoryTitleTextFieldValueChange}
           OnAddCategory={this.handleAddCategory}
           OnPictureChange={this.handlePictureChange}
+          OnEditPictureChange={this.handleEditPictureChange}
           selected={this.state.selected}
           OnClick={this.handleClick}
           categoryName={this.state.categoryName}

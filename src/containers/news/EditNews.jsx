@@ -46,23 +46,30 @@ class EditNews extends Component {
       isLoadingPostType: true,
       isLoadingCategories: true,
       isLoadingKhabarnegar: true,
-      isLoadingVirastar: true,
       isLoadingPublisher: true,
       isLoadingPostCreatType: true,
       newsData: undefined,
       images: [],
+      graphics: [],
+
       videos: [],
-
+      FilterTags: undefined,
+      tags: undefined,
+      localGraphics: { graphics: [] },
       localImages: { images: [] },
-      localVideos: { videos: [] },
 
+      localVideos: { videos: [] },
+      newTag: "",
+      tagList: { tagList: [] },
+      deleteGraphics: [],
       deleteImages: [],
+
       deleteVideos: [],
 
       newsImage: null,
       errors: {
         categoryId: "", //dastebandi
-        editorId: "", //virastar
+        // editorId: "", //virastar
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
         publisherId: "", //montasher konande
@@ -72,9 +79,14 @@ class EditNews extends Component {
         preTitle: "", //roo titir
         postTitle: "", //zire titr
         defaultImage: null,
-        body: ""
+        body: "",
+        images: "",
+        graphics: "",
+
+        videos: ""
       },
       busy: false,
+      publishing: false,
       postType: undefined,
       categories: undefined,
       khabarnegar: undefined,
@@ -85,6 +97,8 @@ class EditNews extends Component {
     this.state = this.DEFAULT_STATE;
   }
   componentDidMount() {
+    this.setState(this.DEFAULT_STATE);
+
     this.load();
     console.log("props", this.props.routeParams.id);
   }
@@ -102,10 +116,21 @@ class EditNews extends Component {
         this.setState({ isLoading: false });
 
         console.log("res", res);
+        var tags = res.data.tags;
+        var tagList = [];
+        for (var i = 0; i < tags.length; i++) {
+          tagList.push(tags[i].name);
+          console.log("data[i].name", tags[i].name);
+        }
+        console.log("tagList", tagList);
 
         if (res && res.status && res.status === 200 && res.data) {
           this.setState({
             newsData: res.data,
+            tagList: {
+              ...this.state.tagList,
+              tagList
+            },
             // filteredData: transactions,
             // filteredData: this.filterData(res.data.match, "CUSTOMER"),
             isLoading: false
@@ -114,16 +139,41 @@ class EditNews extends Component {
           this.fetchPostType();
           this.fetchCategories();
           this.fetchKhabarNegar();
-          this.fetchVirastar();
+          // this.fetchVirastar();
           this.fetchPublisher();
           this.fetchPostCreateType();
           this.fetchGroups();
+          this.fetchTags();
         } else {
           this.setState({ data: undefined, isLoading: false });
         }
       },
       err => {
         this.setState({ isLoading: false });
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
+  fetchTags = () => {
+    console.log("res");
+    ItookApi.fetchTags().then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data) {
+          console.log("res", res);
+
+          this.setState({
+            tags: res.data,
+            isLoadingtags: false
+          });
+        } else {
+          this.setState({ postType: undefined, isLoadingtags: false });
+        }
+      },
+      err => {
+        this.setState({});
         process.env.NODE_ENV === "development" ? console.log(err) : void 0;
       }
     );
@@ -204,29 +254,29 @@ class EditNews extends Component {
     );
   };
 
-  fetchVirastar = () => {
-    console.log("res");
-    ItookApi.fetchVirastar().then(
-      res => {
-        // this.setState({ isLoading: false });
-        console.log("res", res);
-        if (res && res.status && res.status === 200 && res.data.users) {
-          console.log("res", res);
+  // fetchVirastar = () => {
+  //   console.log("res");
+  //   ItookApi.fetchVirastar().then(
+  //     res => {
+  //       // this.setState({ isLoading: false });
+  //       console.log("res", res);
+  //       if (res && res.status && res.status === 200 && res.data.users) {
+  //         console.log("res", res);
 
-          this.setState({
-            virastar: res.data.users,
-            isLoadingVirastar: false
-          });
-        } else {
-          this.setState({ virastar: undefined, isLoadingVirastar: false });
-        }
-      },
-      err => {
-        this.setState({});
-        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
-      }
-    );
-  };
+  //         this.setState({
+  //           virastar: res.data.users,
+  //           isLoadingVirastar: false
+  //         });
+  //       } else {
+  //         this.setState({ virastar: undefined, isLoadingVirastar: false });
+  //       }
+  //     },
+  //     err => {
+  //       this.setState({});
+  //       process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+  //     }
+  //   );
+  // };
 
   fetchPublisher = () => {
     console.log("res");
@@ -311,6 +361,7 @@ class EditNews extends Component {
    */
   createFormData = key => {
     let formData = new FormData();
+    console.log("videos", this.state.deleteVideos);
 
     formData.append("categoryId", this.state.newsData.categoryId);
     formData.append("editorId", this.state.newsData.editorId);
@@ -329,23 +380,77 @@ class EditNews extends Component {
     formData.append("groupId", this.state.newsData.groupId);
     formData.append("groupPosition", this.state.newsData.groupPosition);
 
-    formData.append("testImage", this.state.newsImage);
+    formData.append(
+      "testImage",
+      this.state.newsImage !== null ? this.state.newsImage : void 0
+    );
     formData.append("body", this.state.newsData.body);
-    formData.append("deleteImages", this.state.deleteImages);
-    formData.append("deletevideos", this.state.deletevideos);
+    // formData.append("deleteImages", this.state.deleteImages);
+    // formData.append("deleteVideos", this.state.deleteVideos);
 
-    for (var k in this.state.images) {
-      if (this.state.images.hasOwnProperty(k)) {
-        if (this.state.images[k] !== "") {
-          formData.append("images[" + k + "]", this.state.images[k]);
+    for (var k in this.state.deleteVideos) {
+      console.log("videos", this.state.deleteVideos);
+
+      if (this.state.deleteVideos.hasOwnProperty(k)) {
+        if (this.state.deleteVideos[k] !== "") {
+          formData.append(
+            "deletedvideos[" + k + "]",
+            this.state.deleteVideos[k]
+          );
         }
       }
     }
 
-    for (var i in this.state.videos) {
-      if (this.state.videos.hasOwnProperty(i)) {
-        if (this.state.videos[i] !== "") {
-          formData.append("videos[" + i + "]", this.state.videos[i]);
+    for (var i in this.state.deleteGraphics) {
+      if (this.state.deleteGraphics.hasOwnProperty(i)) {
+        if (this.state.deleteGraphics[i] !== "") {
+          formData.append(
+            "deletedGraphics[" + i + "]",
+            this.state.deleteGraphics[i]
+          );
+        }
+      }
+    }
+
+    for (var l in this.state.deleteImages) {
+      if (this.state.deleteImages.hasOwnProperty(l)) {
+        if (this.state.deleteImages[l] !== "") {
+          formData.append(
+            "deletedImages[" + l + "]",
+            this.state.deleteImages[l]
+          );
+        }
+      }
+    }
+
+    for (var j in this.state.tagList.tagList) {
+      if (this.state.tagList.tagList.hasOwnProperty(j)) {
+        if (this.state.tagList.tagList[j] !== "") {
+          formData.append("tags[" + j + "]", this.state.tagList.tagList[j]);
+        }
+      }
+    }
+
+    for (var m in this.state.images) {
+      if (this.state.images.hasOwnProperty(m)) {
+        if (this.state.images[m] !== "") {
+          formData.append("images[" + m + "]", this.state.images[m]);
+        }
+      }
+    }
+
+    for (var f in this.state.graphics) {
+      if (this.state.graphics.hasOwnProperty(f)) {
+        if (this.state.graphics[f] !== "") {
+          formData.append("graphics[" + f + "]", this.state.graphics[f]);
+        }
+      }
+    }
+
+    for (var g in this.state.videos) {
+      if (this.state.videos.hasOwnProperty(g)) {
+        if (this.state.videos[g] !== "") {
+          formData.append("videos[" + g + "]", this.state.videos[g]);
         }
       }
     }
@@ -373,7 +478,7 @@ class EditNews extends Component {
 
         if (res && res.status && res.status === 200) {
           // this.state.data.unshift({ ...this.state.user });
-          this.load();
+
           this.setState({
             busy: false,
             // data: res.data,
@@ -384,6 +489,7 @@ class EditNews extends Component {
 
             // errors: this.DEFAULT_STATE.errors
           });
+          this.load();
         } else if (res.status && res.status === 422) {
           console.log("RESERROR", res.data.errors);
 
@@ -447,18 +553,93 @@ class EditNews extends Component {
     //       ) !== -1
     //     ) {
 
-    const videos = Array.from(e.target.files);
-    this.setState(
-      {
-        videos: [...this.state.videos, ...videos],
-        // localImages: [...this.state.localImages, ...localImages]
-        localVideos: {
-          ...this.state.localVideos,
-          videos: [...this.state.localVideos.videos, ...videos]
-        }
-      },
-      () => console.log("videos", this.state.news.videos)
-    );
+    if (e.target.files[0]) {
+      if (
+        ["mp4", "3gp", "ogg", "wmv", "wma"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const videos = Array.from(e.target.files);
+        this.setState(
+          {
+            videos: [...this.state.videos, ...videos],
+            // localImages: [...this.state.localImages, ...localImages]
+            localVideos: {
+              ...this.state.localVideos,
+              videos: [...this.state.localVideos.videos, ...videos]
+            }
+          },
+          () => console.log("videos", this.state.localVideos.videos)
+        );
+      } else {
+        setTimeout(() => {
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد"
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+          });
+        }, 100);
+      }
+    }
+  };
+
+  /**
+   * @description : Callback for file of file browsing
+   *
+   * @author Ali Aryani
+   *
+   * @param event (object) : An event with file data
+   *
+   */
+  handleGraphicChange = e => {
+    console.log("file", e.target.files[0]);
+    // if (e.target.files[0]) {
+    //   if (
+    //     process.env.REACT_APP_MAX_JAVAZ_UPLOAD_SIZE_IN_BYTE >
+    //     e.target.files[0].size
+    //   ) {
+    //     if (
+    //       ["jpg", "jpeg", "png"].indexOf(
+    //         e.target.files[0].name.split(".").pop()
+    //       ) !== -1
+    //     ) {
+
+    if (e.target.files[0]) {
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const graphics = Array.from(e.target.files);
+        this.setState(
+          {
+            graphics: [...this.state.graphics, ...graphics],
+            // localImages: [...this.state.localImages, ...localImages]
+            localGraphics: {
+              ...this.state.localGraphics,
+              graphics: [...this.state.localGraphics.graphics, ...graphics]
+            }
+          },
+          () => console.log("graphics", this.state.localGraphics.graphics)
+        );
+      } else {
+        setTimeout(() => {
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد"
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+          });
+        }, 100);
+      }
+    }
   };
 
   /**
@@ -471,73 +652,49 @@ class EditNews extends Component {
    */
   handleGalleryPictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          const images = Array.from(e.target.files);
-          const localImages = Array.from(e.target.files);
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const images = Array.from(e.target.files);
+        const localImages = Array.from(e.target.files);
 
-          console.log("galleryImages", images);
+        console.log("galleryImages", images);
 
-          this.setState(
-            {
-              images: [...this.state.images, ...images],
-              // localImages: [...this.state.localImages, ...localImages]
-              localImages: {
-                ...this.state.localImages,
-                images: [...this.state.localImages.images, ...images]
-              }
-            },
-            () => console.log("images", this.state.localImages)
-          );
-          // const len = images.length;
-          // for (let i = 0; i < len; i++)
-          // this.setState(
-          //   {
-          //     newsData: {
-          //       ...this.state.newsData,
-          //       images: [...this.state.newsData.images, ...images]
-          //     }
-          //   },
-          //   () => console.log("galleryImages", this.state.newsData.images)
-          // );
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              newsImage: "",
-              newsData: {
-                ...this.state.newsData,
-                newsData: null
-              }
-            });
-          }, 100);
-        }
+        this.setState(
+          {
+            images: [...this.state.images, ...images],
+            // localImages: [...this.state.localImages, ...localImages]
+            localImages: {
+              ...this.state.localImages,
+              images: [...this.state.localImages.images, ...images]
+            }
+          },
+          () => console.log("images", this.state.localImages)
+        );
+        // const len = images.length;
+        // for (let i = 0; i < len; i++)
+        // this.setState(
+        //   {
+        //     newsData: {
+        //       ...this.state.newsData,
+        //       images: [...this.state.newsData.images, ...images]
+        //     }
+        //   },
+        //   () => console.log("galleryImages", this.state.newsData.images)
+        // );
       } else {
-        console.log("payam");
-        // alert("warning");
         setTimeout(() => {
-          this.setState(
-            {
-              newsImage: "",
-              newsData: {
-                ...this.state.newsData,
-                defaultImage: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد"
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+          });
         }, 100);
       }
     }
@@ -553,63 +710,56 @@ class EditNews extends Component {
    */
   handlePictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          console.log("dsadsad");
-          this.setState(
-            {
-              newsImage: e.target.files[0],
-              newsData: {
-                ...this.state.newsData,
-                testImage: URL.createObjectURL(e.target.files[0])
-              }
-              // categoryName: {
-              //   ...this.state.categoryName,
-              //   image: URL.createObjectURL(e.target.files[0])
-              // }
-            },
-            () => console.log("image", this.state.newsImage)
-          );
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              newsImage: "",
-              newsData: {
-                ...this.state.newsData,
-                testImage: null
-              }
-            });
-          }, 100);
-        }
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState(
+          {
+            newsImage: e.target.files[0],
+            newsData: {
+              ...this.state.newsData,
+              testImage: URL.createObjectURL(e.target.files[0])
+            }
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: URL.createObjectURL(e.target.files[0])
+            // }
+          },
+          () => console.log("image", this.state.newsImage)
+        );
       } else {
-        console.log("payam");
-        // alert("warning");
         setTimeout(() => {
-          this.setState(
-            {
-              newsImage: "",
-              newsData: {
-                ...this.state.newsData,
-                testImage: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد"
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+          });
         }, 100);
       }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            newsImage: "",
+            newsData: {
+              ...this.state.newsData,
+              testImage: null
+            },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
     }
   };
 
@@ -712,7 +862,7 @@ class EditNews extends Component {
         },
         videos
       },
-      () => console.log("images", this.state.localImages)
+      () => console.log("localVideos", this.state.localVideos)
     );
   };
 
@@ -734,6 +884,144 @@ class EditNews extends Component {
         images
       },
       () => console.log("images", this.state.localImages)
+    );
+  };
+
+  handleRemoveLoacalGraphics = index => {
+    console.log("index", index);
+    var localGraphics = this.state.localGraphics.graphics;
+
+    var graphics = this.state.graphics;
+
+    graphics.splice(index, 1);
+
+    localGraphics.splice(index, 1);
+    this.setState(
+      {
+        localGraphics: {
+          ...this.state.localGraphics,
+          graphics: localGraphics
+        },
+        graphics
+      },
+      () => console.log("graphics", this.state.localGraphics)
+    );
+  };
+
+  handleAddNewTag = () => {
+    var tagList = this.state.tagList.tagList;
+
+    if (this.state.newTag.length > 0) {
+      tagList.push(this.state.newTag);
+
+      this.setState(
+        {
+          tagList: {
+            ...this.state.tagList,
+            tagList
+          },
+          newTag: ""
+        },
+        () => {
+          console.log("tagList", this.state.tagList);
+          // console.log("newTag", this.state.newTag);
+        }
+      );
+    }
+  };
+
+  /**
+   * @description : search in products data
+   *
+   * @author Ali Aryani
+   */
+  handleSuggestFildeSearch = text => {
+    console.log("event", text);
+
+    var data = this.state.tags;
+    var filteredData = [];
+
+    if (text === "") {
+      filteredData = [];
+      // this.setState({
+      //   OpenedProduct: "",
+      //   // openedFestival: { ...this.state.openedFestival, itemName: "", item: "" }
+      // });
+    } else if (data) {
+      filteredData = data.filter(d => {
+        return d.name.indexOf(text) >= 0;
+      });
+    }
+    // var newTag = [];
+    // newTag.push(text);
+    this.setState(
+      {
+        FilterTags: filteredData,
+        newTag: text
+        // OpenedProduct: {
+        //   ...this.OpenedProduct,
+        //   title: text
+        // }
+        // searchText: text
+      },
+      () => console.log("newTag", this.state.newTag)
+    );
+  };
+
+  /**
+   * @description : callback when one product is touch
+   *
+   * @author Ali Aryani
+   */
+  handleClicTag = (event, id) => {
+    console.log("id", id);
+
+    var data = this.state.FilterTags;
+    console.log("this.state.FilterTags", this.state.FilterTags);
+
+    var tagList = this.state.tagList.tagList;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        tagList.push(data[i].name);
+        console.log("data[i].name", data[i].name);
+        break;
+      }
+    }
+    this.setState(
+      {
+        tagList: {
+          ...this.state.tagList,
+          tagList
+        },
+        newTag: "",
+        FilterTags: undefined
+      },
+      () => {
+        console.log("tag", this.state.tagList);
+      }
+    );
+  };
+
+  handleDeleteChip = index => {
+    console.log("index", index);
+    var tagList = this.state.tagList.tagList;
+    tagList.splice(index, 1);
+    // for(var i=0; i<galleryImages.length;i++)
+    // {
+    //   if(galleryImages[i]===index)
+    //   {
+
+    //   }
+    // }
+
+    this.setState(
+      {
+        tagList: {
+          ...this.state.tagList,
+          tagList
+        }
+      },
+      () => console.log("tag", this.state.tagList)
     );
   };
 
@@ -760,6 +1048,29 @@ class EditNews extends Component {
     );
   };
 
+  handleRemoveGraphics = index => {
+    console.log("index", index);
+    var graphics = this.state.newsData.graphics;
+    graphics.splice(index, 1);
+
+    var deleteGraphics = this.state.deleteGraphics.map(n => {
+      return n;
+    });
+
+    deleteGraphics.push(index);
+
+    this.setState(
+      {
+        newsData: {
+          ...this.state.newsData,
+          graphics
+        },
+        deleteGraphics
+      },
+      () => console.log("deleteGraphics", this.state.deleteGraphics)
+    );
+  };
+
   handleChangeSelectFieldData = (key, event) => {
     console.log("news", event);
     this.setState(
@@ -776,6 +1087,8 @@ class EditNews extends Component {
 
   handlePublish = () => {
     console.log("res");
+    this.setState({ publishing: true });
+
     ItookApi.newsPublish(this.props.routeParams.id).then(
       res => {
         // this.setState({ isLoading: false });
@@ -783,9 +1096,11 @@ class EditNews extends Component {
         if (res && res.status && res.status === 200 && res.data) {
           console.log("res", res);
           this.load();
-          // this.setState({
-          //   groups: res.data
-          // });
+          this.setState({
+            publishing: false,
+            isSnackOpen: true,
+            snackbarMessage: "عملیات با موفقیت انجام شد"
+          });
         } else {
           console.log("res", res);
           this.setState({
@@ -829,8 +1144,7 @@ class EditNews extends Component {
       this.state.isLoadingKhabarnegar ||
       this.state.isLoadingPostCreatType ||
       this.state.isLoadingPostType ||
-      this.state.isLoadingPublisher ||
-      this.state.isLoadingVirastar
+      this.state.isLoadingPublisher
     ) {
       component = (
         <div style={{ marginTop: "15%" }}>
@@ -838,10 +1152,11 @@ class EditNews extends Component {
         </div>
       );
     } else {
-      console.log("images", this.state.localImages);
+      console.log("images", this.state.tagList);
       component = (
         <EditNewsUI
           busy={this.state.busy}
+          publishing={this.state.publishing}
           errors={this.state.errors}
           postType={this.state.postType}
           categories={this.state.categories}
@@ -855,16 +1170,29 @@ class EditNews extends Component {
           onChangeTextFieldData={this.handleChangeTextFieldData}
           onChangeSelectFieldData={this.handleChangeSelectFieldData}
           OnPictureChange={this.handlePictureChange}
+          onVideoChange={this.handleVideoChange}
+          onGraphicChange={this.handleGraphicChange}
           onEditNews={this.handleEditNews}
           onChangeEditor={this.handleChangeEditor}
           OnGalleryPictureChange={this.handleGalleryPictureChange}
           onRemoveImage={this.handleRemoveImage}
           onRemoveLoacalImage={this.handleRemoveLoacalImage}
+          onRemoveGraphic={this.handleRemoveGraphics}
+          onRemoveLoacalGraphic={this.handleRemoveLoacalGraphics}
           onRemoveVideos={this.handleRemoveVideos}
           onRemoveLocalVideos={this.handleRemoveLocalVideos}
           localImages={this.state.localImages}
           localVideos={this.state.localVideos}
+          localGraphics={this.state.localGraphics}
           onPublish={this.handlePublish}
+          SuggestSearch={this.handleSuggestFildeSearch}
+          OnClicTag={this.handleClicTag}
+          FilterTags={this.state.FilterTags}
+          onAddNewTag={this.handleAddNewTag}
+          tags={this.state.tags}
+          newTag={this.state.newTag}
+          tagList={this.state.tagList}
+          onDeleteChip={this.handleDeleteChip}
         />
       );
     }

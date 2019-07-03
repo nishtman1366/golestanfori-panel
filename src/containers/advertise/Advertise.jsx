@@ -61,9 +61,11 @@ class Advertise extends Component {
       },
       advertiseImage: null,
       errors: {
-        alt: "",
-        image: null,
-        url: ""
+        positionId: "",
+        name: "",
+        image: "",
+        destinationUrl: "",
+        target: ""
       },
       openedAdvertise: undefined
     };
@@ -99,7 +101,12 @@ class Advertise extends Component {
           });
           this.fetchPosition();
         } else {
-          this.setState({ data: undefined, isLoading: false });
+          this.setState({
+            data: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
@@ -174,14 +181,18 @@ class Advertise extends Component {
     this.setState({
       openModal: false,
       errors: {
-        alt: "",
-        image: null,
-        url: ""
+        positionId: "",
+        name: "",
+        image: "",
+        destinationUrl: "",
+        target: ""
       },
       advertise: {
-        alt: "",
+        positionId: "",
+        name: "",
         image: null,
-        url: ""
+        destinationUrl: "",
+        target: null
       }
     });
   };
@@ -190,9 +201,13 @@ class Advertise extends Component {
     this.setState({
       OpenEditModal: false,
       errors: {
-        alt: "",
-        image: null,
-        url: ""
+        errors: {
+          positionId: "",
+          name: "",
+          image: "",
+          destinationUrl: "",
+          target: ""
+        }
       }
     });
   };
@@ -474,58 +489,41 @@ class Advertise extends Component {
    */
   handlePictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "gif", "GIF"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          console.log("dsadsad");
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "gif", "GIF"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState({
+          advertiseImage: e.target.files[0],
+          advertise: {
+            ...this.state.advertise,
+            image: URL.createObjectURL(e.target.files[0])
+          },
+          errors: { ...this.state.errors, image: "" }
+
+          // categoryName: {
+          //   ...this.state.categoryName,
+          //   image: URL.createObjectURL(e.target.files[0])
+          // }
+        });
+      } else {
+        setTimeout(() => {
           this.setState({
-            advertiseImage: e.target.files[0],
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            advertiseImage: "",
             advertise: {
               ...this.state.advertise,
-              image: URL.createObjectURL(e.target.files[0])
+              image: null
             }
-            // categoryName: {
-            //   ...this.state.categoryName,
-            //   image: URL.createObjectURL(e.target.files[0])
-            // }
           });
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              advertiseImage: "",
-              advertise: {
-                ...this.state.advertise,
-                image: null
-              }
-            });
-          }, 100);
-        }
-      } else {
-        console.log("payam");
-        // alert("warning");
-        setTimeout(() => {
-          this.setState(
-            {
-              advertiseImage: "",
-              advertise: {
-                ...this.state.advertise,
-                image: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
         }, 100);
       }
     }
@@ -541,58 +539,41 @@ class Advertise extends Component {
    */
   handleEditPictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "gif", "GIF"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          console.log("dsadsad");
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "gif", "GIF"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState({
+          advertiseImage: e.target.files[0],
+          openedAdvertise: {
+            ...this.state.openedAdvertise,
+            image: URL.createObjectURL(e.target.files[0])
+          },
+          errors: { ...this.state.errors, image: "" }
+
+          // categoryName: {
+          //   ...this.state.categoryName,
+          //   image: URL.createObjectURL(e.target.files[0])
+          // }
+        });
+      } else {
+        setTimeout(() => {
           this.setState({
-            advertiseImage: e.target.files[0],
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            advertiseImage: "",
             openedAdvertise: {
               ...this.state.openedAdvertise,
-              image: URL.createObjectURL(e.target.files[0])
+              image: null
             }
-            // categoryName: {
-            //   ...this.state.categoryName,
-            //   image: URL.createObjectURL(e.target.files[0])
-            // }
           });
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              advertiseImage: "",
-              openedAdvertise: {
-                ...this.state.openedAdvertise,
-                image: null
-              }
-            });
-          }, 100);
-        }
-      } else {
-        console.log("payam");
-        // alert("warning");
-        setTimeout(() => {
-          this.setState(
-            {
-              advertiseImage: "",
-              openedAdvertise: {
-                ...this.state.openedAdvertise,
-                image: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
         }, 100);
       }
     }
@@ -672,7 +653,7 @@ class Advertise extends Component {
     this.setState(
       {
         advertise: { ...this.state.advertise, positionId: event.target.value },
-        errors: { ...this.state.errors, status: "" }
+        errors: { ...this.state.errors, positionId: "" }
       },
       () => {
         console.log("filter", this.state.advertise);
@@ -688,7 +669,7 @@ class Advertise extends Component {
           ...this.state.openedAdvertise,
           positionId: event.target.value
         },
-        errors: { ...this.state.errors, status: "" }
+        errors: { ...this.state.errors, positionId: "" }
       },
       () => {
         console.log("filter", this.state.openedAdvertise);
@@ -701,7 +682,7 @@ class Advertise extends Component {
     this.setState(
       {
         advertise: { ...this.state.advertise, target: event.target.value },
-        errors: { ...this.state.errors, status: "" }
+        errors: { ...this.state.errors, target: "" }
       },
       () => {
         console.log("filter", this.state.advertise);
@@ -717,7 +698,7 @@ class Advertise extends Component {
           ...this.state.openedAdvertise,
           target: event.target.value
         },
-        errors: { ...this.state.errors, status: "" }
+        errors: { ...this.state.errors, target: "" }
       },
       () => {
         console.log("openedAdvertise", this.state.openedAdvertise);

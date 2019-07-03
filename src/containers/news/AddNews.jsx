@@ -46,17 +46,16 @@ class AddNews extends Component {
       tag: [],
       FilterTags: undefined,
       isLoadingtags: true,
-      newTag: [],
+      newTag: "",
       isLoadingPostType: true,
       isLoadingCategories: true,
       isLoadingKhabarnegar: true,
-      isLoadingVirastar: true,
       isLoadingPublisher: true,
       isLoadingPostCreatType: true,
 
       news: {
         categoryId: "", //dastebandi
-        editorId: "", //virastar
+        // editorId: "", //virastar
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
         publisherId: "", //montasher konande
@@ -72,6 +71,8 @@ class AddNews extends Component {
         galleryImages: [],
         body: "",
         videos: [],
+        graphics: [],
+
         template: "",
         photographer: "",
         code: "",
@@ -80,6 +81,8 @@ class AddNews extends Component {
       },
       newsImage: null,
       galleryImages: [],
+      graphics: [],
+
       errors: {
         categoryId: "", //dastebandi
         editorId: "", //virastar
@@ -120,7 +123,7 @@ class AddNews extends Component {
     this.fetchPostType();
     this.fetchCategories();
     this.fetchKhabarNegar();
-    this.fetchVirastar();
+    // this.fetchVirastar();
     this.fetchPublisher();
     this.fetchPostCreateType();
     this.fetchGroups();
@@ -226,29 +229,29 @@ class AddNews extends Component {
     );
   };
 
-  fetchVirastar = () => {
-    console.log("res");
-    ItookApi.fetchVirastar().then(
-      res => {
-        // this.setState({ isLoading: false });
-        console.log("res", res);
-        if (res && res.status && res.status === 200 && res.data.users) {
-          console.log("res", res);
+  // fetchVirastar = () => {
+  //   console.log("res");
+  //   ItookApi.fetchVirastar().then(
+  //     res => {
+  //       // this.setState({ isLoading: false });
+  //       console.log("res", res);
+  //       if (res && res.status && res.status === 200 && res.data.users) {
+  //         console.log("res", res);
 
-          this.setState({
-            virastar: res.data.users,
-            isLoadingVirastar: false
-          });
-        } else {
-          this.setState({ virastar: undefined, isLoadingVirastar: false });
-        }
-      },
-      err => {
-        this.setState({});
-        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
-      }
-    );
-  };
+  //         this.setState({
+  //           virastar: res.data.users,
+  //           isLoadingVirastar: false
+  //         });
+  //       } else {
+  //         this.setState({ virastar: undefined, isLoadingVirastar: false });
+  //       }
+  //     },
+  //     err => {
+  //       this.setState({});
+  //       process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+  //     }
+  //   );
+  // };
 
   fetchPublisher = () => {
     console.log("res");
@@ -370,6 +373,14 @@ class AddNews extends Component {
       }
     }
 
+    for (var k in this.state.graphics) {
+      if (this.state.graphics.hasOwnProperty(k)) {
+        if (this.state.graphics[k] !== "") {
+          formData.append("graphics[" + k + "]", this.state.graphics[k]);
+        }
+      }
+    }
+
     for (var k in this.state.news.videos) {
       if (this.state.news.videos.hasOwnProperty(k)) {
         if (this.state.news.videos[k] !== "") {
@@ -410,26 +421,35 @@ class AddNews extends Component {
             // openedCategory: null,
             snackbarMessage: "عملیات با موفقیت انجام شد",
             isSnackOpen: true,
-            openModal: false
-            // tag: []
-            // news: {
-            //   categoryId: "", //dastebandi
-            //   editorId: "", //virastar
-            //   postsCreateTypeId: "", //shiveye tolid
-            //   postsTypeId: "", //noe khabar
-            //   publisherId: "", //montasher konande
-            //   userId: "", // khabarnegar,
-            //   lead: "", //lead
-            //   title: "", //titr khabr
-            //   preTitle: "", //roo titir
-            //   postTitle: "", //zire titr
-            //   testImage: null,
-            //   body: ""
-            // },
-            // newsImage: null
-            // errors: this.DEFAULT_STATE.errors
+            openModal: false,
+            news: {
+              categoryId: "", //dastebandi
+              // editorId: "", //virastar
+              postsCreateTypeId: "", //shiveye tolid
+              postsTypeId: "", //noe khabar
+              publisherId: "", //montasher konande
+              userId: "", // khabarnegar,
+              groupId: "", //grouhe khabar,
+              groupPosition: "",
+              homePage: 0,
+              lead: "", //lead
+              title: "", //titr khabr
+              preTitle: "", //roo titir
+              postTitle: "", //zire titr
+              testImage: null,
+              galleryImages: [],
+              body: "",
+              videos: [],
+              graphics: [],
+
+              template: "",
+              photographer: "",
+              code: "",
+              tag: [],
+              source: ""
+            }
           });
-        } else if (res.status && res.status === 422) {
+        } else if (res && res.status && res.status === 422) {
           console.log("RESERROR", res.data.errors);
 
           var errors = this.state.errors;
@@ -449,11 +469,19 @@ class AddNews extends Component {
             isSnackOpen: true,
             snackbarMessage: "خطا در برقراری با سرور"
           });
-        } else {
+        } else if (res) {
+          console.log("RESERROR", res);
+
           this.setState({
             busy: false,
             isSnackOpen: true,
             snackbarMessage: res.data.message
+          });
+        } else {
+          this.setState({
+            busy: false,
+            isSnackOpen: true,
+            snackbarMessage: "خطای ناشناخته"
           });
         }
       },
@@ -481,73 +509,145 @@ class AddNews extends Component {
    */
   handleGalleryPictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          const galleryImages = Array.from(e.target.files);
-          console.log("galleryImages", galleryImages);
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const galleryImages = Array.from(e.target.files);
+        console.log("galleryImages", galleryImages);
 
-          this.setState(
-            { galleryImages: [...this.state.galleryImages, ...galleryImages] },
-            () => console.log("galleryImages", this.state.news.galleryImages)
-          );
-          // const len = galleryImages.length;
-          // for (let i = 0; i < len; i++)
-          this.setState(
-            {
-              news: {
-                ...this.state.news,
-                galleryImages: [
-                  ...this.state.news.galleryImages,
-                  ...galleryImages
-                ]
-              }
-              // categoryName: {
-              //   ...this.state.categoryName,
-              //   image: URL.createObjectURL(e.target.files[0])
-              // }
-            },
-            () => console.log("galleryImages", this.state.news.galleryImages)
-          );
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              newsImage: "",
-              news: {
-                ...this.state.news,
-                testImage: null
-              }
-            });
-          }, 100);
-        }
+        this.setState(
+          { galleryImages: [...this.state.galleryImages, ...galleryImages] },
+          () => console.log("galleryImages", this.state.news.galleryImages)
+        );
+        // const len = galleryImages.length;
+        // for (let i = 0; i < len; i++)
+        this.setState(
+          {
+            news: {
+              ...this.state.news,
+              galleryImages: [
+                ...this.state.news.galleryImages,
+                ...galleryImages
+              ]
+            }
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: URL.createObjectURL(e.target.files[0])
+            // }
+          },
+          () => console.log("galleryImages", this.state.news.galleryImages)
+        );
       } else {
-        console.log("payam");
-        // alert("warning");
         setTimeout(() => {
-          this.setState(
-            {
-              newsImage: "",
-              news: {
-                ...this.state.news,
-                testImage: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            newsImage: "",
+            news: {
+              ...this.state.news,
+              testImage: null
+            }
+          });
         }, 100);
       }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            newsImage: "",
+            news: {
+              ...this.state.news,
+              testImage: null
+            },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
+    }
+  };
+
+  /**
+   * @description : Callback for file of file browsing
+   *
+   * @author Ali Aryani
+   *
+   * @param event (object) : An event with file data
+   *
+   */
+  handleGraphicChange = e => {
+    if (e.target.files[0]) {
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "gif", "GIF"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const graphics = Array.from(e.target.files);
+        console.log("graphics", graphics);
+
+        this.setState({ graphics: [...this.state.graphics, ...graphics] }, () =>
+          console.log("graphics", this.state.news.graphics)
+        );
+        // const len = galleryImages.length;
+        // for (let i = 0; i < len; i++)
+        this.setState(
+          {
+            news: {
+              ...this.state.news,
+              graphics: [...this.state.news.graphics, ...graphics]
+            }
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: URL.createObjectURL(e.target.files[0])
+            // }
+          },
+          () => console.log("graphics", this.state.news.graphics)
+        );
+      } else {
+        setTimeout(() => {
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            graphics: "",
+            news: {
+              ...this.state.news,
+              graphics: null
+            }
+          });
+        }, 100);
+      }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            newsImage: "",
+            news: {
+              ...this.state.news,
+              testImage: null
+            },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
     }
   };
 
@@ -561,63 +661,61 @@ class AddNews extends Component {
    */
   handlePictureChange = e => {
     if (e.target.files[0]) {
-      if (e.target.files[0].size <= 124000000) {
-        if (
-          ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
-            e.target.files[0].name.split(".").pop()
-          ) !== -1
-        ) {
-          console.log("dsadsad");
-          this.setState(
-            {
-              newsImage: e.target.files[0],
-              news: {
-                ...this.state.news,
-                testImage: URL.createObjectURL(e.target.files[0])
-              }
-              // categoryName: {
-              //   ...this.state.categoryName,
-              //   image: URL.createObjectURL(e.target.files[0])
-              // }
-            },
-            () => console.log("dsadsad", this.state.newsImage)
-          );
-        } else {
-          setTimeout(() => {
-            this.setState({
-              isSnackOpen: true,
-              snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-              // fileMeli: null,
-              // user: {
-              //   ...this.state.user,
-              //   fileMeli: ""
-              // }
-              newsImage: "",
-              news: {
-                ...this.state.news,
-                testImage: null
-              }
-            });
-          }, 100);
-        }
+      if (
+        ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        console.log("dsadsad");
+        this.setState(
+          {
+            newsImage: e.target.files[0],
+            news: {
+              ...this.state.news,
+              testImage: URL.createObjectURL(e.target.files[0])
+            }
+            // categoryName: {
+            //   ...this.state.categoryName,
+            //   image: URL.createObjectURL(e.target.files[0])
+            // }
+          },
+          () => console.log("dsadsad", this.state.newsImage)
+        );
       } else {
-        console.log("payam");
-        // alert("warning");
         setTimeout(() => {
-          this.setState(
-            {
-              newsImage: "",
-              news: {
-                ...this.state.news,
-                testImage: null
-              },
-              isSnackOpen: true,
-              snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
-            },
-            () => console.log("snack", this.state.isSnackOpen)
-          );
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
+            // fileMeli: null,
+            // user: {
+            //   ...this.state.user,
+            //   fileMeli: ""
+            // }
+            newsImage: "",
+            news: {
+              ...this.state.news,
+              testImage: null
+            }
+          });
         }, 100);
       }
+    } else {
+      console.log("payam");
+      // alert("warning");
+      setTimeout(() => {
+        this.setState(
+          {
+            newsImage: "",
+            news: {
+              ...this.state.news,
+              testImage: null
+            },
+            isSnackOpen: true,
+            snackbarMessage: "حجم عکس انتخابی بیشتر از 120 کیلوبایت می‌باشد"
+          },
+          () => console.log("snack", this.state.isSnackOpen)
+        );
+      }, 100);
     }
   };
 
@@ -631,27 +729,37 @@ class AddNews extends Component {
    */
   handleVideoChange = e => {
     console.log("file", e.target.files[0]);
-    // if (e.target.files[0]) {
-    //   if (
-    //     process.env.REACT_APP_MAX_JAVAZ_UPLOAD_SIZE_IN_BYTE >
-    //     e.target.files[0].size
-    //   ) {
-    //     if (
-    //       ["jpg", "jpeg", "png"].indexOf(
-    //         e.target.files[0].name.split(".").pop()
-    //       ) !== -1
-    //     ) {
 
-    const videos = Array.from(e.target.files);
-    this.setState(
-      {
-        news: {
-          ...this.state.news,
-          videos: [...this.state.news.videos, ...videos]
-        }
-      },
-      () => console.log("videos", this.state.news.videos)
-    );
+    // if (
+    //   ["jpg", "jpeg", "png"].indexOf(
+    //     e.target.files[0].name.split(".").pop()
+    //   ) !== -1
+    // ) {
+    if (e.target.files[0]) {
+      if (
+        ["mp4", "3gp", "ogg", "wmv", "wma"].indexOf(
+          e.target.files[0].name.split(".").pop()
+        ) !== -1
+      ) {
+        const videos = Array.from(e.target.files);
+        this.setState(
+          {
+            news: {
+              ...this.state.news,
+              videos: [...this.state.news.videos, ...videos]
+            }
+          },
+          () => console.log("videos", this.state.news.videos)
+        );
+      } else {
+        setTimeout(() => {
+          this.setState({
+            isSnackOpen: true,
+            snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد"
+          });
+        }, 100);
+      }
+    }
   };
 
   /**
@@ -724,19 +832,24 @@ class AddNews extends Component {
   };
 
   handleAddNewTag = () => {
-    var newTag = this.state.newTag;
     var tag = this.state.news.tag;
-    tag.push(newTag);
+    if (this.state.newTag.length > 0) {
+      tag.push(this.state.newTag);
 
-    this.setState(
-      {
-        tag,
-        newTag: []
-      },
-      () => {
-        console.log("tag", this.state.news.tag);
-      }
-    );
+      this.setState(
+        {
+          news: {
+            ...this.state.news,
+            tag
+          },
+          newTag: ""
+        },
+        () => {
+          console.log("tag", this.state.news.tag);
+          // console.log("newTag", this.state.newTag);
+        }
+      );
+    }
   };
 
   /**
@@ -744,13 +857,13 @@ class AddNews extends Component {
    *
    * @author Ali Aryani
    */
-  handleSuggestFildeSearch = event => {
-    console.log("event", event);
+  handleSuggestFildeSearch = text => {
+    console.log("event", text);
 
     var data = this.state.tags;
     var filteredData = [];
 
-    if (event === "") {
+    if (text === "") {
       filteredData = [];
       // this.setState({
       //   OpenedProduct: "",
@@ -758,20 +871,20 @@ class AddNews extends Component {
       // });
     } else if (data) {
       filteredData = data.filter(d => {
-        return d.name.indexOf(event) >= 0;
+        return d.name.indexOf(text) >= 0;
       });
     }
-
+    // var newTag = [];
+    // newTag.push(text);
     this.setState(
       {
         FilterTags: filteredData,
-
-        newTag: event
+        newTag: text
         // OpenedProduct: {
         //   ...this.OpenedProduct,
-        //   title: event
+        //   title: text
         // }
-        // searchText: event
+        // searchText: text
       },
       () => console.log("newTag", this.state.newTag)
     );
@@ -784,32 +897,35 @@ class AddNews extends Component {
    */
   handleClicTag = (event, id) => {
     console.log("id", id);
-    console.log("FilterTags", this.state.FilterTags);
+    console.log("this.state.news.tag", this.state.news.tag);
 
     var data = this.state.FilterTags;
-    var tag = this.state.tag;
+    var tag = this.state.news.tag;
     for (var i = 0; i < data.length; i++) {
       if (data[i].id === id) {
         tag.push(data[i].name);
+        console.log("data[i].name", data[i].name);
+        break;
       }
     }
     this.setState(
       {
         news: {
           ...this.state.news,
-          tag: [...this.state.news.tag, ...tag]
+          tag
         },
-        newTag: []
+        newTag: "",
+        FilterTags: undefined
       },
       () => {
-        console.log("tag", this.state.news);
+        console.log("tag", this.state.news.tag);
       }
     );
   };
 
   handleDeleteChip = index => {
     console.log("index", index);
-    var tag = this.state.tag;
+    var tag = this.state.news.tag;
     tag.splice(index, 1);
     // for(var i=0; i<galleryImages.length;i++)
     // {
@@ -823,7 +939,7 @@ class AddNews extends Component {
       {
         news: {
           ...this.state.news,
-          tag: [...this.state.news.tag, ...tag]
+          tag
         }
       },
       () => console.log("tag", this.state.tag)
@@ -850,6 +966,29 @@ class AddNews extends Component {
         }
       },
       () => console.log("galleryImages", this.state.news.galleryImages)
+    );
+  };
+
+  handleRemoveGraphic = index => {
+    console.log("index", index);
+    var graphics = this.state.news.graphics;
+    graphics.splice(index, 1);
+    // for(var i=0; i<galleryImages.length;i++)
+    // {
+    //   if(galleryImages[i]===index)
+    //   {
+
+    //   }
+    // }
+
+    this.setState(
+      {
+        news: {
+          ...this.state.news,
+          graphics
+        }
+      },
+      () => console.log("graphics", this.state.news.graphics)
     );
   };
 
@@ -906,8 +1045,7 @@ class AddNews extends Component {
       this.state.isLoadingKhabarnegar ||
       this.state.isLoadingPostCreatType ||
       this.state.isLoadingPostType ||
-      this.state.isLoadingPublisher ||
-      this.state.isLoadingVirastar
+      this.state.isLoadingPublisher
     ) {
       component = (
         <div style={{ marginTop: "15%" }}>
@@ -915,7 +1053,7 @@ class AddNews extends Component {
         </div>
       );
     } else {
-      console.log("tagssss", this.state.tag);
+      console.log("tagssss", this.state.news.tag);
       component = (
         <AddNewsUI
           busy={this.state.busy}
@@ -935,15 +1073,18 @@ class AddNews extends Component {
           onAddNews={this.handleAddNews}
           onChangeEditor={this.handleChangeEditor}
           onVideoChange={this.handleVideoChange}
+          onGraphicChange={this.handleGraphicChange}
           onChangeAgeCheckbox={this.handleChangeAgeCheckbox}
           onRemoveImage={this.handleRemoveImage}
           onRemoveVideos={this.handleRemoveVideos}
+          onRemoveGraphic={this.handleRemoveGraphic}
           onDeleteChip={this.handleDeleteChip}
           SuggestSearch={this.handleSuggestFildeSearch}
           OnClicTag={this.handleClicTag}
           tag={this.state.tag}
           FilterTags={this.state.FilterTags}
           onAddNewTag={this.handleAddNewTag}
+          newTag={this.state.newTag}
         />
       );
     }

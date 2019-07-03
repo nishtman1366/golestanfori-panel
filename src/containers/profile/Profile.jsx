@@ -30,7 +30,7 @@ class Profile extends Component {
         tell: ""
       },
 
-      avatarPath: null
+      image: null
       // isLoading: true,
       // isSnackOpen: false,
       // snackMessage: "",
@@ -155,10 +155,10 @@ class Profile extends Component {
     //     ) {
     this.setState(
       {
-        avatarPath: e.target.files[0],
+        image: e.target.files[0],
         user: {
           ...this.state.user,
-          avatarPath: URL.createObjectURL(e.target.files[0])
+          image: URL.createObjectURL(e.target.files[0])
         }
       },
       () => console.log(this.state.user)
@@ -167,10 +167,10 @@ class Profile extends Component {
     //       this.setState({
     //         isSnackOpen: true,
     //         snackbarMessage: "نوع فایل انتخابی معتبر نمی‌باشد",
-    //         avatarPath: null,
+    //         image: null,
     //         user: {
     //           ...this.state.user,
-    //           avatarPath: ""
+    //           image: ""
     //         }
     //       });
     //     }
@@ -183,18 +183,18 @@ class Profile extends Component {
     //       ),
     //       user: {
     //         ...this.state.user,
-    //         avatarPath: ""
+    //         image: ""
     //       }
     //     });
     //   }
     // }
 
     // this.setState({
-    //   avatarPath: e.target.files[0],
+    //   image: e.target.files[0],
 
     //   user: {
     //     ...this.state.user,
-    //     avatarPath: e.target.files[0]
+    //     image: e.target.files[0]
     //   }
     // });
   };
@@ -261,57 +261,56 @@ class Profile extends Component {
    */
   handleUpdateUser = event => {
     console.log("handle", event);
-    if (this.verifyUser()) {
-      this.setState({ isUpdating: true });
 
-      ItookApi.updateUserProfile(this.createFormData()).then(
-        res => {
-          if (res && res.status && res.status === 200) {
-            this.setState({
-              // errors: this.DEFAULT_STATE.errors,
-              isUpdating: false,
+    this.setState({ isUpdating: true });
 
-              snackbarMessage: "عملیات با موفقیت انجام شد",
-              isSnackOpen: true
-            });
-          } else if (res && res.status && res.status === 422) {
-            console.log("RESERROR", res.data.errors);
-
-            var errors = {};
-
-            for (var key in res.data.errors) {
-              var error =
-                typeof res.data.errors[key] === "string"
-                  ? res.data.errors[key]
-                  : res.data.errors[key][0];
-              errors[key] = error;
-            }
-
-            this.setState({ busy: false, errors });
-          } else if (res && res.status && res.status === 500) {
-            this.setState({
-              busy: false,
-              isSnackOpen: true,
-              snackbarMessage: "خطا در برقراری با سرور"
-            });
-          } else {
-            this.setState({
-              busy: false,
-              isSnackOpen: true,
-              snackbarMessage: res.data.message
-            });
-          }
-        },
-        err => {
+    ItookApi.updateUserProfile(this.createFormData()).then(
+      res => {
+        if (res && res.status && res.status === 200) {
           this.setState({
+            // errors: this.DEFAULT_STATE.errors,
             isUpdating: false,
 
+            snackbarMessage: "عملیات با موفقیت انجام شد",
+            isSnackOpen: true
+          });
+        } else if (res && res.status && res.status === 422) {
+          console.log("RESERROR", res.data.errors);
+
+          var errors = {};
+
+          for (var key in res.data.errors) {
+            var error =
+              typeof res.data.errors[key] === "string"
+                ? res.data.errors[key]
+                : res.data.errors[key][0];
+            errors[key] = error;
+          }
+
+          this.setState({ busy: false, errors });
+        } else if (res && res.status && res.status === 500) {
+          this.setState({
+            busy: false,
             isSnackOpen: true,
-            snackbarMessage: "خطا در انجام عملیات"
+            snackbarMessage: "خطا در برقراری با سرور"
+          });
+        } else {
+          this.setState({
+            busy: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
           });
         }
-      );
-    }
+      },
+      err => {
+        this.setState({
+          isUpdating: false,
+
+          isSnackOpen: true,
+          snackbarMessage: "خطا در انجام عملیات"
+        });
+      }
+    );
   };
 
   /**
@@ -322,10 +321,10 @@ class Profile extends Component {
    */
   handleRemoveAvatar = () => {
     this.setState({
-      avatarPath: "",
+      image: "",
       user: {
         ...this.state.user,
-        avatarPath: ""
+        image: ""
       }
     });
   };
@@ -350,7 +349,7 @@ class Profile extends Component {
     formData.append("tell", this.state.user.tell);
     formData.append("password", this.state.user.password);
 
-    formData.append("avatarPath", this.state.avatarPath);
+    formData.append("image", this.state.image);
     for (var pair of formData.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }

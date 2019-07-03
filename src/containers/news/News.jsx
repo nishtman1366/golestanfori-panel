@@ -24,7 +24,14 @@ import AppLayout from "components/appLayout/AppLayout";
 import ItookApi from "api/ItookApi";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
-import { Delete, AddBox, Filter, Enseraf, Tik } from "components/Icons";
+import {
+  Delete,
+  AddBox,
+  Filter,
+  Enseraf,
+  Tik,
+  ClearSearch
+} from "components/Icons";
 import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -59,12 +66,13 @@ class News extends Component {
         snackbarMessage: ""
       },
       filter: {
-        categoryId: "",
+        categoryId: 0,
         searchQuery: "",
-        status: ""
+        status: 0,
+        userId: 0
       },
       OpenFilterModal: false,
-
+      groupId: 1,
       groups: undefined,
       OpenDeleteModal: false,
       OpenAddToGroupModal: false,
@@ -72,6 +80,7 @@ class News extends Component {
       news: undefined,
       links: undefined,
       categories: undefined,
+      khabarnegar: undefined,
       selected: [],
       busy: false,
 
@@ -110,24 +119,53 @@ class News extends Component {
           this.setState({
             news,
             links,
+            OpenFilterModal: false,
             // filteredData: transactions,
             // filteredData: this.filterData(res.data.match, "CUSTOMER"),
-            isLoading: false,
-            filter: {
-              categoryId: "",
-              searchQuery: "",
-              status: ""
-            }
+            isLoading: false
           });
 
           this.fetchGroups();
           this.fetchCategories();
+          this.fetchKhabarNegar();
         } else {
-          this.setState({ data: undefined, isLoading: false });
+          this.setState({
+            data: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
         this.setState({ isLoading: false });
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
+  fetchKhabarNegar = () => {
+    console.log("res");
+    ItookApi.fetchKhabarNegar().then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data.users) {
+          console.log("res", res);
+
+          this.setState({
+            khabarnegar: res.data.users,
+            isLoadingKhabarnegar: false
+          });
+        } else {
+          this.setState({
+            khabarnegar: undefined,
+            isLoadingKhabarnegar: false
+          });
+        }
+      },
+      err => {
+        this.setState({});
         process.env.NODE_ENV === "development" ? console.log(err) : void 0;
       }
     );
@@ -146,7 +184,12 @@ class News extends Component {
             groups: res.data
           });
         } else {
-          this.setState({ groups: undefined, isLoadingCategories: false });
+          this.setState({
+            groups: undefined,
+            isLoadingCategories: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
@@ -199,7 +242,7 @@ class News extends Component {
             }}
           >
             <Grid container spacing={6}>
-              <Grid item xs={6}>
+              <Grid item xs={4}>
                 <FormControl style={{ margin: 4, minWidth: 90 }}>
                   <InputLabel
                     htmlFor="type"
@@ -217,12 +260,68 @@ class News extends Component {
                     onChange={this.OnFilterChange}
                     input={<Input id="type" />}
                   >
+                    <MenuItem
+                      value={0}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
                     {this.renderCategories(this.state.categories)}
                   </Select>
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={4}>
+                <FormControl style={{ margin: 4, minWidth: 60 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    خبرنگار
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.userId}
+                    // error={this.props.errors.type.length > 0}
+                    // formhelpertext={this.props.errors.type}
+                    onChange={this.OnKhabarnegarChange}
+                    input={<Input id="type" />}
+                  >
+                    <MenuItem
+                      value={0}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
+                    {this.state.khabarnegar
+                      ? this.state.khabarnegar.map(n => {
+                          return (
+                            <MenuItem
+                              value={n.id}
+                              key={n.id}
+                              style={{
+                                fontFamily: "iransans",
+                                fontSize: ".9rem"
+                              }}
+                            >
+                              {n.name}
+                            </MenuItem>
+                          );
+                        })
+                      : void 0}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={4}>
                 <FormControl style={{ margin: 4, minWidth: 60 }}>
                   <InputLabel
                     htmlFor="type"
@@ -241,7 +340,7 @@ class News extends Component {
                     input={<Input id="type" />}
                   >
                     <MenuItem
-                      value=""
+                      value={0}
                       style={{
                         fontFamily: "iransans",
                         fontSize: ".9rem"
@@ -256,7 +355,7 @@ class News extends Component {
                         fontSize: ".9rem"
                       }}
                     >
-                      فعال
+                      درانتظار انتشار
                     </MenuItem>
                     <MenuItem
                       value={2}
@@ -265,7 +364,25 @@ class News extends Component {
                         fontSize: ".9rem"
                       }}
                     >
-                      غیر فعال
+                      انتشار یاقته
+                    </MenuItem>
+                    <MenuItem
+                      value={3}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      ویرایش شده
+                    </MenuItem>
+                    <MenuItem
+                      value={4}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      حذف شده
                     </MenuItem>
                   </Select>
                 </FormControl>
@@ -589,6 +706,19 @@ class News extends Component {
     );
   };
 
+  OnKhabarnegarChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, userId: event.target.value },
+        errors: { ...this.state.errors, userId: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
+      }
+    );
+  };
+
   OnFilterChange = event => {
     console.log("event.target.value ", event.target.value);
     this.setState(
@@ -705,6 +835,21 @@ class News extends Component {
     );
   };
 
+  handleClearSearch = event => {
+    console.log("event", event);
+    this.setState(
+      {
+        errors: { ...this.state.errors, event: "" },
+
+        filter: {
+          ...this.state.filter,
+          searchQuery: ""
+        }
+      },
+      () => this.fetchNews()
+    );
+  };
+
   renderAppbarActionsButtons = () => {
     var actionButtons = [];
     if (this.state.selected.length > 0) {
@@ -744,6 +889,17 @@ class News extends Component {
           <IconButton style={{ padding: 10 }} aria-label="Search" type="submit">
             <SearchIcon />
           </IconButton>
+          {this.state.filter.searchQuery !== "" ? (
+            <IconButton
+              style={{ padding: 1 }}
+              aria-label="Search"
+              onClick={this.handleClearSearch}
+            >
+              <ClearSearch />
+            </IconButton>
+          ) : (
+            void 0
+          )}
           <InputBase
             name="searchQuery"
             style={{
@@ -753,7 +909,7 @@ class News extends Component {
               fontFamily: "iransans",
               fontSize: ".9rem"
             }}
-            // value={this.state.filter.searchQuery}
+            defaultValue={this.state.filter.searchQuery}
             // onChange={e => {
             //   this.search(e.target.value);
             // }}
@@ -840,4 +996,8 @@ class News extends Component {
   }
 }
 
-export default connect()(News);
+export default connect(state => {
+  return {
+    user: state.user
+  };
+})(News);

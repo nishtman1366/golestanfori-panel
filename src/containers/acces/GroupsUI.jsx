@@ -14,30 +14,36 @@ import Fab from "@material-ui/core/Fab";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
+import TextField from "@material-ui/core/TextField";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { USERS } from "components/StatesIcons";
-import { Edit, Warning, AddCategory, Trash } from "components/Icons";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { connect } from "react-redux";
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { USERS } from "components/StatesIcons";
+import {
+  Edit,
+  Warning,
+  AddCategory,
+  EditUser,
+  Enseraf,
+  Tik
+} from "components/Icons";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { connect } from "react-redux";
 
 const CustomTableCell = withStyles(theme => ({
   head: {
     backgroundColor: "#2196F3",
-    color: theme.palette.common.white,
+    color: "#fff",
     fontSize: 14,
     fontFamily: "iransans"
   },
@@ -50,7 +56,7 @@ const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
     color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5
+    marginLeft: theme.spacing(2.5)
   }
 });
 
@@ -110,21 +116,12 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 const styles = theme => ({
   root: {
     width: "100%",
-    // marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
-  },
-  bigAvatar: {
-    width: 76,
-    height: 76
+    marginTop: theme.spacing(3),
+    overflowX: "auto",
+    fontFamily: "iransans"
   },
   table: {
     width: "100%"
-  },
-  card: {
-    maxWidth: 200
-  },
-  media: {
-    height: 60
   },
   tableWrapper: {
     overflowX: "auto"
@@ -135,7 +132,7 @@ const styles = theme => ({
     }
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
     minWidth: 120
   },
   textFieldFormLabel: {
@@ -152,15 +149,19 @@ const styles = theme => ({
   },
   fab: {
     margin: theme.spacing(1)
+  },
+  dialogPaper: {
+    maxHeight: "500px",
+    width: "400px"
   }
 });
-class NewsUI extends Component {
+class GroupsUI extends Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
       page: 0,
-      rowsPerPage: 100
+      rowsPerPage: 10
     };
   }
   handleKeyPress = e => {
@@ -177,168 +178,86 @@ class NewsUI extends Component {
   };
   render() {
     return (
-      <div style={{ marginTop: 24 }}>
+      <div>
         {this.renderUI()}
-
-        {this.props.user.permissions["write-news"] === true
+        {/* {this.props.user.permissions["write-groups"] === true
           ? this.renderFabButton()
-          : void 0}
-
-        {this.renderDeleteDialog()}
-        {this.renderAddNewsToGroupDialog()}
+          : void 0} */}
+        {this.renderAddDialog()}
+        {/* {this.props.openedGroup !== undefined ? (
+          <div>{this.renderEditDialog()}</div>
+        ) : null} */}
+        {/* {this.renderDeleteDialog()} */}
       </div>
     );
   }
   isSelected = id => this.props.selected.indexOf(id) !== -1;
 
-  renderAddNewsToGroupDialog = () => {
-    const { classes } = this.props;
-
-    return (
-      <Dialog
-        classes={{ paper: classes.dialogPaper }}
-        open={this.props.OpenAddToGroupModal}
-        // onClose={this.props.OnCloseModalDelete}
-        aria-labelledby="responsive-title"
-      >
-        <DialogTitle id="delet" style={{ textAlign: "center" }}>
-          {/* <AddIcon /> */}
-          <p>لطفا یکی از گروه‌های زیر را انتخاب کنید</p>
-        </DialogTitle>
-
-        <DialogContent>{this.renderAddToGroupDialogBody()}</DialogContent>
-        <Grid
-          container
-          alignItems="center"
-          justify="space-around"
-          style={{ marginBottom: "8px" }}
-        >
-          <Button
-            disabled={this.props.busy}
-            onClick={this.props.OnCloseAddToGroup}
-            style={{
-              fontFamily: "iransans",
-              fontSize: ".9rem",
-              background: "#f44336",
-              color: "#fff"
-            }}
-          >
-            انصراف
-          </Button>
-          {this.props.busy ? (
-            <CircularProgress size={30} />
-          ) : (
-            <Button
-              onClick={this.props.OnAddToGroup}
-              style={{
-                fontFamily: "iransans",
-                fontSize: ".9rem",
-                background: "#4caf50",
-                color: "#fff"
-              }}
-            >
-              بلی
-            </Button>
-          )}
-        </Grid>
-      </Dialog>
-    );
-  };
-
-  renderAddToGroupDialogBody = () => {
+  renderAddDialogBody = () => {
     const { classes } = this.props;
 
     return (
       <div>
-        <DialogContent>
-          <Grid container className={classes.root} justify="center">
-            <Grid item xs={12} md={12}>
-              <FormControl className={classes.formControl}>
-                <InputLabel
-                  htmlFor="type"
-                  style={{
-                    fontFamily: "iransans",
-                    fontSize: ".9rem"
-                  }}
-                >
-                  گروه ها
-                </InputLabel>
-                <Select
-                  value={this.props.groupId}
-                  onChange={e => {
-                    this.props.onChangeSelectFieldGroups(e.target.value);
-                  }}
-                  input={<Input id="name-error" />}
-                >
-                  {this.props.groups
-                    ? this.props.groups.map(n => {
-                        return (
-                          <MenuItem
-                            value={n.id}
-                            key={n.id}
-                            style={{
-                              fontFamily: "iransans",
-                              fontSize: ".9rem",
-                              right: 0,
-                              left: "auto"
-                            }}
-                          >
-                            {n.name}
-                          </MenuItem>
-                        );
-                      })
-                    : void 0}
-                </Select>
-              </FormControl>
-            </Grid>
-            {/* <Grid item xs={6} md={4}>
-              <FormControl
-                className={classes.formControl}
-                error={this.props.errors.editorId}
-              >
-                <InputLabel
-                  htmlFor="type"
-                  style={{
-                    fontFamily: "iransans",
-                    fontSize: ".9rem"
-                  }}
-                >
-                  ویراستار
-                </InputLabel>
-                <Select
-                  value={this.props.news.editorId}
-                  onChange={e => {
-                    this.props.onChangeSelectFieldData(
-                      "editorId",
-                      e.target.value
-                    );
-                  }}
-                  input={<Input id="name-error" />}
-                >
-                  {this.props.virastar
-                    ? this.props.virastar.map(n => {
-                        return (
-                          <MenuItem
-                            value={n.id}
-                            key={n.id}
-                            style={{
-                              fontFamily: "iransans",
-                              fontSize: ".9rem",
-                              right: 0,
-                              left: "auto"
-                            }}
-                          >
-                            {n.name}
-                          </MenuItem>
-                        );
-                      })
-                    : void 0}
-                </Select>
-                <FormHelperText>{this.props.errors.editorId}</FormHelperText>
-              </FormControl>
-            </Grid> */}
-          </Grid>
-        </DialogContent>
+        <form onSubmit={this.props.OnAddGroup}>
+          {/* <Grid container spacing={8} alignItems="flex-end"> */}
+          <TextField
+            error={this.props.errors.name}
+            helperText={this.props.errors.name}
+            required
+            id="required"
+            label="نام گروه"
+            defaultValue={this.props.group.name}
+            onChange={e => {
+              this.props.onFormDataChange(e.target.value);
+            }}
+            InputLabelProps={{
+              className: classes.textFieldFormLabel
+            }}
+            fullWidth
+            InputProps={{
+              className: classes.textFieldForm
+            }}
+            margin="normal"
+          />
+          {/* </Grid> */}
+
+          <button type="submit" hidden />
+        </form>
+      </div>
+    );
+  };
+
+  renderEditDialogBody = () => {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <form onSubmit={this.props.OnEditGroup}>
+          {/* <Grid container spacing={8} alignItems="flex-end"> */}
+          <TextField
+            error={this.props.errors.name}
+            helperText={this.props.errors.name}
+            required
+            //   disabled={this.props.user.permissions["settings-write"] === false}
+            id="required"
+            label="نام گروه"
+            defaultValue={this.props.openedGroup.name}
+            onChange={e => {
+              this.props.OnEditFormDataChange(e.target.value);
+            }}
+            InputLabelProps={{
+              className: classes.textFieldFormLabel
+            }}
+            fullWidth
+            InputProps={{
+              className: classes.textFieldForm
+            }}
+            margin="normal"
+          />
+          {/* </Grid> */}
+
+          <button type="submit" hidden />
+        </form>
       </div>
     );
   };
@@ -359,6 +278,120 @@ class NewsUI extends Component {
           </DialogContentText>
         </DialogContent>
       </div>
+    );
+  };
+  renderAddDialog = () => {
+    const { classes } = this.props;
+
+    return (
+      <Dialog
+        classes={{ paper: classes.dialogPaper }}
+        // fullScreen={fullScreen}
+        open={this.props.OpenModal}
+        // onClose={this.props.OnCloseModal}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="add" style={{ textAlign: "center" }}>
+          <AddCategory />
+        </DialogTitle>
+        <DialogContent>{this.renderAddDialogBody()}</DialogContent>
+        <Grid
+          container
+          alignItems="center"
+          justify="space-around"
+          style={{ marginBottom: "8px" }}
+        >
+          <Button
+            disabled={this.props.busy}
+            onClick={this.props.OnCloseModal}
+            style={{
+              fontFamily: "iransans",
+              color: "#fff",
+              fontSize: ".9rem",
+              background: "#f44336"
+            }}
+          >
+            انصراف
+            <Enseraf style={{ marginRight: 8 }} />
+          </Button>
+
+          {this.props.busy ? (
+            <CircularProgress size={30} />
+          ) : (
+            <Button
+              onClick={this.props.OnAddGroup}
+              style={{
+                color: "#fff",
+
+                fontFamily: "iransans",
+                fontSize: ".9rem",
+                background: "#4caf50"
+              }}
+            >
+              بلی
+              <Tik style={{ marginRight: 8 }} />
+            </Button>
+          )}
+        </Grid>
+      </Dialog>
+    );
+  };
+
+  renderEditDialog = () => {
+    const { classes } = this.props;
+
+    return (
+      <Dialog
+        classes={{ paper: classes.dialogPaper }}
+        open={this.props.OpenEditModal}
+        // onClose={this.props.OnCloseEdit}
+        aria-labelledby="dialog-title"
+      >
+        <DialogTitle id="edit" style={{ textAlign: "center" }}>
+          <AddCategory />
+        </DialogTitle>
+        <DialogContent>{this.renderEditDialogBody()}</DialogContent>
+        <Grid
+          container
+          alignItems="center"
+          justify="space-around"
+          style={{ marginBottom: "8px" }}
+        >
+          <Button
+            disabled={this.props.busy}
+            onClick={this.props.OnCloseEdit}
+            style={{
+              fontFamily: "iransans",
+              color: "#fff",
+              fontSize: ".9rem",
+              background: "#f44336"
+            }}
+          >
+            انصراف
+            <Enseraf style={{ marginRight: 8 }} />
+          </Button>
+
+          <div>
+            {this.props.busy ? (
+              <CircularProgress size={30} />
+            ) : (
+              <Button
+                onClick={this.props.OnEditGroup}
+                style={{
+                  color: "#fff",
+
+                  fontFamily: "iransans",
+                  fontSize: ".9rem",
+                  background: "#4caf50"
+                }}
+              >
+                بلی
+                <Tik style={{ marginRight: 8 }} />
+              </Button>
+            )}
+          </div>
+        </Grid>
+      </Dialog>
     );
   };
 
@@ -388,26 +421,30 @@ class NewsUI extends Component {
             onClick={this.props.OnCloseModalDelete}
             style={{
               fontFamily: "iransans",
+              color: "#fff",
               fontSize: ".9rem",
-              background: "#f44336",
-              color: "#fff"
+              background: "#f44336"
             }}
           >
             انصراف
+            <Enseraf style={{ marginRight: 8 }} />
           </Button>
+
           {this.props.busy ? (
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnDeleteNews}
+              onClick={this.props.OnDeleteGroup}
               style={{
+                color: "#fff",
+
                 fontFamily: "iransans",
                 fontSize: ".9rem",
-                background: "#4caf50",
-                color: "#fff"
+                background: "#4caf50"
               }}
             >
               بلی
+              <Tik style={{ marginRight: 8 }} />
             </Button>
           )}
         </Grid>
@@ -419,7 +456,7 @@ class NewsUI extends Component {
 
     return (
       <Fab
-        href={"/AddNews"}
+        onClick={this.props.OnClickOpen}
         color="primary"
         aria-label="Add"
         style={{
@@ -438,7 +475,6 @@ class NewsUI extends Component {
       </Fab>
     );
   };
-
   renderUI = () => {
     console.log("pagein");
     const { onSelectAllClick, numSelected, rowCount } = this.props;
@@ -447,10 +483,10 @@ class NewsUI extends Component {
     const { rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage -
-      Math.min(rowsPerPage, this.props.news.length - page * rowsPerPage);
+      Math.min(rowsPerPage, this.props.data.length - page * rowsPerPage);
 
     var component;
-    if (this.props.news.length > 0) {
+    if (this.props.data.length > 0) {
       component = (
         <div>
           {/* <Grid item xs={12} md={4}>
@@ -480,86 +516,31 @@ class NewsUI extends Component {
                   <Table className={classes.table}>
                     <TableHead>
                       <TableRow>
-                        <CustomTableCell
-                          // padding="checkbox"
-                          style={{
-                            textAlign: "right",
-                            padding: "0"
-                          }}
-                        >
+                        <CustomTableCell style={{ textAlign: "right" }}>
                           <Checkbox
                             style={{
                               color: "#1daced",
-                              display: "none",
-                              padding: 0
+                              display: "none"
                             }}
                           />
                         </CustomTableCell>
-                        <CustomTableCell
-                          style={{
-                            textAlign: "right",
-                            paddingRight: 2,
-                            paddingLeft: 2
-                          }}
-                        >
+                        <CustomTableCell style={{ textAlign: "right" }}>
                           ردیف
                         </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "right", padding: 0 }}
-                        >
-                          تصویر
-                        </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "right", padding: 0 }}
-                        >
-                          دسته بندی
-                        </CustomTableCell>
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 0 }}
-                        >
-                          عنوان
-                        </CustomTableCell>
-
-                        {/* <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
-                          ویرایشگر
-                        </CustomTableCell> */}
-
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
-                          منتشرکننده
-                        </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
-                          خبرنگار
-                        </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
-                          وضعیت
-                        </CustomTableCell>
-
-                        <CustomTableCell
-                          style={{ textAlign: "center", padding: 4 }}
-                        >
-                          تاریخ
+                        <CustomTableCell style={{ textAlign: "right" }}>
+                          نام
                         </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          ویرایش
+                          {this.props.user.permissions["edit-groups"] === true
+                            ? "ویرایش"
+                            : ""}
                         </CustomTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {console.log("news", this.props.news)}
-                      {this.props.news
+                      {console.log("data", this.props.data)}
+                      {this.props.data
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
@@ -590,7 +571,7 @@ class NewsUI extends Component {
                                     color: "#1daced",
                                     display:
                                       this.props.user.permissions[
-                                        "delete-news"
+                                        "delete-groups"
                                       ] === false
                                         ? "none"
                                         : "inline-flex"
@@ -600,89 +581,31 @@ class NewsUI extends Component {
                               <CustomTableCell
                                 component="th"
                                 scope="row"
-                                style={{
-                                  textAlign: "right",
-                                  paddingRight: 2,
-                                  paddingLeft: 2
-                                }}
+                                style={{ textAlign: "right" }}
                               >
                                 {n.row}
                               </CustomTableCell>
 
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right", padding: 0 }}
+                                style={{ textAlign: "right", padding: "0" }}
                               >
-                                <Card style={{ width: 60, height: 60 }}>
-                                  <CardMedia
-                                    style={{ width: 60, height: 60 }}
-                                    image={n.testImage}
-                                    title={n.type ? n.type.name : void 0}
-                                  />
-                                </Card>
+                                {n.displayName}
                               </CustomTableCell>
 
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right", padding: 0 }}
-                              >
-                                {n.category !== null
-                                  ? n.category.name
-                                  : "نامشخص"}
-                              </CustomTableCell>
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "center", padding: 0 }}
-                              >
-                                {n.title}
-                              </CustomTableCell>
-
-                              {/* <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: 4 }}
-                              >
-                                {n.editor !== null ? n.editor.name : "نامشخص"}
-                              </CustomTableCell> */}
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: 4 }}
-                              >
-                                {n.publisher !== null
-                                  ? n.publisher.name
-                                  : "نامشخص"}
-                              </CustomTableCell>
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: 4 }}
-                              >
-                                {n.user !== null ? n.user.name : "نامشخص"}
-                              </CustomTableCell>
-
-                              <CustomTableCell
-                                numeric
-                                style={{
-                                  textAlign: "right",
-                                  padding: 4
-                                }}
-                              >
-                                {n.statusText}
-                              </CustomTableCell>
-
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "right", padding: 4 }}
-                              >
-                                {n.updatedAt}
-                              </CustomTableCell>
-
-                              <CustomTableCell
-                                numeric
-                                style={{ textAlign: "center", padding: 0 }}
+                                style={{ textAlign: "right" }}
                               >
                                 <IconButton
                                   aria-label="edit"
                                   style={{
-                                    display: "inline-flex"
+                                    display:
+                                      this.props.user.permissions[
+                                        "edit-groups"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 >
                                   <Edit />
@@ -697,11 +620,11 @@ class NewsUI extends Component {
                         </TableRow>
                       )} */}
                     </TableBody>
-                    <TableFooter>
+                    <TableFooter style={{ direction: "ltr" }}>
                       <TableRow>
                         <TablePagination
                           colSpan={3}
-                          count={this.props.news.length}
+                          count={this.props.data.length}
                           rowsPerPage={rowsPerPage}
                           labelDisplayedRows={({ from, to, count }) =>
                             from + "-" + to + "از " + count
@@ -731,7 +654,7 @@ class NewsUI extends Component {
           <p
             style={{ fontSize: ".8rem", color: "#999999", textAlign: "center" }}
           >
-            لیست خالی است
+            لیست گروه ها خالی است
           </p>
         </div>
       );
@@ -745,5 +668,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(NewsUI)
+  })(GroupsUI)
 );

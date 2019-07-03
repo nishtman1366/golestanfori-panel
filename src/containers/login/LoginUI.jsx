@@ -290,8 +290,8 @@ class LoginUI extends Component {
                       <Grid item>
                         <TextField
                           required
-                          // error={this.props.errors.username}
-                          // helperText={this.props.errors.username}
+                          error={this.props.errors.username}
+                          helperText={this.props.errors.username}
                           autoFocus={true}
                           label="نام کاربری"
                           id="username"
@@ -322,8 +322,8 @@ class LoginUI extends Component {
                       </Grid>
                       <Grid item>
                         <TextField
-                          // error={this.props.errors.password}
-                          // helperText={this.props.errors.password}
+                          error={this.props.errors.password}
+                          helperText={this.props.errors.password}
                           required
                           label="رمز عبور"
                           id="adornment-password"

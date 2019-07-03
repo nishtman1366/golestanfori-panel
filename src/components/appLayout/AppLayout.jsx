@@ -329,8 +329,7 @@ class AppLayout extends React.Component {
             </Avatar>
           )}
           <p style={{ color: "#fff", fontWeight: "bold" }}>
-            {/* {this.props.user.firstName + " " + this.props.user.lastName} */}
-            علی آریانی
+            {this.props.user.firstName + " " + this.props.user.lastName}
           </p>
           <IconButton
             aria-label="More"
@@ -402,119 +401,180 @@ class AppLayout extends React.Component {
             />
           </MenuItem>
         </IndexLink>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-users-list"] ? (
+          <Link
+            to="/users"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Users />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="کاربران"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
 
-        <Link
-          to="/users"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <Users />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="کاربران"
-            />
-          </MenuItem>
-        </Link>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-ctaegories-list"] ? (
+          <Link
+            to="/categories"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Categpry />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="دسته بندی ها"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
 
-        <Link
-          to="/categories"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <Categpry />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="دسته بندی ها"
-            />
-          </MenuItem>
-        </Link>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-news-list"] ? (
+          <Link
+            to="/news"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <News />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="اخبار"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
 
-        <Link
-          to="/news"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <News />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="اخبار"
-            />
-          </MenuItem>
-        </Link>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-groups-list"] ? (
+          <Link
+            to="/groups"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Group />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="گروه‌ها"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
 
-        <Link
-          to="/groups"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <Group />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="گروه‌ها"
-            />
-          </MenuItem>
-        </Link>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-comments-list"] ? (
+          <Link
+            to="/comments"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Comments />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="نظرات"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
 
-        <Link
-          to="/comments"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <Comments />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="نظرات"
-            />
-          </MenuItem>
-        </Link>
-        <Link
-          to="/advertise"
-          style={{ textDecoration: "none" }}
-          activeClassName="active"
-          activeStyle={{ fontWeight: "bold" }}
-        >
-          <MenuItem className={classes.menuItem}>
-            <ListItemIcon className={classes.icon}>
-              <Advertise />
-            </ListItemIcon>
-            <ListItemText
-              className={classes.ListItemText}
-              classes={{ primary: classes.secondary }}
-              inset
-              primary="تبلیغات"
-            />
-          </MenuItem>
-        </Link>
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-ads-list"] ? (
+          <Link
+            to="/advertise"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Advertise />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="تبلیغات"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
+
+        {this.props.user &&
+        this.props.user.permissions &&
+        this.props.user.permissions["view-users-groups"] ? (
+          <Link
+            to="/acces"
+            style={{ textDecoration: "none" }}
+            activeClassName="active"
+            activeStyle={{ fontWeight: "bold" }}
+          >
+            <MenuItem className={classes.menuItem}>
+              <ListItemIcon className={classes.icon}>
+                <Access />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.ListItemText}
+                classes={{ primary: classes.secondary }}
+                inset
+                primary="سطح دسترسی"
+              />
+            </MenuItem>
+          </Link>
+        ) : (
+          void 0
+        )}
       </div>
     );
 

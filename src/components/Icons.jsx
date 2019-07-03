@@ -317,6 +317,15 @@ export const Close = props => (
   </SvgIcon>
 );
 
+export const ClearSearch = props => (
+  <SvgIcon {...props}>
+    <path
+      fill="#939393"
+      d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41ZZ"
+    />
+  </SvgIcon>
+);
+
 export const Save = props => (
   <SvgIcon {...props}>
     <path
@@ -407,6 +416,12 @@ export const Tik = props => (
       fill="#fff"
       d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
     />
+  </SvgIcon>
+);
+
+export const Publish = props => (
+  <SvgIcon {...props}>
+    <path fill="#fff" d="M5,4V6H19V4H5M5,14H9V20H15V14H19L12,7L5,14Z" />
   </SvgIcon>
 );
 

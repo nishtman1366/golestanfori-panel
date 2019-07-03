@@ -7,15 +7,21 @@ import { Editor } from "@tinymce/tinymce-react";
 import Checkbox from "@material-ui/core/Checkbox";
 
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Button from "@material-ui/core/Button";
-
+import Chip from "@material-ui/core/Chip";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Remove, AddMedia } from "components/Icons";
+import { Remove, AddMedia, Tik, Publish } from "components/Icons";
 import { connect } from "react-redux";
 import jMoment from "moment-jalaali";
 
@@ -23,8 +29,6 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import ReactPlayer from "react-player";
-
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const styles = theme => ({
   root: {
@@ -106,6 +110,9 @@ class EditNewsUI extends Component {
         <Grid container className={classes.root} justify="center" spacing={2}>
           <Grid item xs={12}>
             <Button
+              disabled={
+                this.props.user.permissions["view-comments-list"] === false
+              }
               href={"/comments/" + this.props.newsData.id}
               variant="outlined"
               color="primary"
@@ -114,7 +121,7 @@ class EditNewsUI extends Component {
               مشاهده نظرات
             </Button>
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={7}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
@@ -133,6 +140,7 @@ class EditNewsUI extends Component {
                       نوع{" "}
                     </InputLabel>
                     <Select
+                      readOnly
                       value={this.props.newsData.postsTypeId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -181,6 +189,9 @@ class EditNewsUI extends Component {
                       دسته بندی
                     </InputLabel>
                     <Select
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       value={this.props.newsData.categoryId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -212,6 +223,9 @@ class EditNewsUI extends Component {
                       شیوه تولید
                     </InputLabel>
                     <Select
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       value={this.props.newsData.postsCreateTypeId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -250,6 +264,7 @@ class EditNewsUI extends Component {
                     error={this.props.errors.code}
                     helperText={this.props.errors.code}
                     required
+                    disabled
                     // id="required"
                     type="text"
                     label="کد خبر"
@@ -271,13 +286,13 @@ class EditNewsUI extends Component {
             </Paper>
           </Grid>
 
-          <Grid item xs={10}>
+          <Grid item xs={5}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>
               اطلاعات افراد
             </p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.userId}
@@ -292,6 +307,9 @@ class EditNewsUI extends Component {
                       خبرنگار
                     </InputLabel>
                     <Select
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       value={this.props.newsData.userId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -323,7 +341,7 @@ class EditNewsUI extends Component {
                     <FormHelperText>{this.props.errors.userId}</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                {/* <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.editorId}
@@ -370,8 +388,8 @@ class EditNewsUI extends Component {
                       {this.props.errors.editorId}
                     </FormHelperText>
                   </FormControl>
-                </Grid>
-                <Grid item xs={6} md={3}>
+                </Grid> */}
+                <Grid item xs={6} md={4}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.publisherId}
@@ -386,6 +404,9 @@ class EditNewsUI extends Component {
                       منتشرکننده
                     </InputLabel>
                     <Select
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       value={this.props.newsData.publisherId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -419,8 +440,11 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={4}>
                   <TextField
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     error={this.props.errors.photographer}
                     helperText={this.props.errors.photographer}
                     required
@@ -453,6 +477,9 @@ class EditNewsUI extends Component {
               <Grid container justify="center" spacing={2}>
                 <Grid item xs={4}>
                   <TextField
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     error={this.props.errors.preTitle}
                     helperText={this.props.errors.preTitle}
                     required
@@ -484,7 +511,9 @@ class EditNewsUI extends Component {
                     error={this.props.errors.title}
                     helperText={this.props.errors.title}
                     required
-                    // id="required"
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     type="text"
                     label="تیتر"
                     multiline
@@ -508,7 +537,9 @@ class EditNewsUI extends Component {
                     error={this.props.errors.postTitle}
                     helperText={this.props.errors.postTitle}
                     required
-                    // id="required"
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     type="text"
                     label="زیر تیتر"
                     multiline
@@ -535,7 +566,9 @@ class EditNewsUI extends Component {
                     error={this.props.errors.lead}
                     helperText={this.props.errors.lead}
                     required
-                    // id="required"
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     type="text"
                     label="لید"
                     multiline
@@ -559,7 +592,9 @@ class EditNewsUI extends Component {
                     error={this.props.errors.lead}
                     helperText={this.props.errors.lead}
                     required
-                    // id="required"
+                    disabled={
+                      this.props.user.permissions["edit-news"] === false
+                    }
                     type="text"
                     label="منبع"
                     multiline
@@ -583,6 +618,7 @@ class EditNewsUI extends Component {
           <Grid item xs={3}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>عکس اصلی</p>
             <input
+              disabled={this.props.user.permissions["edit-news"] === false}
               style={{ display: "none" }}
               ref="image"
               accept=".png,.jpg,.jpeg"
@@ -598,9 +634,15 @@ class EditNewsUI extends Component {
             {this.props.newsData.testImage ? (
               <div>
                 <label htmlFor="raised-pic1-file">
-                  <Card style={{ width: 250, height: 200 }}>
-                    <CardMedia
-                      // alt="Adelle Charles"
+                  <Card
+                    style={{
+                      width: 250,
+                      height: 200,
+                      position: "relative",
+                      background: "#000"
+                    }}
+                  >
+                    {/* <CardMedia
                       image={this.props.newsData.testImage}
                       style={{
                         position: "relative",
@@ -608,6 +650,21 @@ class EditNewsUI extends Component {
                         width: 250,
                         height: 200,
                         cursor: "pointer"
+                      }}
+                    /> */}
+
+                    <img
+                      src={this.props.newsData.testImage}
+                      alt=""
+                      style={{
+                        maxHeight: "100%",
+                        maxWidth: "100%",
+                        position: "absolute",
+                        margin: "auto",
+                        left: 0,
+                        top: 0,
+                        right: 0,
+                        bottom: 0
                       }}
                     />
                   </Card>
@@ -637,6 +694,7 @@ class EditNewsUI extends Component {
           <Grid item xs={9}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>متن خبر</p>
             <Editor
+              disabled={this.props.user.permissions["edit-news"] === false}
               apiKey="YOUR_API_KEY"
               init={{
                 plugins:
@@ -740,6 +798,7 @@ class EditNewsUI extends Component {
               </p>
               <Paper className={classes.root}>
                 <input
+                  disabled={this.props.user.permissions["edit-news"] === false}
                   style={{ display: "none" }}
                   ref="galleryImages"
                   accept=".png,.jpg,.jpeg"
@@ -757,7 +816,11 @@ class EditNewsUI extends Component {
                   {/* <label htmlFor="raised-galleryImages-file"> */}
                   <div>
                     <label htmlFor="raised-galleryImages-file">
-                      <AddMedia />
+                      <AddMedia
+                        disabled={
+                          this.props.user.permissions["edit-news"] === false
+                        }
+                      />
                     </label>
                   </div>
 
@@ -786,7 +849,7 @@ class EditNewsUI extends Component {
               <Paper className={classes.root}>
                 <input
                   ref="VideoUpload"
-                  // accept=".png,.jpg,.jpeg"
+                  disabled={this.props.user.permissions["edit-news"] === false}
                   id="raised-VideoUpload-file"
                   multiple
                   type="file"
@@ -801,22 +864,74 @@ class EditNewsUI extends Component {
                   {/* <label htmlFor="raised-galleryImages-file"> */}
                   <div>
                     <label htmlFor="raised-VideoUpload-file">
-                      <AddMedia />
+                      <AddMedia
+                        disabled={
+                          this.props.user.permissions["edit-news"] === false
+                        }
+                      />
                     </label>
                   </div>
 
                   {/* </label> */}
                 </div>
-
+                {console.log("videos", this.props.newsData.videos)}
                 <Grid container>
                   {this.props.newsData.videos.length > 0
-                    ? this.renderGalleryVideos(this.props.newsData.images)
+                    ? this.renderGalleryVideos(this.props.newsData.videos)
                     : void 0}
-                  {console.log("images", this.props.localImages)}
+                  {console.log("images", this.props.localVideos)}
 
                   {this.props.localVideos
                     ? this.renderLocalGalleryVideos(
-                        this.props.localImages.images
+                        this.props.localVideos.videos
+                      )
+                    : void 0}
+                </Grid>
+              </Paper>
+            </Grid>
+          ) : this.props.newsData.postsTypeId === 7 ? (
+            <Grid item xs={12}>
+              <p style={{ fontWeight: "bold", color: "#2196F3" }}>
+                انتخاب گرافیک ها
+              </p>
+              <Paper className={classes.root}>
+                <input
+                  ref="GraphicUpload"
+                  disabled={this.props.user.permissions["edit-news"] === false}
+                  id="raised-GraphicUpload-file"
+                  multiple
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={event => {
+                    this.props.onGraphicChange(event);
+                    this.refs.GraphicUpload.value = "";
+                  }}
+                />
+
+                <div>
+                  {/* <label htmlFor="raised-galleryImages-file"> */}
+                  <div>
+                    <label htmlFor="raised-GraphicUpload-file">
+                      <AddMedia
+                        disabled={
+                          this.props.user.permissions["edit-news"] === false
+                        }
+                      />
+                    </label>
+                  </div>
+
+                  {/* </label> */}
+                </div>
+                {console.log("videos", this.props.newsData.graphics)}
+                <Grid container>
+                  {this.props.newsData.graphics.length > 0
+                    ? this.renderGalleryGraphic(this.props.newsData.graphics)
+                    : void 0}
+                  {console.log("images", this.props.localGraphics)}
+
+                  {this.props.localGraphics
+                    ? this.renderLocalGalleryGraphic(
+                        this.props.localGraphics.graphics
                       )
                     : void 0}
                 </Grid>
@@ -826,7 +941,7 @@ class EditNewsUI extends Component {
             void 0
           )}
 
-          <Grid item xs={10}>
+          <Grid item xs={12}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
@@ -845,6 +960,9 @@ class EditNewsUI extends Component {
                       گروه خبر
                     </InputLabel>
                     <Select
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       value={this.props.newsData.groupId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -889,7 +1007,9 @@ class EditNewsUI extends Component {
                     </InputLabel>
                     <Select
                       value={this.props.newsData.groupPosition}
-                      // error={this.props.errorsProducts.unitType}
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       // formhelpertext={this.props.errorsProducts.unitType}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -923,7 +1043,9 @@ class EditNewsUI extends Component {
                     </InputLabel>
                     <Select
                       value={this.props.newsData.template}
-                      // error={this.props.errorsProducts.unitType}
+                      readOnly={
+                        this.props.user.permissions["edit-news"] === false
+                      }
                       // formhelpertext={this.props.errorsProducts.unitType}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -966,6 +1088,9 @@ class EditNewsUI extends Component {
                       // label="نمایش در صفحه اول"
                       control={
                         <Checkbox
+                          disabled={
+                            this.props.user.permissions["edit-news"] === false
+                          }
                           checked={this.props.newsData.homePage}
                           onChange={this.props.onChangeAgeCheckbox}
                           value={this.props.newsData.homePage}
@@ -987,27 +1112,102 @@ class EditNewsUI extends Component {
               </Grid>
             </Paper>
           </Grid>
-          <Grid
-            item
-            xs={3}
-            style={{
-              textAlign: "center",
-              marginBottom: 16,
-              marginTop: 16
-            }}
-          >
-            <Button
-              disabled={this.props.busy}
-              onClick={this.props.onEditNews}
-              style={{
-                fontFamily: "iransans",
-                fontSize: ".9rem",
-                background: "#2196F3",
-                color: "#fff"
-              }}
-            >
-              بروزرسانی
-            </Button>
+
+          {console.log("tagssss", this.props.newsData.tags)}
+          <Grid item xs={12}>
+            <p style={{ fontWeight: "bold", color: "#2196F3" }}>برچسب ها</p>
+            <Paper className={classes.root}>
+              <Grid container justify="center" spacing={2}>
+                <Grid item xs={6} md={4}>
+                  <div style={{ display: "inline-block" }}>
+                    <Button
+                      disabled={
+                        this.props.user.permissions["edit-news"] === false
+                      }
+                      onClick={this.props.onAddNewTag}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem",
+                        background: "#2196F3",
+                        color: "#fff"
+                      }}
+                    >
+                      افزودن
+                    </Button>
+                  </div>
+                  <div
+                    style={{
+                      display: "inline-block",
+                      verticalAlign: "bottom",
+                      marginRight: 8
+                    }}
+                  >
+                    <TextField
+                      id="search"
+                      label="جستجو"
+                      type="search"
+                      disabled={
+                        this.props.user.permissions["edit-news"] === false
+                      }
+                      value={this.props.newTag}
+                      className={classes.textField}
+                      InputLabelProps={{
+                        className: classes.textFieldFormLabel
+                      }}
+                      onChange={e => {
+                        this.props.SuggestSearch(e.target.value);
+                      }}
+                      margin="normal"
+                    />
+                  </div>
+                </Grid>
+                <Grid item xs={8}>
+                  {console.log("tags", this.props.tagList.tagList)}
+                  <Grid container justify="center" spacing={2}>
+                    {this.props.tagList && this.props.tagList.tagList.length > 0
+                      ? this.renderTagsChip(this.props.tagList.tagList)
+                      : void 0}
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Paper>
+            {this.props.newTag !== "" ? (
+              <div
+                style={{
+                  background: "#e3e3e3",
+                  width: 260,
+
+                  borderRadius: 8
+                }}
+              >
+                {this.props.FilterTags.map(r => {
+                  return (
+                    <List
+                      component="nav"
+                      style={{
+                        width: "100%",
+                        maxWidth: "360px",
+                        textAlign: "right"
+                      }}
+                      // className={classes.root}
+                      aria-label="Mailbox folders"
+                    >
+                      <ListItem
+                        style={{ textAlign: "right" }}
+                        button
+                        onClick={event => this.props.OnClicTag(event, r.id)}
+                        key={r.id}
+                      >
+                        <ListItemText primary={r.name} />
+                      </ListItem>
+                      <Divider />
+                    </List>
+                  );
+                })}
+              </div>
+            ) : (
+              void 0
+            )}
           </Grid>
           <Grid
             item
@@ -1018,23 +1218,86 @@ class EditNewsUI extends Component {
               marginTop: 16
             }}
           >
-            <Button
-              disabled={this.props.busy}
-              onClick={this.props.onPublish}
+            {this.props.busy ? (
+              <CircularProgress size={30} />
+            ) : this.props.user.permissions["edit-news"] === true ? (
+              <Button
+                disabled={this.props.busy}
+                onClick={this.props.onEditNews}
+                style={{
+                  fontFamily: "iransans",
+                  fontSize: ".9rem",
+                  background: "#2196F3",
+                  color: "#fff"
+                }}
+              >
+                بروزرسانی
+                <Tik style={{ marginRight: 8 }} />
+              </Button>
+            ) : (
+              void 0
+            )}
+          </Grid>
+          {this.props.user.permissions["publish-news"] === true ? (
+            <Grid
+              item
+              xs={3}
               style={{
-                fontFamily: "iransans",
-                fontSize: ".9rem",
-                background: "#2196F3",
-                color: "#fff"
+                textAlign: "center",
+                marginBottom: 16,
+                marginTop: 16
               }}
             >
-              {this.props.newsData.status === 1 ? "لغو انتشار" : "انتشار"}
-            </Button>
-          </Grid>
+              {this.props.publishing ? (
+                <CircularProgress size={30} />
+              ) : (
+                <Button
+                  disabled={this.props.publishing}
+                  onClick={this.props.onPublish}
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem",
+                    background: "#2196F3",
+                    color: "#fff"
+                  }}
+                >
+                  {this.props.newsData.status === 1 ? "لغو انتشار" : "انتشار"}
+
+                  <Publish style={{ marginRight: 8 }} />
+                </Button>
+              )}
+            </Grid>
+          ) : (
+            void 0
+          )}
         </Grid>
       </div>
     );
   };
+
+  renderTagsChip(tags) {
+    console.log("tags", tags);
+    var tag = [];
+    const { classes } = this.props;
+    for (let i = 0; i < tags.length; i++) {
+      tag.push(
+        <Grid item xs={6} md={3} key={tags[i]}>
+          <Chip
+            // icon={<Close onClick={this.props.onDeleteChip} />}
+            style={{ padding: 12, cursor: "pointer" }}
+            label={tags[i]}
+            onDelete={
+              this.props.user.permissions["edit-news"] === true
+                ? () => this.props.onDeleteChip(i)
+                : void 0
+            }
+            color="primary"
+          />
+        </Grid>
+      );
+    }
+    return tag;
+  }
 
   renderNameOfVideos(videos) {
     if (videos === undefined) return;
@@ -1081,27 +1344,30 @@ class EditNewsUI extends Component {
               controls={true}
               url={this.props.newsData.videos[i]}
             />
-
-            <div
-              style={{ textAlign: "center", cursor: "pointer" }}
-              onClick={() => this.props.onRemoveVideos(i)}
-            >
-              <Remove
-                style={{ display: "inline-block", verticalAlign: "middle" }}
-              />
-              <p
-                style={{
-                  display: "inline-block",
-                  marginTop: 3,
-                  fontWeight: "bold",
-                  color: "#F44336",
-                  verticalAlign: "middle",
-                  marginRight: 4
-                }}
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveVideos(i)}
               >
-                حذف
-              </p>{" "}
-            </div>
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
           </Card>
         </Grid>
       );
@@ -1143,27 +1409,30 @@ class EditNewsUI extends Component {
               controls={true}
               url={URL.createObjectURL(this.props.localVideos.videos[i])}
             />
-
-            <div
-              style={{ textAlign: "center", cursor: "pointer" }}
-              onClick={() => this.props.onRemoveLocalVideos(i)}
-            >
-              <Remove
-                style={{ display: "inline-block", verticalAlign: "middle" }}
-              />
-              <p
-                style={{
-                  display: "inline-block",
-                  marginTop: 3,
-                  fontWeight: "bold",
-                  color: "#F44336",
-                  verticalAlign: "middle",
-                  marginRight: 4
-                }}
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveLocalVideos(i)}
               >
-                حذف
-              </p>{" "}
-            </div>
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
           </Card>
         </Grid>
       );
@@ -1189,26 +1458,30 @@ class EditNewsUI extends Component {
                 height: 90
               }}
             />
-            <div
-              style={{ textAlign: "center", cursor: "pointer" }}
-              onClick={() => this.props.onRemoveImage(i)}
-            >
-              <Remove
-                style={{ display: "inline-block", verticalAlign: "middle" }}
-              />
-              <p
-                style={{
-                  display: "inline-block",
-                  marginTop: 3,
-                  fontWeight: "bold",
-                  color: "#F44336",
-                  verticalAlign: "middle",
-                  marginRight: 4
-                }}
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveImage(i)}
               >
-                حذف
-              </p>{" "}
-            </div>
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
           </Card>
         </Grid>
       );
@@ -1235,31 +1508,134 @@ class EditNewsUI extends Component {
                 height: 90
               }}
             />
-            <div
-              style={{ textAlign: "center", cursor: "pointer" }}
-              onClick={() => this.props.onRemoveLoacalImage(i)}
-            >
-              <Remove
-                style={{ display: "inline-block", verticalAlign: "middle" }}
-              />
-              <p
-                style={{
-                  display: "inline-block",
-                  marginTop: 3,
-                  fontWeight: "bold",
-                  color: "#F44336",
-                  verticalAlign: "middle",
-                  marginRight: 4
-                }}
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveLoacalImage(i)}
               >
-                حذف
-              </p>{" "}
-            </div>
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
           </Card>
         </Grid>
       );
     }
     return localImages;
+  }
+
+  renderGalleryGraphic(graphics) {
+    console.log("images", graphics);
+    var galleryGraphic = [];
+    const { classes } = this.props;
+    for (let i = 0; i < graphics.length; i++) {
+      galleryGraphic.push(
+        <Grid item xs={6} md={2}>
+          <Card style={{ width: 130, height: 120, marginTop: 8 }}>
+            <CardMedia
+              // alt="Adelle Charles"
+              image={this.props.newsData.graphics[i]}
+              style={{
+                position: "relative",
+                margin: "auto",
+                width: "100%",
+                height: 90
+              }}
+            />
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveGraphic(i)}
+              >
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
+          </Card>
+        </Grid>
+      );
+    }
+    return galleryGraphic;
+  }
+
+  renderLocalGalleryGraphic(graphics) {
+    console.log("images", graphics);
+    var localGraphics = [];
+    const { classes } = this.props;
+
+    for (let i = 0; i < graphics.length; i++) {
+      localGraphics.push(
+        <Grid item xs={6} md={2}>
+          <Card style={{ width: 130, height: 120, marginTop: 8 }}>
+            <CardMedia
+              // alt="Adelle Charles"
+              image={URL.createObjectURL(this.props.localGraphics.graphics[i])}
+              style={{
+                position: "relative",
+                margin: "auto",
+                width: "100%",
+                height: 90
+              }}
+            />
+            {this.props.user.permissions["edit-news"] === true ? (
+              <div
+                style={{ textAlign: "center", cursor: "pointer" }}
+                onClick={() => this.props.onRemoveLoacalGraphic(i)}
+              >
+                <Remove
+                  style={{ display: "inline-block", verticalAlign: "middle" }}
+                />
+                <p
+                  style={{
+                    display: "inline-block",
+                    marginTop: 3,
+                    fontWeight: "bold",
+                    color: "#F44336",
+                    verticalAlign: "middle",
+                    marginRight: 4
+                  }}
+                >
+                  حذف
+                </p>{" "}
+              </div>
+            ) : (
+              void 0
+            )}
+          </Card>
+        </Grid>
+      );
+    }
+    return localGraphics;
   }
 
   renderCategories(categories) {

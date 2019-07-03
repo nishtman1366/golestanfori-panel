@@ -24,7 +24,7 @@ import AppLayout from "components/appLayout/AppLayout";
 import ItookApi from "api/ItookApi";
 import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
-import { Delete, Filter, Enseraf, Tik } from "components/Icons";
+import { Delete, Filter, Enseraf, Tik, ClearSearch } from "components/Icons";
 import Loading from "containers/Loading";
 import Snackbar from "@material-ui/core/Snackbar";
 import { OPERATION_FAILED } from "components/StatesIcons";
@@ -57,9 +57,9 @@ class Users extends Component {
         snackbarMessage: ""
       },
       filter: {
-        groupId: "",
+        groupId: 0,
         searchQuery: "",
-        status: ""
+        status: 0
       },
       openModal: false,
       OpenDeleteModal: false,
@@ -124,7 +124,12 @@ class Users extends Component {
             GroupUsers: res.data
           });
         } else {
-          this.setState({ GroupUsers: undefined, isLoadingCategories: false });
+          this.setState({
+            GroupUsers: undefined,
+            isLoadingCategories: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
@@ -151,16 +156,21 @@ class Users extends Component {
             filteredData: users,
             OpenFilterModal: false,
             // filteredData: this.filterData(res.data.group, "CUSTOMER"),
-            isLoading: false,
-            filter: {
-              groupId: "",
-              searchQuery: "",
-              status: ""
-            }
+            isLoading: false
+            // filter: {
+            //   groupId: "",
+            //   searchQuery: "",
+            //   status: ""
+            // }
           });
           this.fetchGroupUsers();
         } else {
-          this.setState({ data: undefined, isLoading: false });
+          this.setState({
+            data: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data.message
+          });
         }
       },
       err => {
@@ -202,7 +212,7 @@ class Users extends Component {
                     input={<Input id="type" />}
                   >
                     <MenuItem
-                      value=""
+                      value={0}
                       style={{
                         fontFamily: "iransans",
                         fontSize: ".9rem"
@@ -248,7 +258,7 @@ class Users extends Component {
                     input={<Input id="type" />}
                   >
                     <MenuItem
-                      value=""
+                      value={0}
                       style={{
                         fontFamily: "iransans",
                         fontSize: ".9rem"
@@ -623,6 +633,7 @@ class Users extends Component {
 
           this.setState({ busy: false, errors });
         } else if (res && res.status && res.status === 500) {
+          console.log("res", res);
           this.setState({
             busy: false,
             isSnackOpen: true,
@@ -720,6 +731,22 @@ class Users extends Component {
         filter: {
           ...this.state.filter,
           searchQuery: event
+        }
+      },
+      () => this.fetchUsers(),
+      () => console.log("search", this.state.searchQuery)
+    );
+  };
+
+  handleClearSearch = event => {
+    console.log("event", event);
+    this.setState(
+      {
+        errors: { ...this.state.errors, event: "" },
+
+        filter: {
+          ...this.state.filter,
+          searchQuery: ""
         }
       },
       () => this.fetchUsers()
@@ -833,6 +860,17 @@ class Users extends Component {
           <IconButton style={{ padding: 10 }} aria-label="Search" type="submit">
             <SearchIcon />
           </IconButton>
+          {this.state.filter.searchQuery !== "" ? (
+            <IconButton
+              style={{ padding: 1 }}
+              aria-label="Search"
+              onClick={this.handleClearSearch}
+            >
+              <ClearSearch />
+            </IconButton>
+          ) : (
+            void 0
+          )}
 
           <InputBase
             name="searchQuery"
@@ -843,7 +881,7 @@ class Users extends Component {
               fontFamily: "iransans",
               fontSize: ".9rem"
             }}
-            // value={this.state.filter.searchQuery}
+            defaultValue={this.state.filter.searchQuery}
             // onChange={e => {
             //   this.search(e.target.value);
             // }}

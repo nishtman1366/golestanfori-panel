@@ -210,11 +210,11 @@ class Login extends Component {
 
           document.cookie = "token=" + res.data.token;
 
-          this.props.dispatch(
-            actions.updateUser({
-              isLoggedIn: true
-            })
-          );
+          // this.props.dispatch(
+          //   actions.updateUser({
+          //     isLoggedIn: true
+          //   })
+          // );
 
           // console.log("document.cookie", document.cookie);
 

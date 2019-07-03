@@ -19,7 +19,7 @@ import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -180,7 +180,9 @@ class UsersUI extends Component {
     return (
       <div>
         {this.renderUI()}
-        {this.renderFabButton()}
+        {this.props.user.permissions["write-users"] === true
+          ? this.renderFabButton()
+          : void 0}
         {this.renderAddDialog()}
         {this.props.openedUser !== undefined ? (
           <div>{this.renderEditDialog()}</div>
@@ -198,7 +200,7 @@ class UsersUI extends Component {
       <div>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <FormControl>
+            <FormControl error={this.props.errors.groupId}>
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -212,7 +214,6 @@ class UsersUI extends Component {
                 autoFocus
                 value={this.props.person.groupId}
                 // error={this.props.errors.type.length > 0}
-                formhelpertext={this.props.errors.type}
                 onChange={this.props.OnTypeChange}
                 input={<Input id="type" />}
               >
@@ -233,6 +234,7 @@ class UsersUI extends Component {
                     })
                   : void 0}
               </Select>
+              <FormHelperText>{this.props.errors.groupId}</FormHelperText>
             </FormControl>
           </Grid>
 
@@ -324,7 +326,6 @@ class UsersUI extends Component {
             <TextField
               error={this.props.errors.mobile}
               helperText={this.props.errors.mobile}
-              required
               id="required"
               label="تلفن همراه"
               InputLabelProps={{
@@ -345,7 +346,6 @@ class UsersUI extends Component {
             <TextField
               error={this.props.errors.email}
               helperText={this.props.errors.email}
-              required
               id="required"
               label="ایمیل"
               InputLabelProps={{
@@ -375,8 +375,8 @@ class UsersUI extends Component {
     return (
       <div>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <FormControl>
+          <Grid item xs={6}>
+            <FormControl error={this.props.errors.groupId}>
               <InputLabel
                 htmlFor="type"
                 style={{
@@ -387,10 +387,10 @@ class UsersUI extends Component {
                 سمت
               </InputLabel>
               <Select
+                readOnly={this.props.user.permissions["edit-users"] === false}
                 autoFocus
                 value={this.props.openedUser.groupId}
                 // error={this.props.errors.type.length > 0}
-                formhelpertext={this.props.errors.type}
                 onChange={this.props.OnTypeEditChange}
                 input={<Input id="type" />}
               >
@@ -411,13 +411,31 @@ class UsersUI extends Component {
                     })
                   : void 0}
               </Select>
+              <FormHelperText>{this.props.errors.groupId}</FormHelperText>
             </FormControl>
           </Grid>
+          {this.props.user.permissions["view-users-groups"] === true ? (
+            <Grid item xs={6}>
+              <Button
+                href={
+                  "/permissions/user/" + this.props.openedUser.id + "/acces"
+                }
+                variant="outlined"
+                color="primary"
+                className={classes.button}
+              >
+                سطح دسترسی
+              </Button>
+            </Grid>
+          ) : (
+            void 0
+          )}
 
           <Grid item xs={12} md={6}>
             <TextField
               error={this.props.errors.firstName}
               helperText={this.props.errors.firstName}
+              disabled={this.props.user.permissions["edit-users"] === false}
               required
               id="required"
               label="نام"
@@ -439,6 +457,7 @@ class UsersUI extends Component {
             <TextField
               error={this.props.errors.lastName}
               helperText={this.props.errors.lastName}
+              disabled={this.props.user.permissions["edit-users"] === false}
               required
               id="required"
               label="نام خانوادگی"
@@ -459,6 +478,7 @@ class UsersUI extends Component {
           <Grid item xs={12} md={6}>
             <TextField
               type="text"
+              disabled={this.props.user.permissions["edit-users"] === false}
               error={this.props.errors.username}
               helperText={this.props.errors.username}
               required
@@ -479,6 +499,7 @@ class UsersUI extends Component {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
+              disabled={this.props.user.permissions["edit-users"] === false}
               error={this.props.errors.password}
               helperText={this.props.errors.password}
               required
@@ -500,9 +521,9 @@ class UsersUI extends Component {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
+              disabled={this.props.user.permissions["edit-users"] === false}
               error={this.props.errors.mobile}
               helperText={this.props.errors.mobile}
-              required
               id="required"
               label="تلفن همراه"
               InputLabelProps={{
@@ -521,9 +542,9 @@ class UsersUI extends Component {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
+              disabled={this.props.user.permissions["edit-users"] === false}
               error={this.props.errors.email}
               helperText={this.props.errors.email}
-              required
               id="required"
               label="ایمیل"
               InputLabelProps={{
@@ -652,14 +673,15 @@ class UsersUI extends Component {
               background: "#f44336"
             }}
           >
-            انصراف
+            بستن
             <Enseraf style={{ marginRight: 8 }} />
           </Button>
 
           <div>
+            {console.log("data", this.props.user.permissions["edit-users"])}
             {this.props.busy ? (
               <CircularProgress size={30} />
-            ) : (
+            ) : this.props.user.permissions["edit-users"] === true ? (
               <Button
                 onClick={this.props.OnEditUser}
                 style={{
@@ -673,6 +695,8 @@ class UsersUI extends Component {
                 تایید
                 <Tik style={{ marginRight: 8 }} />
               </Button>
+            ) : (
+              void 0
             )}
           </div>
         </Grid>
@@ -827,6 +851,9 @@ class UsersUI extends Component {
                         <CustomTableCell style={{ textAlign: "right" }}>
                           سمت
                         </CustomTableCell>
+                        <CustomTableCell style={{ textAlign: "right" }}>
+                          وضعیت
+                        </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
                           ویرایش
@@ -864,7 +891,12 @@ class UsersUI extends Component {
                                   checked={isSelected}
                                   style={{
                                     color: "#1daced",
-                                    display: "inline-flex"
+                                    display:
+                                      this.props.user.permissions[
+                                        "delete-users"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 />
                               </TableCell>
@@ -905,6 +937,12 @@ class UsersUI extends Component {
                                 style={{ textAlign: "center", padding: "0" }}
                               >
                                 {n.groupText}
+                              </CustomTableCell>
+                              <CustomTableCell
+                                numeric
+                                style={{ textAlign: "center", padding: "0" }}
+                              >
+                                {n.statusText}
                               </CustomTableCell>
 
                               <CustomTableCell

@@ -180,7 +180,9 @@ class GroupsUI extends Component {
     return (
       <div>
         {this.renderUI()}
-        {this.renderFabButton()}
+        {this.props.user.permissions["write-groups"] === true
+          ? this.renderFabButton()
+          : void 0}
         {this.renderAddDialog()}
         {this.props.openedGroup !== undefined ? (
           <div>{this.renderEditDialog()}</div>
@@ -530,7 +532,9 @@ class GroupsUI extends Component {
                         </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          ویرایش
+                          {this.props.user.permissions["edit-groups"] === true
+                            ? "ویرایش"
+                            : ""}
                         </CustomTableCell>
                       </TableRow>
                     </TableHead>
@@ -565,7 +569,12 @@ class GroupsUI extends Component {
                                   checked={isSelected}
                                   style={{
                                     color: "#1daced",
-                                    display: "inline-flex"
+                                    display:
+                                      this.props.user.permissions[
+                                        "delete-groups"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 />
                               </TableCell>
@@ -591,7 +600,12 @@ class GroupsUI extends Component {
                                 <IconButton
                                   aria-label="edit"
                                   style={{
-                                    display: "inline-flex"
+                                    display:
+                                      this.props.user.permissions[
+                                        "edit-groups"
+                                      ] === false
+                                        ? "none"
+                                        : "inline-flex"
                                   }}
                                 >
                                   <Edit />
