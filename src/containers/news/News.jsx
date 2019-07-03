@@ -102,11 +102,11 @@ class News extends Component {
     this.fetchNews();
   };
 
-  fetchNews = () => {
-    ItookApi.fetchNews(this.state.filter).then(
-      res => {
-        this.setState({ isLoading: false });
+  fetchNews = (url = null) => {
+    this.setState({ isLoading: true });
 
+    ItookApi.fetchNews(url, this.state.filter).then(
+      res => {
         console.log("res", res);
 
         if (res && res.status && res.status === 200 && res.data) {
@@ -975,6 +975,7 @@ class News extends Component {
           onChangeSelectFieldGroups={this.handleChangeSelectFieldGroups}
           groupId={this.state.groupId}
           OnAddToGroup={this.handleAddToGroup}
+          OnFetch={this.fetchNews}
         />
       );
     }

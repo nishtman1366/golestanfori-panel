@@ -113,7 +113,7 @@ class EditNewsUI extends Component {
               disabled={
                 this.props.user.permissions["view-comments-list"] === false
               }
-              href={"/comments/" + this.props.newsData.id}
+              href={"editNews/" + this.props.newsData.id + "/comments"}
               variant="outlined"
               color="primary"
               className={classes.button}
@@ -589,8 +589,8 @@ class EditNewsUI extends Component {
 
                 <Grid item xs={4}>
                   <TextField
-                    error={this.props.errors.lead}
-                    helperText={this.props.errors.lead}
+                    error={this.props.errors.source}
+                    helperText={this.props.errors.source}
                     required
                     disabled={
                       this.props.user.permissions["edit-news"] === false
@@ -598,9 +598,12 @@ class EditNewsUI extends Component {
                     type="text"
                     label="منبع"
                     multiline
-                    value={this.props.newsData.lead}
+                    value={this.props.newsData.source}
                     onChange={e => {
-                      this.props.onChangeTextFieldData("lead", e.target.value);
+                      this.props.onChangeTextFieldData(
+                        "source",
+                        e.target.value
+                      );
                     }}
                     InputLabelProps={{
                       className: classes.textFieldFormLabel
@@ -778,7 +781,7 @@ class EditNewsUI extends Component {
                 tinycomments_mode: "embedded",
                 content_style:
                   ".mce-annotation { background: #fff0b7; } .tc-active-annotation {background: #ffe168; color: black; }",
-                images_upload_url: "postAcceptor.php"
+                images_upload_url: "http://192.168.1.6:8000/upload"
               }}
               initialValue={this.props.newsData.body}
               // onChange={e => {
@@ -1105,7 +1108,7 @@ class EditNewsUI extends Component {
                         marginRight: 8
                       }}
                     >
-                      نمایش در صفحه اول
+                      نمایش در لیست آخرین اخبار
                     </p>
                   </div>
                 </Grid>

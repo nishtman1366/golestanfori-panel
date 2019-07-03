@@ -116,7 +116,7 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 const styles = theme => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
     overflowX: "auto",
     fontFamily: "iransans"
   },

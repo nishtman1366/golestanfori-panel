@@ -201,6 +201,9 @@ ReactDOM.render(
           <Route path="groups" component={Groups} />
           <Route path="users" component={Users} />
           <Route path="comments(/:id)" component={Comments} />
+
+          <Route path="editNews/:id/comments(/:id)" component={Comments} />
+
           <Route path="profile" component={Profile} />
 
           <Route path="advertise" component={Advertise} />

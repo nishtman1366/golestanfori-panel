@@ -119,7 +119,7 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 const styles = theme => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
     overflowX: "auto",
     fontFamily: "iransans"
   },
@@ -215,7 +215,7 @@ class AdvertiseUI extends Component {
               <input
                 style={{ display: "none" }}
                 ref="image"
-                accept=".png,.jpg,.jpeg"
+                accept=".png,.jpg,.jpeg,.gif"
                 className={classes.input}
                 id="raised-pic1-file"
                 multiple
@@ -296,7 +296,7 @@ class AdvertiseUI extends Component {
           <Grid item xs={6}>
             <FormControl
               style={{ margin: 4, minWidth: 60 }}
-              error={this.props.errors.target}
+              error={this.props.errors.positionId}
             >
               <InputLabel
                 htmlFor="type"
@@ -332,7 +332,7 @@ class AdvertiseUI extends Component {
                   : void 0}
               </Select>
               <FormHelperText style={{ color: "red" }}>
-                {this.props.errors.target}
+                {this.props.errors.positionId}
               </FormHelperText>
             </FormControl>
           </Grid>
@@ -477,7 +477,7 @@ class AdvertiseUI extends Component {
                 disabled={this.props.user.permissions["edit-ads"] === false}
                 style={{ display: "none" }}
                 ref="image"
-                accept=".png,.jpg,.jpeg"
+                accept=".png,.jpg,.jpeg,.gif"
                 className={classes.input}
                 id="raised-pic1-file"
                 multiple

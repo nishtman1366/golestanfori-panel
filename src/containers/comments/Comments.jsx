@@ -10,6 +10,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { OPERATION_FAILED, NO_MESSAGE_RECIVED } from "components/StatesIcons";
 import Grid from "@material-ui/core/Grid";
 import { Delete } from "components/Icons";
+import { browserHistory } from "react-router";
 
 class Comments extends Component {
   constructor(props) {
@@ -62,7 +63,7 @@ class Comments extends Component {
             comments: undefined,
             isLoading: false,
             isSnackOpen: true,
-            snackbarMessage: res.data.message
+            snackbarMessage: res && res.data ? res.data.message : void 0
           };
         }
         this.setState({ ...this.state, ...state }, () =>
@@ -263,6 +264,20 @@ class Comments extends Component {
       this.setState({ selected: newSelected }, () =>
         console.log("ID", this.state.selected)
       );
+    } else if (
+      event.target.tagName === "path" ||
+      event.target.tagName === "svg" ||
+      event.target.tagName === "BUTTON"
+    ) {
+      var comments = this.state.comments;
+      for (var i = 0; i < comments.length; i++) {
+        if (comments[i].id === id) {
+          var postId = comments[i].postId;
+          break;
+        }
+      }
+
+      browserHistory.push("editNews/" + postId);
     } else {
       // if (event.target.tagName === "path")
       console.log("ID", id);

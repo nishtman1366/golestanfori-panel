@@ -32,7 +32,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { Edit, Warning, AddUserIcon, EditUser } from "components/Icons";
+import { NewsBlue, Warning, AddUserIcon, EditUser } from "components/Icons";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -117,7 +117,7 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 const styles = theme => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
     overflowX: "auto"
   },
   table: {
@@ -389,12 +389,15 @@ class CommentsUI extends Component {
                   <CustomTableCell style={{ textAlign: "right" }}>
                     ایمیل
                   </CustomTableCell>
-                  {/* <CustomTableCell style={{ textAlign: "right" }}>
+                  <CustomTableCell style={{ textAlign: "right" }}>
                     وضعیت
-                  </CustomTableCell> */}
+                  </CustomTableCell>
 
                   <CustomTableCell style={{ textAlign: "right" }}>
                     تاریخ
+                  </CustomTableCell>
+                  <CustomTableCell style={{ textAlign: "right" }}>
+                    مشاهده خبر
                   </CustomTableCell>
                 </TableRow>
               </TableHead>
@@ -443,17 +446,31 @@ class CommentsUI extends Component {
                           {n.name}
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          {n.postId}
+                          {n.post ? n.post.code : void 0}
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
                           {n.email}
                         </CustomTableCell>
-                        {/* <CustomTableCell style={{ textAlign: "right" }}>
+
+                        <CustomTableCell style={{ textAlign: "right" }}>
                           {n.statusText}
-                        </CustomTableCell> */}
+                        </CustomTableCell>
 
                         <CustomTableCell numeric style={{ textAlign: "right" }}>
                           {n.jData}
+                        </CustomTableCell>
+                        <CustomTableCell
+                          numeric
+                          style={{ textAlign: "center", padding: 0 }}
+                        >
+                          <IconButton
+                            aria-label="edit"
+                            style={{
+                              display: "inline-flex"
+                            }}
+                          >
+                            <NewsBlue />
+                          </IconButton>
                         </CustomTableCell>
                       </TableRow>
                     );

@@ -105,7 +105,7 @@ class Advertise extends Component {
             data: undefined,
             isLoading: false,
             isSnackOpen: true,
-            snackbarMessage: res.data.message
+            snackbarMessage: res && res.data ? res.data.message : void 0
           });
         }
       },

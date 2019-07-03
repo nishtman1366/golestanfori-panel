@@ -177,7 +177,7 @@ class NewsUI extends Component {
   };
   render() {
     return (
-      <div style={{ marginTop: 24 }}>
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
         {this.renderUI()}
 
         {this.props.user.permissions["write-news"] === true
@@ -672,7 +672,7 @@ class NewsUI extends Component {
                                 numeric
                                 style={{ textAlign: "right", padding: 4 }}
                               >
-                                {n.updatedAt}
+                                {n.updatedDate}
                               </CustomTableCell>
 
                               <CustomTableCell
@@ -697,25 +697,76 @@ class NewsUI extends Component {
                         </TableRow>
                       )} */}
                     </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TablePagination
-                          colSpan={3}
-                          count={this.props.news.length}
-                          rowsPerPage={rowsPerPage}
-                          labelDisplayedRows={({ from, to, count }) =>
-                            from + "-" + to + "از " + count
-                          }
-                          labelRowsPerPage=""
-                          page={page}
-                          onChangePage={this.handleChangePage}
-                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                          ActionsComponent={TablePaginationActionsWrapped}
-                        />
-                      </TableRow>
-                    </TableFooter>
                   </Table>
                 </div>
+                {this.props.links ? (
+                  <div style={{ textAlign: "center" }}>
+                    <Grid
+                      container
+                      justify="center"
+                      style={{ marginTop: 8, marginBottom: 8 }}
+                    >
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.prevPageUrl === null}
+                          size="small"
+                          style={{
+                            background: "#1daced",
+                            color: "#fff"
+                          }}
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.firstPageUrl)
+                          }
+                        >
+                          صفحه اول
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.prevPageUrl === null}
+                          size="small"
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.prevPageUrl)
+                          }
+                        >
+                          صفحه قبل
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.nextPageUrl === null}
+                          size="small"
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.nextPageUrl)
+                          }
+                        >
+                          صفحه بعد
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.nextPageUrl === null}
+                          size="small"
+                          style={{
+                            background: "#1daced",
+                            color: "#fff"
+                          }}
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.lastPageUrl)
+                          }
+                        >
+                          صفحه آخر
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </div>
+                ) : (
+                  void 0
+                )}
               </Paper>
             </Grid>
           </Grid>

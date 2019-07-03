@@ -299,10 +299,12 @@ var ItookApi = {
    * @return server response object
    */
 
-  fetchNews(filter) {
+  fetchNews(url, filter) {
+    var apiUrl = url === null ? API_URL + "/posts/list" : url;
+
     console.log("filter", filter);
     return axios
-      .post(API_URL + "/posts/list", filter)
+      .post(apiUrl, filter)
       .then(response => {
         return response;
       })

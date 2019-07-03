@@ -116,15 +116,15 @@ class EditNews extends Component {
         this.setState({ isLoading: false });
 
         console.log("res", res);
-        var tags = res.data.tags;
-        var tagList = [];
-        for (var i = 0; i < tags.length; i++) {
-          tagList.push(tags[i].name);
-          console.log("data[i].name", tags[i].name);
-        }
-        console.log("tagList", tagList);
 
         if (res && res.status && res.status === 200 && res.data) {
+          var tags = res.data.tags;
+          var tagList = [];
+          for (var i = 0; i < tags.length; i++) {
+            tagList.push(tags[i].name);
+            console.log("data[i].name", tags[i].name);
+          }
+          console.log("tagList", tagList);
           this.setState({
             newsData: res.data,
             tagList: {
@@ -145,7 +145,12 @@ class EditNews extends Component {
           this.fetchGroups();
           this.fetchTags();
         } else {
-          this.setState({ data: undefined, isLoading: false });
+          this.setState({
+            newsData: undefined,
+            isLoading: false,
+            isSnackOpen: true,
+            snackbarMessage: res.data
+          });
         }
       },
       err => {
@@ -369,12 +374,41 @@ class EditNews extends Component {
     formData.append("postsTypeId", this.state.newsData.postsTypeId);
     formData.append("publisherId", this.state.newsData.publisherId);
     formData.append("userId", this.state.newsData.userId);
-    formData.append("lead", this.state.newsData.lead);
+    formData.append(
+      "lead",
+      this.state.newsData.lead !== null ? this.state.newsData.lead : ""
+    );
+
+    formData.append(
+      "photographer",
+      this.state.newsData.photographer !== null
+        ? this.state.newsData.photographer
+        : ""
+    );
+
+    formData.append(
+      "postTitle",
+      this.state.newsData.postTitle !== null
+        ? this.state.newsData.postTitle
+        : ""
+    );
+
+    formData.append(
+      "preTitle",
+      this.state.newsData.preTitle !== null ? this.state.newsData.preTitle : ""
+    );
+    formData.append(
+      "source",
+      this.state.newsData.source !== null ? this.state.newsData.source : ""
+    );
+
+    formData.append(
+      "body",
+      this.state.newsData.body !== null ? this.state.newsData.body : ""
+    );
+
     formData.append("title", this.state.newsData.title);
-    formData.append("preTitle", this.state.newsData.preTitle);
-    formData.append("postTitle", this.state.newsData.postTitle);
     formData.append("code", this.state.newsData.code);
-    formData.append("source", this.state.newsData.source);
     formData.append("template", this.state.newsData.template);
     formData.append("homePage", this.state.newsData.homePage);
     formData.append("groupId", this.state.newsData.groupId);
@@ -384,7 +418,6 @@ class EditNews extends Component {
       "testImage",
       this.state.newsImage !== null ? this.state.newsImage : void 0
     );
-    formData.append("body", this.state.newsData.body);
     // formData.append("deleteImages", this.state.deleteImages);
     // formData.append("deleteVideos", this.state.deleteVideos);
 
@@ -394,7 +427,7 @@ class EditNews extends Component {
       if (this.state.deleteVideos.hasOwnProperty(k)) {
         if (this.state.deleteVideos[k] !== "") {
           formData.append(
-            "deletedvideos[" + k + "]",
+            "deletedVideos[" + k + "]",
             this.state.deleteVideos[k]
           );
         }

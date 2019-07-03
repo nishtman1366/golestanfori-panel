@@ -720,7 +720,7 @@ class AddNewsUI extends Component {
                 tinycomments_mode: "embedded",
                 content_style:
                   ".mce-annotation { background: #fff0b7; } .tc-active-annotation {background: #ffe168; color: black; }",
-                images_upload_url: "postAcceptor.php"
+                images_upload_url: "http://192.168.1.6:8000/upload"
               }}
               initialValue={this.props.news.body}
               // onChange={e => {
@@ -1024,7 +1024,7 @@ class AddNewsUI extends Component {
                         // marginTop: 24
                       }}
                     >
-                      نمایش در صفحه اول
+                      نمایش در لیست آخرین اخبار
                     </span>
                   </div>
                 </Grid>
