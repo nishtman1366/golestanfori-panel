@@ -69,6 +69,7 @@ class Users extends Component {
       data: undefined,
       selected: [],
       filteredData: undefined,
+      links: undefined,
 
       busy: false,
       appType: "all",
@@ -139,8 +140,8 @@ class Users extends Component {
     );
   };
 
-  fetchUsers = () => {
-    ItookApi.fetchUsers(this.state.filter).then(
+  fetchUsers = (url = null) => {
+    ItookApi.fetchUsers(url, this.state.filter).then(
       res => {
         this.setState({ isLoading: false });
 
@@ -150,9 +151,12 @@ class Users extends Component {
           var rowNumber = 1;
           var users = res.data.users;
           for (var i = 0; i < users.length; i++) users[i].row = rowNumber++;
+          var links = res.data.links;
 
           this.setState({
             data: users,
+            links,
+
             filteredData: users,
             OpenFilterModal: false,
             // filteredData: this.filterData(res.data.group, "CUSTOMER"),
@@ -953,6 +957,8 @@ class Users extends Component {
           openedUser={this.state.openedUser}
           OnEditFormDataChange={this.handleEditFormDataChange}
           errors={this.state.errors}
+          links={this.state.links}
+          OnFetch={this.fetchUsers}
         />
         // );
         // component = (

@@ -219,6 +219,26 @@ var ItookApi = {
         return error.response;
       });
   },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchCategriesList() {
+    return axios
+      .get(API_URL + "/categories/post")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
   /**
    * @description : Sends a request to add Category
    *
@@ -283,29 +303,6 @@ var ItookApi = {
       .delete(API_URL + "/categories", params)
       .then(response => {
         console.log("Response : " + response);
-        return response;
-      })
-      .catch(error => {
-        console.log(error);
-        return error.response;
-      });
-  },
-
-  /**
-   * @description : Sends a request to fetch Categries
-   *
-   * @author Ali Aryani
-   *
-   * @return server response object
-   */
-
-  fetchNews(url, filter) {
-    var apiUrl = url === null ? API_URL + "/posts/list" : url;
-
-    console.log("filter", filter);
-    return axios
-      .post(apiUrl, filter)
-      .then(response => {
         return response;
       })
       .catch(error => {
@@ -804,17 +801,42 @@ var ItookApi = {
   },
 
   /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchNews(url, filter) {
+    var apiUrl = url === null ? API_URL + "/posts/list" : url;
+
+    console.log("filter", filter);
+    return axios
+      .post(apiUrl, filter)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
    * @description : Sends a request to fetch fetchMatchsConfigList from the server
    *
    * @author Ali Aryani
    *
    * @return server response as object
    */
-  fetchUsers(filter) {
+  fetchUsers(url, filter) {
+    var apiUrl = url === null ? API_URL + "/users" : url;
+
     console.log("filter", filter);
 
     return axios
-      .post(API_URL + "/users", filter)
+      .post(apiUrl, filter)
       .then(response => {
         return response;
       })

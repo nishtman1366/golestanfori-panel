@@ -82,24 +82,39 @@ class AddNews extends Component {
       newsImage: null,
       galleryImages: [],
       graphics: [],
-
+      subCategoryId: null,
       errors: {
         categoryId: "", //dastebandi
-        editorId: "", //virastar
+        // editorId: "", //virastar
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
         publisherId: "", //montasher konande
         userId: "", // khabarnegar,
+        groupId: "", //grouhe khabar,
+        groupPosition: "",
+        homePage: 0,
         lead: "", //lead
         title: "", //titr khabr
         preTitle: "", //roo titir
         postTitle: "", //zire titr
-        testImage: null,
-        body: ""
+        testImage: "",
+        galleryImages: "",
+        body: "",
+        videos: "",
+        graphics: "",
+
+        template: "",
+        photographer: "",
+        code: "",
+        tag: "",
+        source: ""
       },
       busy: false,
       postType: undefined,
       categories: undefined,
+      subCategories: undefined,
+      subCategoriesList: undefined,
+
       khabarnegar: undefined,
       virastar: undefined,
       publisher: undefined,
@@ -180,17 +195,26 @@ class AddNews extends Component {
 
   fetchCategories = () => {
     console.log("res");
-    ItookApi.fetchCategries().then(
+    ItookApi.fetchCategriesList().then(
       res => {
         // this.setState({ isLoading: false });
         console.log("res");
         if (res && res.status && res.status === 200 && res.data) {
           console.log("res", res);
 
-          this.setState({
-            categories: res.data,
-            isLoadingCategories: false
-          });
+          this.setState(
+            {
+              categories: res.data.categories,
+              subCategoriesList: res.data.subCategories,
+
+              isLoadingCategories: false
+            },
+            () =>
+              console.log(
+                "this.state.subCategories",
+                this.state.subCategoriesList
+              )
+          );
         } else {
           this.setState({ categories: undefined, isLoadingCategories: false });
         }
@@ -336,7 +360,12 @@ class AddNews extends Component {
   createFormData = key => {
     let formData = new FormData();
 
-    formData.append("categoryId", this.state.news.categoryId);
+    formData.append(
+      "categoryId",
+      this.state.subCategoryId !== null
+        ? this.state.subCategoryId
+        : this.state.news.categoryId
+    );
     formData.append("editorId", this.state.news.editorId);
     formData.append("postsCreateTypeId", this.state.news.postsCreateTypeId);
     formData.append("postsTypeId", this.state.news.postsTypeId);
@@ -392,6 +421,54 @@ class AddNews extends Component {
     // formData.append("images", this.state.galleryImages);
 
     return formData;
+  };
+
+  handleCategoriesChange = event => {
+    console.log("event", event);
+
+    // var id =
+    //   this.state.data.provinceId !== null
+    //     ? this.state.data.provinceId
+    //     : event.target.value;
+
+    var id = event.target.value;
+
+    console.log("this.state.subCategories", this.state.subCategoriesList);
+    var subCategories = [];
+
+    for (let i = 0; i < this.state.subCategoriesList.length; i++) {
+      if (id === this.state.subCategoriesList[i].parentId) {
+        subCategories.push(this.state.subCategoriesList[i]);
+      }
+    }
+
+    console.log("subCategories", subCategories);
+
+    this.setState(
+      {
+        subCategories,
+        news: {
+          ...this.state.news,
+          categoryId: id
+          // subCategories: id === null ? null : this.state.data.subCategories
+        },
+        subCategoryId: null
+      },
+      () => console.log("data", this.state.news)
+    );
+  };
+
+  handleSubCategoryChange = event => {
+    console.log("event", event.target.value);
+
+    var id = event.target.value;
+
+    this.setState(
+      {
+        subCategoryId: id
+      },
+      () => console.log("subCategoryId", this.state.subCategoryId)
+    );
   };
 
   /**
@@ -1060,6 +1137,7 @@ class AddNews extends Component {
           errors={this.state.errors}
           postType={this.state.postType}
           categories={this.state.categories}
+          subCategories={this.state.subCategories}
           khabarnegar={this.state.khabarnegar}
           virastar={this.state.virastar}
           publisher={this.state.publisher}
@@ -1085,6 +1163,9 @@ class AddNews extends Component {
           FilterTags={this.state.FilterTags}
           onAddNewTag={this.handleAddNewTag}
           newTag={this.state.newTag}
+          onCategoriesChange={this.handleCategoriesChange}
+          onSubCategoryChange={this.handleSubCategoryChange}
+          subCategoryId={this.state.subCategoryId}
         />
       );
     }

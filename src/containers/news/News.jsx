@@ -65,11 +65,13 @@ class News extends Component {
         open: false,
         snackbarMessage: ""
       },
+      postType: undefined,
       filter: {
         categoryId: 0,
         searchQuery: "",
         status: 0,
-        userId: 0
+        userId: 0,
+        postsTypeId: 0
       },
       OpenFilterModal: false,
       groupId: 1,
@@ -128,6 +130,7 @@ class News extends Component {
           this.fetchGroups();
           this.fetchCategories();
           this.fetchKhabarNegar();
+          this.fetchPostType();
         } else {
           this.setState({
             data: undefined,
@@ -162,6 +165,30 @@ class News extends Component {
             khabarnegar: undefined,
             isLoadingKhabarnegar: false
           });
+        }
+      },
+      err => {
+        this.setState({});
+        process.env.NODE_ENV === "development" ? console.log(err) : void 0;
+      }
+    );
+  };
+
+  fetchPostType = () => {
+    console.log("res");
+    ItookApi.fetchPostType().then(
+      res => {
+        // this.setState({ isLoading: false });
+        console.log("res");
+        if (res && res.status && res.status === 200 && res.data) {
+          console.log("res", res);
+
+          this.setState({
+            postType: res.data,
+            isLoadingPostType: false
+          });
+        } else {
+          this.setState({ postType: undefined, isLoadingPostType: false });
         }
       },
       err => {
@@ -241,8 +268,55 @@ class News extends Component {
               margin: "16px"
             }}
           >
-            <Grid container spacing={6}>
-              <Grid item xs={4}>
+            <Grid container spacing={2}>
+              <Grid item xs={3}>
+                <FormControl style={{ margin: 4, minWidth: 90 }}>
+                  <InputLabel
+                    htmlFor="type"
+                    style={{
+                      fontFamily: "iransans",
+                      fontSize: ".9rem"
+                    }}
+                  >
+                    نوع خبر
+                  </InputLabel>
+                  <Select
+                    value={this.state.filter.postsTypeId}
+                    // error={this.props.errorsProducts.unitType}
+                    // formhelpertext={this.props.errorsProducts.unitType}
+                    onChange={this.OnPostTypeChange}
+                    input={<Input id="type" />}
+                  >
+                    <MenuItem
+                      value={0}
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      همه
+                    </MenuItem>
+                    {this.state.postType
+                      ? this.state.postType.map(n => {
+                          return (
+                            <MenuItem
+                              value={n.id}
+                              key={n.id}
+                              style={{
+                                fontFamily: "iransans",
+                                fontSize: ".9rem"
+                              }}
+                            >
+                              {n.name}
+                            </MenuItem>
+                          );
+                        })
+                      : void 0}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={3}>
                 <FormControl style={{ margin: 4, minWidth: 90 }}>
                   <InputLabel
                     htmlFor="type"
@@ -274,8 +348,8 @@ class News extends Component {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={4}>
-                <FormControl style={{ margin: 4, minWidth: 60 }}>
+              <Grid item xs={3}>
+                <FormControl style={{ margin: 4, minWidth: 90 }}>
                   <InputLabel
                     htmlFor="type"
                     style={{
@@ -321,8 +395,8 @@ class News extends Component {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={4}>
-                <FormControl style={{ margin: 4, minWidth: 60 }}>
+              <Grid item xs={3}>
+                <FormControl style={{ margin: 4, minWidth: 90 }}>
                   <InputLabel
                     htmlFor="type"
                     style={{
@@ -702,6 +776,19 @@ class News extends Component {
           isSnackOpen: true,
           snackbarMessage: "خطا در انجام عملیات"
         });
+      }
+    );
+  };
+
+  OnPostTypeChange = event => {
+    console.log("event.target.value ", event.target.value);
+    this.setState(
+      {
+        filter: { ...this.state.filter, postsTypeId: event.target.value },
+        errors: { ...this.state.errors, postsTypeId: "" }
+      },
+      () => {
+        console.log("filter", this.state.filter);
       }
     );
   };

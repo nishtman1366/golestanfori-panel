@@ -51,7 +51,8 @@ class EditNews extends Component {
       newsData: undefined,
       images: [],
       graphics: [],
-
+      subCategoryId: null,
+      categoryParentId: null,
       videos: [],
       FilterTags: undefined,
       tags: undefined,
@@ -89,6 +90,8 @@ class EditNews extends Component {
       publishing: false,
       postType: undefined,
       categories: undefined,
+      subCategories: undefined,
+      subCategoriesList: undefined,
       khabarnegar: undefined,
       virastar: undefined,
       publisher: undefined,
@@ -118,24 +121,31 @@ class EditNews extends Component {
         console.log("res", res);
 
         if (res && res.status && res.status === 200 && res.data) {
-          var tags = res.data.tags;
-          var tagList = [];
-          for (var i = 0; i < tags.length; i++) {
-            tagList.push(tags[i].name);
-            console.log("data[i].name", tags[i].name);
+          if (res.data.tags) {
+            var tags = res.data.tags;
+            var tagList = [];
+            for (var i = 0; i < tags.length; i++) {
+              tagList.push(tags[i].name);
+              console.log("data[i].name", tags[i].name);
+            }
+            console.log("tagList", tagList);
           }
-          console.log("tagList", tagList);
           this.setState({
             newsData: res.data,
             tagList: {
               ...this.state.tagList,
               tagList
             },
+            categoryParentId:
+              res.data.category.parentId !== 0
+                ? res.data.category.parentId
+                : res.data.category.id,
+            subCategoryId:
+              res.data.category.parentId !== 0 ? res.data.category.id : null,
             // filteredData: transactions,
             // filteredData: this.filterData(res.data.match, "CUSTOMER"),
             isLoading: false
           });
-
           this.fetchPostType();
           this.fetchCategories();
           this.fetchKhabarNegar();
@@ -210,17 +220,24 @@ class EditNews extends Component {
 
   fetchCategories = () => {
     console.log("res");
-    ItookApi.fetchCategries().then(
+    ItookApi.fetchCategriesList().then(
       res => {
         // this.setState({ isLoading: false });
         console.log("res");
         if (res && res.status && res.status === 200 && res.data) {
-          console.log("res", res);
+          this.setState(
+            {
+              categories: res.data.categories,
+              subCategoriesList: res.data.subCategories,
 
-          this.setState({
-            categories: res.data,
-            isLoadingCategories: false
-          });
+              isLoadingCategories: false
+            },
+            () =>
+              this.state.newsData.categoryId &&
+              this.state.newsData.categoryId !== null
+                ? this.handleCategoriesChange()
+                : void 0
+          );
         } else {
           this.setState({ categories: undefined, isLoadingCategories: false });
         }
@@ -368,7 +385,14 @@ class EditNews extends Component {
     let formData = new FormData();
     console.log("videos", this.state.deleteVideos);
 
-    formData.append("categoryId", this.state.newsData.categoryId);
+    formData.append(
+      "categoryId",
+      this.state.subCategoryId !== null
+        ? this.state.subCategoryId
+        : this.state.categoryParentId
+    );
+
+    // formData.append("categoryId", this.state.newsData.categoryId);
     formData.append("editorId", this.state.newsData.editorId);
     formData.append("postsCreateTypeId", this.state.newsData.postsCreateTypeId);
     formData.append("postsTypeId", this.state.newsData.postsTypeId);
@@ -963,6 +987,59 @@ class EditNews extends Component {
     }
   };
 
+  handleCategoriesChange = event => {
+    // var id =
+    //   this.state.newsData.categoryId !== null
+    //     ? this.state.newsData.categoryId
+    //     : event.target.value;
+
+    var id =
+      event && event.target && event.target.value
+        ? event.target.value
+        : this.state.newsData.category.parentId !== 0
+        ? this.state.newsData.category.parentId
+        : this.state.newsData.category.id;
+    console.log("id", id);
+
+    // var id = event.target.value;
+
+    console.log("this.state.subCategories", this.state.subCategoriesList);
+    var subCategories = [];
+
+    for (let i = 0; i < this.state.subCategoriesList.length; i++) {
+      if (id === this.state.subCategoriesList[i].parentId) {
+        subCategories.push(this.state.subCategoriesList[i]);
+      }
+    }
+
+    console.log("subCategories", subCategories);
+
+    this.setState(
+      {
+        subCategories,
+        categoryParentId: id,
+        subCategoryId:
+          this.state.newsData.category.parentId !== id
+            ? null
+            : this.state.newsData.category.id
+      },
+      () => console.log("dacategoryParentIdta", this.state.categoryParentId)
+    );
+  };
+
+  handleSubCategoryChange = event => {
+    console.log("event", event.target.value);
+
+    var id = event.target.value;
+
+    this.setState(
+      {
+        subCategoryId: id
+      },
+      () => console.log("subCategoryId", this.state.subCategoryId)
+    );
+  };
+
   /**
    * @description : search in products data
    *
@@ -1193,6 +1270,7 @@ class EditNews extends Component {
           errors={this.state.errors}
           postType={this.state.postType}
           categories={this.state.categories}
+          subCategories={this.state.subCategories}
           khabarnegar={this.state.khabarnegar}
           virastar={this.state.virastar}
           publisher={this.state.publisher}
@@ -1226,6 +1304,10 @@ class EditNews extends Component {
           newTag={this.state.newTag}
           tagList={this.state.tagList}
           onDeleteChip={this.handleDeleteChip}
+          onCategoriesChange={this.handleCategoriesChange}
+          onSubCategoryChange={this.handleSubCategoryChange}
+          subCategoryId={this.state.subCategoryId}
+          categoryParentId={this.state.categoryParentId}
         />
       );
     }

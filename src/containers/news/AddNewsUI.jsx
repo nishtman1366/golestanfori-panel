@@ -106,7 +106,7 @@ class AddNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -155,7 +155,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -173,22 +173,80 @@ class AddNewsUI extends Component {
                       value={this.props.news.categoryId}
                       // error={this.props.errorsProducts.unitType}
                       // formhelpertext={this.props.errorsProducts.unitType}
-                      onChange={e => {
-                        this.props.onChangeSelectFieldData(
-                          "categoryId",
-                          e.target.value
-                        );
-                      }}
+                      onChange={this.props.onCategoriesChange}
                       input={<Input id="type" />}
                     >
-                      {this.renderCategories(this.props.categories)}
+                      {this.props.categories
+                        ? this.props.categories.map(n => {
+                            return (
+                              <MenuItem
+                                value={n.id}
+                                key={n.id}
+                                style={{
+                                  fontFamily: "iransans",
+                                  fontSize: ".9rem",
+                                  right: 0,
+                                  left: "auto"
+                                }}
+                              >
+                                {n.name}
+                              </MenuItem>
+                            );
+                          })
+                        : void 0}
                     </Select>
                   </FormControl>
                   <FormHelperText>
                     {this.props.errors.categoryId}
                   </FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={4}>
+
+                <Grid item xs={6} md={3}>
+                  <FormControl
+                    className={classes.formControl}
+                    style={{ minWidth: 100 }}
+                  >
+                    <InputLabel
+                      htmlFor="type"
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      زیرمجموعه{" "}
+                    </InputLabel>
+                    <Select
+                      value={this.props.subCategoryId}
+                      // error={this.props.errorsProducts.unitType}
+                      // formhelpertext={this.props.errorsProducts.unitType}
+                      onChange={this.props.onSubCategoryChange}
+                      input={<Input id="type" />}
+                    >
+                      {this.props.subCategories
+                        ? this.props.subCategories.map(n => {
+                            return (
+                              <MenuItem
+                                value={n.id}
+                                key={n.id}
+                                style={{
+                                  fontFamily: "iransans",
+                                  fontSize: ".9rem",
+                                  right: 0,
+                                  left: "auto"
+                                }}
+                              >
+                                {n.name}
+                              </MenuItem>
+                            );
+                          })
+                        : void 0}
+                    </Select>
+                  </FormControl>
+                  <FormHelperText>
+                    {this.props.errors.categoryId}
+                  </FormHelperText>
+                </Grid>
+                <Grid item xs={6} md={3}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -396,7 +454,6 @@ class AddNewsUI extends Component {
                   <TextField
                     error={this.props.errors.photographer}
                     helperText={this.props.errors.photographer}
-                    required
                     // id="required"
                     type="text"
                     label="عکاس"
@@ -428,7 +485,6 @@ class AddNewsUI extends Component {
                   <TextField
                     error={this.props.errors.preTitle}
                     helperText={this.props.errors.preTitle}
-                    required
                     // id="required"
                     type="text"
                     label="روتیتر"
@@ -479,7 +535,6 @@ class AddNewsUI extends Component {
                   <TextField
                     error={this.props.errors.postTitle}
                     helperText={this.props.errors.postTitle}
-                    required
                     // id="required"
                     type="text"
                     label="زیر تیتر"
@@ -530,9 +585,8 @@ class AddNewsUI extends Component {
                   <TextField
                     error={this.props.errors.source}
                     helperText={this.props.errors.source}
-                    required
                     // id="required"
-                    type="text"
+                    type="  text"
                     label="منبع"
                     multiline
                     value={this.props.news.source}
@@ -861,7 +915,7 @@ class AddNewsUI extends Component {
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
-                    error={this.props.errors.groups}
+                    error={this.props.errors.groupId}
                   >
                     <InputLabel
                       htmlFor="type"
@@ -901,13 +955,16 @@ class AddNewsUI extends Component {
                           })
                         : void 0}
                     </Select>
-                    <FormHelperText>{this.props.errors.groupId}</FormHelperText>
+                    <FormHelperText style={{ color: "red" }}>
+                      {this.props.errors.groupId}
+                    </FormHelperText>
                   </FormControl>
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
+                    error={this.props.errors.groupPosition}
                   >
                     <InputLabel
                       htmlFor="type"
@@ -936,16 +993,17 @@ class AddNewsUI extends Component {
                       <MenuItem value={4}>4</MenuItem>
                       <MenuItem value={5}>5</MenuItem>
                     </Select>
+                    <FormHelperText style={{ color: "red" }}>
+                      {this.props.errors.groupPosition}
+                    </FormHelperText>
                   </FormControl>
-                  <FormHelperText>
-                    {this.props.errors.groupPosition}
-                  </FormHelperText>
                 </Grid>
 
                 <Grid item xs={6} md={3}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
+                    error={this.props.errors.template}
                   >
                     <InputLabel
                       htmlFor="type"
@@ -991,8 +1049,10 @@ class AddNewsUI extends Component {
                         قالب دو
                       </MenuItem>
                     </Select>
+                    <FormHelperText style={{ color: "red" }}>
+                      {this.props.errors.template}
+                    </FormHelperText>
                   </FormControl>
-                  <FormHelperText>{this.props.errors.template}</FormHelperText>
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <div style={{ marginTop: 24 }}>

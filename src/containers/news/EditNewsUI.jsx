@@ -113,7 +113,7 @@ class EditNewsUI extends Component {
               disabled={
                 this.props.user.permissions["view-comments-list"] === false
               }
-              href={"editNews/" + this.props.newsData.id + "/comments"}
+              href={"/editNews/" + this.props.newsData.id + "/comments"}
               variant="outlined"
               color="primary"
               className={classes.button}
@@ -121,13 +121,18 @@ class EditNewsUI extends Component {
               مشاهده نظرات
             </Button>
           </Grid>
+          {console.log(
+            "categoryParentId->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+            this.props.subCategoryId
+          )}
           <Grid item xs={7}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
-              <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+              <Grid container justify="center" spacing={1}>
+                <Grid item xs={6} md={2}>
                   <FormControl
-                    className={classes.formControl}
+                    style={{ margin: 8 }}
+                    // className={classes.formControl}
                     error={this.props.errors.postsTypeId}
                   >
                     <InputLabel
@@ -177,7 +182,7 @@ class EditNewsUI extends Component {
                 <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
-                    error={this.props.errors.categoryId}
+                    style={{ minWidth: 100 }}
                   >
                     <InputLabel
                       htmlFor="type"
@@ -189,28 +194,86 @@ class EditNewsUI extends Component {
                       دسته بندی
                     </InputLabel>
                     <Select
-                      readOnly={
-                        this.props.user.permissions["edit-news"] === false
-                      }
-                      value={this.props.newsData.categoryId}
-                      onChange={e => {
-                        this.props.onChangeSelectFieldData(
-                          "categoryId",
-                          e.target.value
-                        );
-                      }}
+                      value={this.props.categoryParentId}
+                      // error={this.props.errorsProducts.unitType}
+                      // formhelpertext={this.props.errorsProducts.unitType}
+                      onChange={this.props.onCategoriesChange}
                       input={<Input id="type" />}
                     >
-                      {this.renderCategories(this.props.categories)}
+                      {this.props.categories
+                        ? this.props.categories.map(n => {
+                            return (
+                              <MenuItem
+                                value={n.id}
+                                key={n.id}
+                                style={{
+                                  fontFamily: "iransans",
+                                  fontSize: ".9rem",
+                                  right: 0,
+                                  left: "auto"
+                                }}
+                              >
+                                {n.name}
+                              </MenuItem>
+                            );
+                          })
+                        : void 0}
                     </Select>
-                    <FormHelperText>
-                      {this.props.errors.categoryId}
-                    </FormHelperText>
                   </FormControl>
+                  <FormHelperText>
+                    {this.props.errors.categoryId}
+                  </FormHelperText>
                 </Grid>
+
                 <Grid item xs={6} md={3}>
                   <FormControl
                     className={classes.formControl}
+                    style={{ minWidth: 100 }}
+                  >
+                    <InputLabel
+                      htmlFor="type"
+                      style={{
+                        fontFamily: "iransans",
+                        fontSize: ".9rem"
+                      }}
+                    >
+                      زیرمجموعه{" "}
+                    </InputLabel>
+                    <Select
+                      value={this.props.subCategoryId}
+                      // error={this.props.errorsProducts.unitType}
+                      // formhelpertext={this.props.errorsProducts.unitType}
+                      onChange={this.props.onSubCategoryChange}
+                      input={<Input id="type" />}
+                    >
+                      {this.props.subCategories
+                        ? this.props.subCategories.map(n => {
+                            return (
+                              <MenuItem
+                                value={n.id}
+                                key={n.id}
+                                style={{
+                                  fontFamily: "iransans",
+                                  fontSize: ".9rem",
+                                  right: 0,
+                                  left: "auto"
+                                }}
+                              >
+                                {n.name}
+                              </MenuItem>
+                            );
+                          })
+                        : void 0}
+                    </Select>
+                  </FormControl>
+                  <FormHelperText>
+                    {this.props.errors.categoryId}
+                  </FormHelperText>
+                </Grid>
+                <Grid item xs={6} md={2}>
+                  <FormControl
+                    style={{ margin: 8, minWidth: 60 }}
+                    // className={classes.formControl}
                     error={this.props.errors.postsCreateTypeId}
                   >
                     <InputLabel
@@ -259,11 +322,10 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={2}>
                   <TextField
                     error={this.props.errors.code}
                     helperText={this.props.errors.code}
-                    required
                     disabled
                     // id="required"
                     type="text"
@@ -447,7 +509,6 @@ class EditNewsUI extends Component {
                     }
                     error={this.props.errors.photographer}
                     helperText={this.props.errors.photographer}
-                    required
                     // id="required"
                     type="text"
                     label="عکاس"
@@ -482,7 +543,6 @@ class EditNewsUI extends Component {
                     }
                     error={this.props.errors.preTitle}
                     helperText={this.props.errors.preTitle}
-                    required
                     autoFocus={true}
                     // id="required"
                     type="text"
@@ -536,7 +596,6 @@ class EditNewsUI extends Component {
                   <TextField
                     error={this.props.errors.postTitle}
                     helperText={this.props.errors.postTitle}
-                    required
                     disabled={
                       this.props.user.permissions["edit-news"] === false
                     }
@@ -591,7 +650,6 @@ class EditNewsUI extends Component {
                   <TextField
                     error={this.props.errors.source}
                     helperText={this.props.errors.source}
-                    required
                     disabled={
                       this.props.user.permissions["edit-news"] === false
                     }
@@ -1264,7 +1322,7 @@ class EditNewsUI extends Component {
                     color: "#fff"
                   }}
                 >
-                  {this.props.newsData.status === 1 ? "لغو انتشار" : "انتشار"}
+                  {this.props.newsData.status === 2 ? "لغو انتشار" : "انتشار"}
 
                   <Publish style={{ marginRight: 8 }} />
                 </Button>

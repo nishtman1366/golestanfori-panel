@@ -514,7 +514,7 @@ class NewsUI extends Component {
                         <CustomTableCell
                           style={{ textAlign: "right", padding: 0 }}
                         >
-                          دسته بندی
+                          کد خبر
                         </CustomTableCell>
                         <CustomTableCell
                           style={{ textAlign: "center", padding: 0 }}
@@ -624,11 +624,9 @@ class NewsUI extends Component {
 
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right", padding: 0 }}
+                                style={{ textAlign: "right", paddingRight: 6 }}
                               >
-                                {n.category !== null
-                                  ? n.category.name
-                                  : "نامشخص"}
+                                {n.code}
                               </CustomTableCell>
                               <CustomTableCell
                                 numeric
@@ -711,7 +709,10 @@ class NewsUI extends Component {
                           disabled={this.props.links.prevPageUrl === null}
                           size="small"
                           style={{
-                            background: "#1daced",
+                            background:
+                              this.props.links.prevPageUrl === null
+                                ? "#959595"
+                                : "#1daced",
                             color: "#fff"
                           }}
                           className={classes.margin}
@@ -724,6 +725,12 @@ class NewsUI extends Component {
                       </Grid>
                       <Grid item xs={12} md={2}>
                         <Button
+                          style={{
+                            color:
+                              this.props.links.prevPageUrl === null
+                                ? "#959595"
+                                : "#1daced"
+                          }}
                           disabled={this.props.links.prevPageUrl === null}
                           size="small"
                           className={classes.margin}
@@ -742,6 +749,12 @@ class NewsUI extends Component {
                           onClick={event =>
                             this.props.OnFetch(this.props.links.nextPageUrl)
                           }
+                          style={{
+                            color:
+                              this.props.links.nextPageUrl === null
+                                ? "#959595"
+                                : "#1daced"
+                          }}
                         >
                           صفحه بعد
                         </Button>
@@ -751,7 +764,10 @@ class NewsUI extends Component {
                           disabled={this.props.links.nextPageUrl === null}
                           size="small"
                           style={{
-                            background: "#1daced",
+                            background:
+                              this.props.links.nextPageUrl === null
+                                ? "#959595"
+                                : "#1daced",
                             color: "#fff"
                           }}
                           className={classes.margin}

@@ -505,7 +505,7 @@ class AppLayout extends React.Component {
         this.props.user.permissions &&
         this.props.user.permissions["view-comments-list"] ? (
           <Link
-            to="/comments"
+            href="/comments"
             style={{ textDecoration: "none" }}
             activeClassName="active"
             activeStyle={{ fontWeight: "bold" }}
