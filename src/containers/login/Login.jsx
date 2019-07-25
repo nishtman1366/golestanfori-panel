@@ -263,7 +263,8 @@ class Login extends Component {
           this.setState({
             busy: false,
             isSnackOpen: true,
-            snackbarMessage: res.data.message
+            snackbarMessage:
+              res && res.data ? res.data.message : "خطای ناشناخته"
           });
         }
       },

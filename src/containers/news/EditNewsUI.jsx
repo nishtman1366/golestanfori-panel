@@ -369,9 +369,7 @@ class EditNewsUI extends Component {
                       خبرنگار
                     </InputLabel>
                     <Select
-                      readOnly={
-                        this.props.user.permissions["edit-news"] === false
-                      }
+                      readOnly={this.props.user.groupId === 3}
                       value={this.props.newsData.userId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -466,9 +464,7 @@ class EditNewsUI extends Component {
                       منتشرکننده
                     </InputLabel>
                     <Select
-                      readOnly={
-                        this.props.user.permissions["edit-news"] === false
-                      }
+                      readOnly={this.props.user.groupId !== 1}
                       value={this.props.newsData.publisherId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(

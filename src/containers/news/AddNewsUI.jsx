@@ -320,7 +320,9 @@ class AddNewsUI extends Component {
                     >
                       خبرنگار
                     </InputLabel>
+                    {console.log("userId", this.props.news.userId)}
                     <Select
+                      readOnly={this.props.user.groupId === 3}
                       value={this.props.news.userId}
                       onChange={e => {
                         this.props.onChangeSelectFieldData(
@@ -401,55 +403,68 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid> */}
-                <Grid item xs={6} md={4}>
-                  <FormControl
-                    style={{ minWidth: 100 }}
-                    className={classes.formControl}
-                    error={this.props.errors.publisherId}
-                  >
-                    <InputLabel
-                      htmlFor="type"
-                      style={{
-                        fontFamily: "iransans",
-                        fontSize: ".9rem"
-                      }}
+
+                {this.props.user.groupId !== 3 ? (
+                  <Grid item xs={6} md={4}>
+                    <FormControl
+                      style={{ minWidth: 100 }}
+                      className={classes.formControl}
+                      error={this.props.errors.publisherId}
                     >
-                      منتشرکننده
-                    </InputLabel>
-                    <Select
-                      value={this.props.news.publisherId}
-                      onChange={e => {
-                        this.props.onChangeSelectFieldData(
-                          "publisherId",
-                          e.target.value
-                        );
-                      }}
-                      input={<Input id="name-error" />}
-                    >
-                      {this.props.publisher
-                        ? this.props.publisher.map(n => {
-                            return (
-                              <MenuItem
-                                value={n.id}
-                                key={n.id}
-                                style={{
-                                  fontFamily: "iransans",
-                                  fontSize: ".9rem",
-                                  right: 0,
-                                  left: "auto"
-                                }}
-                              >
-                                {n.name}
-                              </MenuItem>
-                            );
-                          })
-                        : void 0}
-                    </Select>
-                    <FormHelperText>
-                      {this.props.errors.publisherId}
-                    </FormHelperText>
-                  </FormControl>
-                </Grid>
+                      <InputLabel
+                        htmlFor="type"
+                        style={{
+                          fontFamily: "iransans",
+                          fontSize: ".9rem"
+                        }}
+                      >
+                        منتشرکننده
+                      </InputLabel>
+                      {console.log("publisherId", this.props.news.publisherId)}
+                      {console.log(
+                        " this.props.user.groupId",
+                        this.props.user.groupId
+                      )}
+
+                      <Select
+                        readOnly={this.props.user.groupId !== 1}
+                        value={this.props.news.publisherId}
+                        onChange={e => {
+                          this.props.onChangeSelectFieldData(
+                            "publisherId",
+                            e.target.value
+                          );
+                        }}
+                        input={<Input id="name-error" />}
+                      >
+                        {this.props.publisher
+                          ? this.props.publisher.map(n => {
+                              return (
+                                <MenuItem
+                                  value={n.id}
+                                  key={n.id}
+                                  style={{
+                                    fontFamily: "iransans",
+                                    fontSize: ".9rem",
+                                    right: 0,
+                                    left: "auto"
+                                  }}
+                                >
+                                  {n.name}
+                                </MenuItem>
+                              );
+                            })
+                          : void 0}
+                      </Select>
+                      <FormHelperText>
+                        {this.props.errors.publisherId}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid>
+                ) : (
+                  void 0
+                )}
+
                 <Grid item xs={6} md={4}>
                   <TextField
                     error={this.props.errors.photographer}

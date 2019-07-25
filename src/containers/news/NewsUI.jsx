@@ -423,7 +423,7 @@ class NewsUI extends Component {
         color="primary"
         aria-label="Add"
         style={{
-          margin: 0,
+          margin: 2,
           top: "auto",
           bottom: 20,
           left: "auto",
@@ -537,13 +537,19 @@ class NewsUI extends Component {
                         <CustomTableCell
                           style={{ textAlign: "center", padding: 4 }}
                         >
-                          خبرنگار
+                          تعداد بازدید
                         </CustomTableCell>
 
                         <CustomTableCell
                           style={{ textAlign: "center", padding: 4 }}
                         >
                           وضعیت
+                        </CustomTableCell>
+
+                        <CustomTableCell
+                          style={{ textAlign: "center", padding: 4 }}
+                        >
+                          مشاهده خبر
                         </CustomTableCell>
 
                         <CustomTableCell
@@ -653,7 +659,7 @@ class NewsUI extends Component {
                                 numeric
                                 style={{ textAlign: "right", padding: 4 }}
                               >
-                                {n.user !== null ? n.user.name : "نامشخص"}
+                                {n.visitCount}
                               </CustomTableCell>
 
                               <CustomTableCell
@@ -664,6 +670,25 @@ class NewsUI extends Component {
                                 }}
                               >
                                 {n.statusText}
+                              </CustomTableCell>
+
+                              <CustomTableCell
+                                numeric
+                                style={{ textAlign: "center", padding: 0 }}
+                              >
+                                <button
+                                  aria-label="edit"
+                                  style={{
+                                    fontFamily: "iransans",
+                                    fontSize: ".9rem",
+                                    background: "#2196F3",
+                                    color: "#fff",
+                                    border: "none",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  مشاهده
+                                </button>
                               </CustomTableCell>
 
                               <CustomTableCell

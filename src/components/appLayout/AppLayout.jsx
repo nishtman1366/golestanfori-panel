@@ -505,7 +505,7 @@ class AppLayout extends React.Component {
         this.props.user.permissions &&
         this.props.user.permissions["view-comments-list"] ? (
           <Link
-            href="/comments"
+            to="/comments"
             style={{ textDecoration: "none" }}
             activeClassName="active"
             activeStyle={{ fontWeight: "bold" }}
@@ -575,6 +575,31 @@ class AppLayout extends React.Component {
         ) : (
           void 0
         )}
+
+        {/* // {this.props.user &&
+//         this.props.user.permissions &&
+//         this.props.user.permissions["view-users-groups"] ? ( */}
+        <Link
+          to="/poll"
+          style={{ textDecoration: "none" }}
+          activeClassName="active"
+          activeStyle={{ fontWeight: "bold" }}
+        >
+          <MenuItem className={classes.menuItem}>
+            <ListItemIcon className={classes.icon}>
+              <Access />
+            </ListItemIcon>
+            <ListItemText
+              className={classes.ListItemText}
+              classes={{ primary: classes.secondary }}
+              inset
+              primary="نظرسنجی"
+            />
+          </MenuItem>
+        </Link>
+        {/* ) : (
+          void 0
+        )} */}
       </div>
     );
 

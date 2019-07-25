@@ -55,6 +55,16 @@ const GroupPosts = Loadable({
   loading: Loading
 });
 
+const Poll = Loadable({
+  loader: () => import("./containers/poll/Poll"),
+  loading: Loading
+});
+
+const Questions = Loadable({
+  loader: () => import("./containers/poll/Questions"),
+  loading: Loading
+});
+
 const Users = Loadable({
   loader: () => import("./containers/users/Users"),
   loading: Loading
@@ -201,6 +211,8 @@ ReactDOM.render(
           <Route path="groups" component={Groups} />
           <Route path="users" component={Users} />
           <Route path="comments" component={Comments} />
+          <Route path="poll" component={Poll} />
+          <Route path="poll/:id/questions" component={Questions} />
 
           <Route path="editNews/:id/comments" component={Comments} />
 

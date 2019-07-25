@@ -234,10 +234,17 @@ class AddNews extends Component {
         console.log("res");
         if (res && res.status && res.status === 200 && res.data.users) {
           console.log("res", res);
+          var userId = this.props.user.id;
+          var publisherId = this.props.user.id;
 
           this.setState({
             khabarnegar: res.data.users,
-            isLoadingKhabarnegar: false
+            isLoadingKhabarnegar: false,
+            news: {
+              ...this.state.news,
+              userId,
+              publisherId
+            }
           });
         } else {
           this.setState({
@@ -1183,4 +1190,8 @@ class AddNews extends Component {
   }
 }
 
-export default connect()(AddNews);
+export default connect(state => {
+  return {
+    user: state.user
+  };
+})(AddNews);

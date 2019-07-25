@@ -11,14 +11,14 @@
 */
 
 import axios from "axios";
-var API_URL = "http://192.168.1.6:8000/api";
+var API_URL = "http://192.168.1.6:8001/api";
 
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 // var API_URL = "http://localhost/eshop/public/api/v1";
 
 var requestUrl = "https://reqres.in/api/users/1";
-// var API_URL = "https://khanbaji.com/api/v1";
+// var API_URL = "http://golestan-fori.itookis.com/api";
 
 // var INVALID_DATA = {
 //   status: "error",
@@ -625,6 +625,182 @@ var ItookApi = {
     return axios
       .get(API_URL + "/groups")
       .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchPolls() {
+    return axios
+      .get(API_URL + "/polls")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addPoll(poll) {
+    console.log("poll", poll);
+
+    return axios
+      .post(API_URL + "/polls", poll)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  editPoll(id, poll) {
+    console.log("id", id);
+    console.log("poll", poll);
+    return axios
+      .put(API_URL + "/polls/" + id, poll)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple groups.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removePoll(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/polls", params)
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchQuestions(id) {
+    return axios
+      .get(API_URL + "/polls/" + id + "/questions")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addQuestion(id, question) {
+    console.log("question", question);
+
+    return axios
+      .post(API_URL + "/polls/" + id + "/questions", question)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  editQuestion(id, question) {
+    console.log("id", id);
+    console.log("question", question);
+    console.log("questionid", question.id);
+
+    return axios
+      .put(API_URL + "/polls/" + id + "/questions/" + question.id, question)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple groups.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeQuestion(id, ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/polls/" + id + "/questions", params)
+      .then(response => {
+        console.log("Response : " + response);
         return response;
       })
       .catch(error => {

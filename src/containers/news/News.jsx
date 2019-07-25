@@ -136,7 +136,8 @@ class News extends Component {
             data: undefined,
             isLoading: false,
             isSnackOpen: true,
-            snackbarMessage: res.data.message
+            snackbarMessage:
+              res && res.data ? res.data.message : "خطای ناشناخته"
           });
         }
       },
@@ -658,7 +659,7 @@ class News extends Component {
    * @param id (number) : The id of data presented on touched row
    */
   handleClick = (event, id) => {
-    console.log("dasdasd", id);
+    console.log("dasdasd", event.target);
     if (event.target.tagName === "INPUT") {
       const { selected } = this.state;
       const selectedIndex = selected.indexOf(id);
@@ -678,8 +679,23 @@ class News extends Component {
       }
 
       this.setState({ selected: newSelected });
-    } else {
+    } else if (
+      (event.target.tagName === "path" || event.target.tagName === "svg") &&
+      event.target.tagName !== "BUTTON"
+    ) {
       browserHistory.push("editNews/" + id);
+    } else if (event.target.tagName === "BUTTON") {
+      var news = this.state.news;
+
+      for (var i = 0; i < news.length; i++) {
+        if (news[i].id === id) {
+          var url = news[i].url;
+          break;
+        }
+      }
+      if (url !== null) {
+        window.open(url, "_blank");
+      }
     }
   };
 
