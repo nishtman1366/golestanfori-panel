@@ -26,6 +26,11 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
+import Radio from "@material-ui/core/Radio";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
+import { green } from "@material-ui/core/colors";
+
 const styles = theme => ({
   root: {
     overflowX: "auto",
@@ -33,6 +38,10 @@ const styles = theme => ({
   },
 
   formControl: {
+    color: green[400],
+    "&$checked": {
+      color: green[600]
+    },
     // margin: theme.spacing.unit,
     marginTop: 8,
     right: 0,
@@ -102,11 +111,11 @@ class AddNewsUI extends Component {
     return (
       <div>
         <Grid container className={classes.root} justify="center" spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={7}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -155,8 +164,28 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <FormControl
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="search"
+                    label="جستجو در دسته بندی اصلی"
+                    type="search"
+                    error={this.props.errors.categoryId}
+                    helperText={this.props.errors.categoryId}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    onChange={e => {
+                      this.props.search2(e.target.value);
+                    }}
+                    margin="normal"
+                  />
+                  <div style={{ height: 321, overflowY: "auto" }}>
+                    {this.renderCategories2(this.props.filteredCategories2)}
+                  </div>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  {/* <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
                   >
@@ -195,58 +224,38 @@ class AddNewsUI extends Component {
                           })
                         : void 0}
                     </Select>
-                  </FormControl>
-                  <FormHelperText>
-                    {this.props.errors.categoryId}
-                  </FormHelperText>
-                </Grid>
+                  </FormControl> */}
 
-                <Grid item xs={6} md={3}>
-                  <FormControl
-                    className={classes.formControl}
-                    style={{ minWidth: 100 }}
-                  >
-                    <InputLabel
-                      htmlFor="type"
-                      style={{
-                        fontFamily: "iransans",
-                        fontSize: ".9rem"
-                      }}
-                    >
-                      زیرمجموعه{" "}
-                    </InputLabel>
-                    <Select
-                      value={this.props.subCategoryId}
-                      // error={this.props.errorsProducts.unitType}
-                      // formhelpertext={this.props.errorsProducts.unitType}
-                      onChange={this.props.onSubCategoryChange}
-                      input={<Input id="type" />}
-                    >
-                      {this.props.subCategories
-                        ? this.props.subCategories.map(n => {
-                            return (
-                              <MenuItem
-                                value={n.id}
-                                key={n.id}
-                                style={{
-                                  fontFamily: "iransans",
-                                  fontSize: ".9rem",
-                                  right: 0,
-                                  left: "auto"
-                                }}
-                              >
-                                {n.name}
-                              </MenuItem>
-                            );
-                          })
-                        : void 0}
-                    </Select>
-                  </FormControl>
-                  <FormHelperText>
-                    {this.props.errors.categoryId}
-                  </FormHelperText>
+                  <TextField
+                    id="search"
+                    label="جستجو دسته بندی "
+                    type="search"
+                    error={this.props.errors.categoryIds}
+                    helperText={this.props.errors.categoryIds}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    onChange={e => {
+                      this.props.search(e.target.value);
+                    }}
+                    margin="normal"
+                  />
+                  <div style={{ height: 321, overflowY: "auto" }}>
+                    {this.renderCategories(this.props.filteredCategories)}
+                  </div>
                 </Grid>
-                <Grid item xs={6} md={3}>
+              </Grid>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={5}>
+            <p style={{ fontWeight: "bold", color: "#2196F3" }}>
+              اطلاعات افراد
+            </p>
+            <Paper className={classes.root}>
+              <Grid container justify="center" spacing={2}>
+                <Grid item xs={12} md={6}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -295,17 +304,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={6}>
-            <p style={{ fontWeight: "bold", color: "#2196F3" }}>
-              اطلاعات افراد
-            </p>
-            <Paper className={classes.root}>
-              <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={6}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -405,7 +404,7 @@ class AddNewsUI extends Component {
                 </Grid> */}
 
                 {this.props.user.groupId !== 3 ? (
-                  <Grid item xs={6} md={4}>
+                  <Grid item xs={12} md={6}>
                     <FormControl
                       style={{ minWidth: 100 }}
                       className={classes.formControl}
@@ -465,7 +464,7 @@ class AddNewsUI extends Component {
                   void 0
                 )}
 
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     error={this.props.errors.photographer}
                     helperText={this.props.errors.photographer}
@@ -486,7 +485,7 @@ class AddNewsUI extends Component {
                       className: classes.textFieldForm
                     }}
                     margin="normal"
-                    style={{ width: "100%", marginTop: 9 }}
+                    style={{ width: "50%", marginTop: 9 }}
                   />
                 </Grid>
               </Grid>
@@ -496,7 +495,7 @@ class AddNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>جزئیات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.preTitle}
                     helperText={this.props.errors.preTitle}
@@ -522,7 +521,7 @@ class AddNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.title}
                     helperText={this.props.errors.title}
@@ -546,7 +545,7 @@ class AddNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.postTitle}
                     helperText={this.props.errors.postTitle}
@@ -572,7 +571,7 @@ class AddNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={8}>
+                <Grid item xs={12} md={8}>
                   <TextField
                     error={this.props.errors.lead}
                     helperText={this.props.errors.lead}
@@ -596,7 +595,7 @@ class AddNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.source}
                     helperText={this.props.errors.source}
@@ -624,7 +623,7 @@ class AddNewsUI extends Component {
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={3}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>عکس اصلی</p>
             <input
               style={{ display: "none" }}
@@ -703,17 +702,27 @@ class AddNewsUI extends Component {
               {this.props.errors.testImage}
             </FormHelperText>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} md={9}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>متن خبر</p>
             <Editor
               apiKey="YOUR_API_KEY"
               init={{
+                image_caption: true,
+                // menubar: "insert tools",
+                media_live_embeds: true,
+
                 plugins:
-                  "print preview fullpage powerpaste searchreplace autolink directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount tinymcespellchecker a11ychecker imagetools textpattern help formatpainter permanentpen pageembed tinycomments mentions linkchecker",
+                  "fullpage advcode code media print preview  powerpaste searchreplace autolink directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount tinymcespellchecker a11ychecker imagetools textpattern help formatpainter permanentpen pageembed tinycomments mentions linkchecker image",
                 language: "fa_IR",
+                valid_elements: "+*[*]",
+                extended_valid_elements: "+*[*]",
+                custom_elements: "*",
+                invalid_elements: "",
+                verify_html: false,
+                valid_children: "+body[style]",
                 language_url: "/assets/tinymce/langs/fa_IR.js",
                 toolbar:
-                  "formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link image media pageembed | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat | addcomment|ltr rtl",
+                  "media| image |formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link   pageembed | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat | addcomment|ltr rtl",
                 image_advtab: true,
                 content_css: [
                   "//fonts.googleapis.com/css?family=Lato:300,300i,400,400i",
@@ -789,7 +798,9 @@ class AddNewsUI extends Component {
                 tinycomments_mode: "embedded",
                 content_style:
                   ".mce-annotation { background: #fff0b7; } .tc-active-annotation {background: #ffe168; color: black; }",
-                images_upload_url: "http://192.168.1.6:8000/upload"
+                images_upload_url:
+                  "http://golestan-fori.ir/api/upload",
+                automatic_uploads: true
               }}
               initialValue={this.props.news.body}
               // onChange={e => {
@@ -926,7 +937,7 @@ class AddNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -975,7 +986,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl
                     className={classes.formControl}
                     style={{ minWidth: 100 }}
@@ -1014,7 +1025,7 @@ class AddNewsUI extends Component {
                   </FormControl>
                 </Grid>
 
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl
                     style={{ minWidth: 100 }}
                     className={classes.formControl}
@@ -1069,7 +1080,7 @@ class AddNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <div style={{ marginTop: 24 }}>
                     <FormControlLabel
                       style={{
@@ -1111,7 +1122,7 @@ class AddNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>برچسب ها</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={4}>
                   <div style={{ display: "inline-block" }}>
                     <Button
                       disabled={this.props.busy}
@@ -1149,7 +1160,7 @@ class AddNewsUI extends Component {
                     />
                   </div>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={12} md={8}>
                   <Grid container justify="center" spacing={2}>
                     {console.log("tags", this.props.tag)}
                     {this.props.news.tag.length > 0
@@ -1420,7 +1431,12 @@ class AddNewsUI extends Component {
     return galleryGraphics;
   }
 
+  isSelected = id => this.props.selected.indexOf(id) !== -1;
+
   renderCategories(categories) {
+    console.log("data", categories);
+    // console.log("categoryId", categoryId);
+
     var rows = null;
 
     if (
@@ -1431,31 +1447,39 @@ class AddNewsUI extends Component {
       return rows; // null
     }
 
-    rows = this.createCategoryList(categories)
-      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map(n => {
-        return (
-          <MenuItem
-            value={n.id}
-            key={n.id}
+    rows = this.createCategoriesList(categories).map(n => {
+      const isSelected = this.isSelected(n.id);
+
+      return (
+        // <MenuItem
+        //   value={n.id}
+        //   key={n.id}
+        //   style={{
+        //     fontFamily: "iransans",
+        //     fontSize: ".9rem"
+        //   }}
+        // >
+        <div onClick={() => this.props.onCategoriesChange(n.id)}>
+          <Checkbox
+            checked={isSelected}
             style={{
-              fontFamily: "iransans",
-              fontSize: ".9rem"
+              color: "#1daced",
+              display: "inline-block"
             }}
-          >
-            {n.name}
-          </MenuItem>
-        );
-      });
+          />
+
+          <p style={{ display: "inline-block" }}> {n.name}</p>
+        </div>
+        // </MenuItem>  </MenuItem>
+      );
+    });
 
     return rows;
   }
-  /**
-   * @description : halghe mizane bar rooye category ha va misazeshoon va harkodam ke zir majmooe dasht zir majmooeye anha ham sakhte mishe
-   *
-   * @author Ali Aryani
-   */
-  createCategoryList(categories) {
+
+  createCategoriesList(categories) {
+    console.log("categories", categories);
+
     var categoriesBundle = [];
 
     if (categories === undefined || categories === null) {
@@ -1463,33 +1487,143 @@ class AddNewsUI extends Component {
     }
 
     categories.map(category => {
+      // console.log("category.id", category.id, "categoryId", categoryId);
+
+      // if (category.id !== categoryId) {
       categoriesBundle.push({
         id: category.id,
-        productCount: category.productCount,
 
-        name: this.createCategoryNameByLevel(category.name, category.level),
-        postsCount: this.createCategoryNameByLevel(category.postsCount)
+        name: this.createCategoryNameByLevel(category.name, category.level)
       });
       if (category.subCategories != null && category.subCategories.length > 0) {
         categoriesBundle = [
           ...categoriesBundle,
-          ...this.createCategoryList(category.subCategories)
+          ...this.createCategoriesList(category.subCategories)
         ];
       }
+      // }
+
       return void 0;
     });
-
+    console.log("data", categoriesBundle);
     return categoriesBundle;
   }
 
-  /**
-   * @description : bad az sakhte shodan category ha ba in tabe anha ra ba khate tire joda karde
-   *
-   * @author Ali Aryani
-   */
   createCategoryNameByLevel(name, level) {
     if (level === 1) {
-      return name;
+      return (
+        <p
+          style={{
+            display: "inline-block",
+            color: "#2196f3",
+            marginTop: 0,
+            marginBottom: 0
+          }}
+        >
+          {" "}
+          {name}
+        </p>
+      );
+    }
+    var newName = "";
+    for (var i = 0; i < level - 1; i++) {
+      newName += "  |  ";
+    }
+    return newName + " ---- " + name;
+  }
+
+  renderCategories2(categories) {
+    console.log("data", categories);
+    // console.log("categoryId", categoryId);
+
+    var rows = null;
+
+    if (
+      categories === undefined ||
+      categories === null ||
+      categories.length === 0
+    ) {
+      return rows; // null
+    }
+
+    rows = this.createCategoriesList2(categories).map(n => {
+      return (
+        // <MenuItem
+        //   value={n.id}
+        //   key={n.id}
+        //   style={{
+        //     fontFamily: "iransans",
+        //     fontSize: ".9rem"
+        //   }}
+        // >
+        <div onClick={() => this.props.onCategoryChange(n.id)}>
+          <Radio
+            checked={this.props.news.categoryId === n.id}
+            onChange={() => this.props.onCategoryChange(n.id)}
+            value="a"
+            name="radio-button-demo"
+            style={{ display: "inline-block", cursor: "pointer" }}
+            inputProps={{ "aria-label": "A" }}
+          />
+          <p style={{ display: "inline-block", cursor: "pointer" }}>
+            {" "}
+            {n.name}
+          </p>
+        </div>
+        // </MenuItem>  </MenuItem>
+      );
+    });
+
+    return rows;
+  }
+
+  createCategoriesList2(categories) {
+    console.log("categories", categories);
+
+    var categoriesBundle = [];
+
+    if (categories === undefined || categories === null) {
+      return categoriesBundle;
+    }
+
+    categories.map(category => {
+      // console.log("category.id", category.id, "categoryId", categoryId);
+
+      // if (category.id !== categoryId) {
+      categoriesBundle.push({
+        id: category.id,
+
+        name: this.createCategoryNameByLevel2(category.name, category.level)
+      });
+      if (category.subCategories != null && category.subCategories.length > 0) {
+        categoriesBundle = [
+          ...categoriesBundle,
+          ...this.createCategoriesList2(category.subCategories)
+        ];
+      }
+      // }
+
+      return void 0;
+    });
+    console.log("data", categoriesBundle);
+    return categoriesBundle;
+  }
+
+  createCategoryNameByLevel2(name, level) {
+    if (level === 1) {
+      return (
+        <p
+          style={{
+            display: "inline-block",
+            color: "#2196f3",
+            marginTop: 0,
+            marginBottom: 0
+          }}
+        >
+          {" "}
+          {name}
+        </p>
+      );
     }
     var newName = "";
     for (var i = 0; i < level - 1; i++) {

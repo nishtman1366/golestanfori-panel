@@ -155,7 +155,7 @@ const styles = theme => ({
     width: "400px"
   }
 });
-class QuestionsUI extends Component {
+class AnswersUI extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -184,7 +184,7 @@ class QuestionsUI extends Component {
           ? this.renderFabButton()
           : void 0}
         {this.renderAddDialog()}
-        {this.props.openedQuestion !== undefined ? (
+        {this.props.openedAnswers !== undefined ? (
           <div>{this.renderEditDialog()}</div>
         ) : null}
         {this.renderDeleteDialog()}
@@ -198,82 +198,28 @@ class QuestionsUI extends Component {
 
     return (
       <div>
-        <form onSubmit={this.props.OnAddQuestion}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
+        <form onSubmit={this.props.OnAddAnswers}>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={12} md={12}>
               <TextField
-                error={this.props.errors.question}
-                helperText={this.props.errors.question}
+                error={this.props.errors.answer}
+                helperText={this.props.errors.answer}
                 required
                 id="required"
-                label="سوال"
-                defaultValue={this.props.question.question}
+                label="جواب"
+                defaultValue={this.props.answers}
                 onChange={e => {
-                  this.props.onQuestionChange(e.target.value);
+                  this.props.onAnswersChange(e.target.value);
                 }}
                 InputLabelProps={{
                   className: classes.textFieldFormLabel
                 }}
-                style={{ marginTop: 10 }}
                 fullWidth
                 InputProps={{
                   className: classes.textFieldForm
                 }}
                 margin="normal"
               />
-            </Grid>
-            {console.log("type", this.props.question.type)}
-            <Grid item xs={12} md={3}>
-              <FormControl
-                style={{ minWidth: 100 }}
-                className={classes.formControl}
-                error={this.props.errors.type}
-              >
-                <InputLabel
-                  htmlFor="type"
-                  style={{
-                    fontFamily: "iransans",
-                    fontSize: ".9rem"
-                  }}
-                >
-                  نوع سوال
-                </InputLabel>
-                <Select
-                  value={this.props.question.type}
-                  // error={this.props.errorsProducts.unitType}
-                  // formhelpertext={this.props.errorsProducts.unitType}
-                  onChange={e => {
-                    this.props.onChangeSelectFieldType(e.target.value);
-                  }}
-                  input={<Input id="type" />}
-                >
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"TEXT"}
-                  >
-                    تشریحی
-                  </MenuItem>
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"SELECT"}
-                  >
-                    چند گزینه ای
-                  </MenuItem>
-                </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {this.props.errors.type}
-                </FormHelperText>
-              </FormControl>
             </Grid>
           </Grid>
 
@@ -288,82 +234,28 @@ class QuestionsUI extends Component {
 
     return (
       <div>
-        <form onSubmit={this.props.OnEditQuestion}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+        <form onSubmit={this.props.OnEditAnswers}>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={12} md={12}>
               <TextField
-                error={this.props.errors.question}
-                helperText={this.props.errors.question}
+                error={this.props.errors.answer}
+                helperText={this.props.errors.answer}
                 required
                 id="required"
-                label="سوال"
-                defaultValue={this.props.openedQuestion.question}
+                label="جواب"
+                defaultValue={this.props.openedAnswers.answer}
                 onChange={e => {
-                  this.props.onEditQuestionChange(e.target.value);
+                  this.props.onEditAnswersChange(e.target.value);
                 }}
                 InputLabelProps={{
                   className: classes.textFieldFormLabel
                 }}
-                style={{ marginTop: 10 }}
                 fullWidth
                 InputProps={{
                   className: classes.textFieldForm
                 }}
                 margin="normal"
               />
-            </Grid>
-
-            <Grid item xs={12} md={3}>
-              <FormControl
-                style={{ minWidth: 100 }}
-                className={classes.formControl}
-                error={this.props.errors.type}
-              >
-                <InputLabel
-                  htmlFor="type"
-                  style={{
-                    fontFamily: "iransans",
-                    fontSize: ".9rem"
-                  }}
-                >
-                  نوع سوال
-                </InputLabel>
-                <Select
-                  value={this.props.openedQuestion.type}
-                  // error={this.props.errorsProducts.unitType}
-                  // formhelpertext={this.props.errorsProducts.unitType}
-                  onChange={e => {
-                    this.props.onEditChangeSelectFieldType(e.target.value);
-                  }}
-                  input={<Input id="type" />}
-                >
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"TEXT"}
-                  >
-                    تشریحی
-                  </MenuItem>
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"SELECT"}
-                  >
-                    چند گزینه ای
-                  </MenuItem>
-                </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {this.props.errors.type}
-                </FormHelperText>
-              </FormControl>
             </Grid>
           </Grid>
 
@@ -430,7 +322,7 @@ class QuestionsUI extends Component {
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnAddQuestion}
+              onClick={this.props.OnAddAnswers}
               style={{
                 color: "#fff",
 
@@ -487,7 +379,7 @@ class QuestionsUI extends Component {
               <CircularProgress size={30} />
             ) : (
               <Button
-                onClick={this.props.OnEditQuestion}
+                onClick={this.props.OnEditAnswers}
                 style={{
                   color: "#fff",
 
@@ -545,7 +437,7 @@ class QuestionsUI extends Component {
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnDeleteQuestion}
+              onClick={this.props.OnDeleteAnswers}
               style={{
                 color: "#fff",
 
@@ -635,17 +527,15 @@ class QuestionsUI extends Component {
                             }}
                           />
                         </CustomTableCell>
-                        <CustomTableCell
-                          style={{ textAlign: "right", padding: 0 }}
-                        >
+                        <CustomTableCell style={{ textAlign: "right" }}>
                           ردیف
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          سوال
+                          جواب
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
+                        {/* <CustomTableCell style={{ textAlign: "right" }}>
                           نوع سوال
-                        </CustomTableCell>
+                        </CustomTableCell> */}
 
                         <CustomTableCell style={{ textAlign: "right" }}>
                           {this.props.user.permissions["edit-groups"] === true
@@ -697,7 +587,7 @@ class QuestionsUI extends Component {
                               <CustomTableCell
                                 component="th"
                                 scope="row"
-                                style={{ textAlign: "right", padding: 0 }}
+                                style={{ textAlign: "right" }}
                               >
                                 {n.row}
                               </CustomTableCell>
@@ -706,14 +596,14 @@ class QuestionsUI extends Component {
                                 numeric
                                 style={{ textAlign: "right", padding: "0" }}
                               >
-                                {n.question}
+                                {n.answer}
                               </CustomTableCell>
-                              <CustomTableCell
+                              {/* <CustomTableCell
                                 numeric
                                 style={{ textAlign: "right" }}
                               >
                                 {n.type === "SELECT" ? "انتخابی" : "تشریحی"}
-                              </CustomTableCell>
+                              </CustomTableCell> */}
 
                               <CustomTableCell
                                 numeric
@@ -776,7 +666,7 @@ class QuestionsUI extends Component {
           <p
             style={{ fontSize: ".8rem", color: "#999999", textAlign: "center" }}
           >
-            لیست سوالات خالی است
+            لیست جواب ها خالی است
           </p>
         </div>
       );
@@ -790,5 +680,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(QuestionsUI)
+  })(AnswersUI)
 );

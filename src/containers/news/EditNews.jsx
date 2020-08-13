@@ -66,10 +66,14 @@ class EditNews extends Component {
       deleteImages: [],
 
       deleteVideos: [],
+      selected: [],
 
       newsImage: null,
+      filteredCategories: undefined,
+      filteredCategories2: undefined,
       errors: {
         categoryId: "", //dastebandi
+        categoryIds: "",
         // editorId: "", //virastar
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
@@ -79,7 +83,7 @@ class EditNews extends Component {
         title: "", //titr khabr
         preTitle: "", //roo titir
         postTitle: "", //zire titr
-        defaultImage: null,
+        defaultImage: "",
         body: "",
         images: "",
         graphics: "",
@@ -132,6 +136,7 @@ class EditNews extends Component {
           }
           this.setState({
             newsData: res.data,
+            selected: res.data.categoryIds,
             tagList: {
               ...this.state.tagList,
               tagList
@@ -225,19 +230,15 @@ class EditNews extends Component {
         // this.setState({ isLoading: false });
         console.log("res");
         if (res && res.status && res.status === 200 && res.data) {
-          this.setState(
-            {
-              categories: res.data.categories,
-              subCategoriesList: res.data.subCategories,
+          console.log("res", res);
 
-              isLoadingCategories: false
-            },
-            () =>
-              this.state.newsData.categoryId &&
-              this.state.newsData.categoryId !== null
-                ? this.handleCategoriesChange()
-                : void 0
-          );
+          this.setState({
+            categories: res.data,
+            filteredCategories: res.data,
+            filteredCategories2: res.data,
+
+            isLoadingCategories: false
+          });
         } else {
           this.setState({ categories: undefined, isLoadingCategories: false });
         }
@@ -385,12 +386,18 @@ class EditNews extends Component {
     let formData = new FormData();
     console.log("videos", this.state.deleteVideos);
 
-    formData.append(
-      "categoryId",
-      this.state.subCategoryId !== null
-        ? this.state.subCategoryId
-        : this.state.categoryParentId
-    );
+    formData.append("categoryId", this.state.newsData.categoryId);
+
+    for (var k in this.state.newsData.categoryIds) {
+      if (this.state.newsData.categoryIds.hasOwnProperty(k)) {
+        if (this.state.newsData.categoryIds[k] !== "") {
+          formData.append(
+            "categoryIds[" + k + "]",
+            this.state.newsData.categoryIds[k]
+          );
+        }
+      }
+    }
 
     // formData.append("categoryId", this.state.newsData.categoryId);
     formData.append("editorId", this.state.newsData.editorId);
@@ -514,6 +521,86 @@ class EditNews extends Component {
 
     return formData;
   };
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  handleTextFildeSearch = event => {
+    var filteredData = [];
+
+    if (event === "") {
+      filteredData = this.state.categories;
+    } else if (this.state.categories) {
+      filteredData = this.createSearchData(this.state.categories, event);
+    }
+
+    // console.log("filteredData", filteredData);
+
+    this.setState(
+      {
+        filteredCategories: filteredData
+      }
+      // () => console.log("search", this.state.filteredData)
+    );
+  };
+
+  createSearchData(categories, query, result = []) {
+    for (var key in categories) {
+      if (categories[key].name.indexOf(query) >= 0) {
+        // Save
+        result.push(categories[key]);
+      }
+      if (categories[key].subCategories != null)
+        this.createSearchData(categories[key].subCategories, query, result);
+    }
+    return result;
+  }
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  handleTextFildeSearch2 = event => {
+    var filteredData = [];
+
+    if (event === "") {
+      filteredData = this.state.categories;
+    } else if (this.state.categories) {
+      filteredData = this.createSearchData2(this.state.categories, event);
+    }
+
+    // console.log("filteredData", filteredData);
+
+    this.setState(
+      {
+        filteredCategories2: filteredData
+      }
+      // () => console.log("search", this.state.filteredData)
+    );
+  };
+
+  createSearchData2(categories, query, result = []) {
+    for (var key in categories) {
+      if (categories[key].name.indexOf(query) >= 0) {
+        // Save
+        result.push(categories[key]);
+      }
+      if (categories[key].subCategories != null)
+        this.createSearchData2(categories[key].subCategories, query, result);
+    }
+    return result;
+  }
 
   /**
    * @description : Callback for touching add button
@@ -986,57 +1073,57 @@ class EditNews extends Component {
       );
     }
   };
-
-  handleCategoriesChange = event => {
-    // var id =
-    //   this.state.newsData.categoryId !== null
-    //     ? this.state.newsData.categoryId
-    //     : event.target.value;
-
-    var id =
-      event && event.target && event.target.value
-        ? event.target.value
-        : this.state.newsData.category.parentId !== 0
-        ? this.state.newsData.category.parentId
-        : this.state.newsData.category.id;
+  handleCategoriesChange = id => {
     console.log("id", id);
 
-    // var id = event.target.value;
+    // const categories = this.state.categories;
+    // const selected = [];
 
-    console.log("this.state.subCategories", this.state.subCategoriesList);
-    var subCategories = [];
+    // for (let i = 0; i < categories.length; i++) {
+    //   if (categories[i].id === event.target.value) {
+    //     selected.push(categories[i].id);
+    //   }
+    // }
 
-    for (let i = 0; i < this.state.subCategoriesList.length; i++) {
-      if (id === this.state.subCategoriesList[i].parentId) {
-        subCategories.push(this.state.subCategoriesList[i]);
-      }
+    const { selected } = this.state;
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
     }
-
-    console.log("subCategories", subCategories);
 
     this.setState(
       {
-        subCategories,
-        categoryParentId: id,
-        subCategoryId:
-          this.state.newsData.category.parentId !== id
-            ? null
-            : this.state.newsData.category.id
+        selected: newSelected,
+        newsData: { ...this.state.newsData, categoryIds: newSelected }
+        // content: {
+        //   ...this.state.content,
+        //   categoryId: event.target.value
+        // }
+        // errors: { ...this.state.errors, type: "" }
       },
-      () => console.log("dacategoryParentIdta", this.state.categoryParentId)
+      () => {
+        console.log("this.state.content", this.state.newsData);
+      }
     );
   };
 
-  handleSubCategoryChange = event => {
-    console.log("event", event.target.value);
-
-    var id = event.target.value;
-
+  handleCategoryChange = id => {
     this.setState(
       {
-        subCategoryId: id
+        newsData: { ...this.state.newsData, categoryId: id }
       },
-      () => console.log("subCategoryId", this.state.subCategoryId)
+      () => console.log("subCategoryId", this.state.newsData)
     );
   };
 
@@ -1270,6 +1357,8 @@ class EditNews extends Component {
           errors={this.state.errors}
           postType={this.state.postType}
           categories={this.state.categories}
+          filteredCategories={this.state.filteredCategories}
+          filteredCategories2={this.state.filteredCategories2}
           subCategories={this.state.subCategories}
           khabarnegar={this.state.khabarnegar}
           virastar={this.state.virastar}
@@ -1305,9 +1394,12 @@ class EditNews extends Component {
           tagList={this.state.tagList}
           onDeleteChip={this.handleDeleteChip}
           onCategoriesChange={this.handleCategoriesChange}
-          onSubCategoryChange={this.handleSubCategoryChange}
+          onCategoryChange={this.handleCategoryChange}
           subCategoryId={this.state.subCategoryId}
           categoryParentId={this.state.categoryParentId}
+          selected={this.state.selected}
+          search={this.handleTextFildeSearch}
+          search2={this.handleTextFildeSearch2}
         />
       );
     }

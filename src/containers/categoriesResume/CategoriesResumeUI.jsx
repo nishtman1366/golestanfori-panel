@@ -169,7 +169,7 @@ const styles = theme => ({
   }
 });
 
-class CategoriesUI extends Component {
+class CategoriesResumeUI extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -859,7 +859,7 @@ class CategoriesUI extends Component {
             </CustomTableCell>
 
             <CustomTableCell style={{ textAlign: "right" }}>
-              {n.postsCount}
+              {n.contentsCount}
             </CustomTableCell>
             <CustomTableCell numeric style={{ textAlign: "right" }}>
               <Fab
@@ -902,7 +902,7 @@ class CategoriesUI extends Component {
         productCount: category.productCount,
 
         name: this.createCategoryNameByLevel(category.name, category.level),
-        postsCount: this.createCategoryNameByLevel(category.postsCount)
+        contentsCount: this.createCategoryNameByLevel(category.contentsCount)
       });
       if (category.subCategories != null && category.subCategories.length > 0) {
         categoriesBundle = [
@@ -1042,5 +1042,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(CategoriesUI)
+  })(CategoriesResumeUI)
 );

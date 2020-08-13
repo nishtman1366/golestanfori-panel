@@ -41,14 +41,14 @@ import {
   Access,
   User,
   Categpry,
-  Reports,
+  Resume,
   Advertise,
   // ManagementUsers,
   DriversManagement,
   Help,
   MenuUp,
   MenuDown,
-  Finance,
+  Content,
   // Profile,
   Messages,
   SendMessage,
@@ -71,7 +71,7 @@ import {
   Discount,
   News,
   DiscountManage,
-  PopUp
+  Poll
   // ArrowLeft
 } from "components/Icons";
 
@@ -587,7 +587,7 @@ class AppLayout extends React.Component {
         >
           <MenuItem className={classes.menuItem}>
             <ListItemIcon className={classes.icon}>
-              <Access />
+              <Poll />
             </ListItemIcon>
             <ListItemText
               className={classes.ListItemText}
@@ -597,6 +597,127 @@ class AppLayout extends React.Component {
             />
           </MenuItem>
         </Link>
+
+        <div>
+          <ListItem
+            button
+            onClick={this.handleSettingClick}
+            className={classes.menuItem}
+            style={{ paddingRight: "16px" }}
+          >
+            <ListItemIcon className={classes.icon}>
+              <Content />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary="محتوا"
+              className={classes.ListItemText}
+              classes={{ primary: classes.secondary }}
+            />
+            {this.state.openSetting ? <MenuUp /> : <MenuDown />}
+          </ListItem>
+          <Collapse in={this.state.openSetting} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link
+                to="/content"
+                style={{ textDecoration: "none" }}
+                activeClassName="active"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                <MenuItem className={classes.menuItem}>
+                  <ListItemIcon className={classes.icon}>
+                    <Categpry />
+                  </ListItemIcon>
+                  <ListItemText
+                    className={classes.ListItemText}
+                    classes={{ primary: classes.secondary }}
+                    inset
+                    primary="دسته بندی ها"
+                  />
+                </MenuItem>
+              </Link>
+              <Link
+                to="/contents"
+                style={{ textDecoration: "none" }}
+                activeClassName="active"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                <MenuItem className={classes.menuItem}>
+                  <ListItemIcon className={classes.icon}>
+                    <Content />
+                  </ListItemIcon>
+                  <ListItemText
+                    className={classes.ListItemText}
+                    classes={{ primary: classes.secondary }}
+                    inset
+                    primary="مطالب"
+                  />
+                </MenuItem>
+              </Link>
+            </List>
+          </Collapse>
+        </div>
+
+        <div>
+          <ListItem
+            button
+            onClick={this.handleDiscountClick}
+            className={classes.menuItem}
+            style={{ paddingRight: "16px" }}
+          >
+            <ListItemIcon className={classes.icon}>
+              <Resume />
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary="رزومه ها"
+              className={classes.ListItemText}
+              classes={{ primary: classes.secondary }}
+            />
+            {this.state.openDiscount ? <MenuUp /> : <MenuDown />}
+          </ListItem>
+          <Collapse in={this.state.openDiscount} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link
+                to="/categoriesResume"
+                style={{ textDecoration: "none" }}
+                activeClassName="active"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                <MenuItem className={classes.menuItem}>
+                  <ListItemIcon className={classes.icon}>
+                    <Categpry />
+                  </ListItemIcon>
+                  <ListItemText
+                    className={classes.ListItemText}
+                    classes={{ primary: classes.secondary }}
+                    inset
+                    primary="دسته بندی ها"
+                  />
+                </MenuItem>
+              </Link>
+              <Link
+                to="/resumes"
+                style={{ textDecoration: "none" }}
+                activeClassName="active"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                <MenuItem className={classes.menuItem}>
+                  <ListItemIcon className={classes.icon}>
+                    <Resume />
+                  </ListItemIcon>
+                  <ListItemText
+                    className={classes.ListItemText}
+                    classes={{ primary: classes.secondary }}
+                    inset
+                    primary="رزومه"
+                  />
+                </MenuItem>
+              </Link>
+            </List>
+          </Collapse>
+        </div>
+
         {/* ) : (
           void 0
         )} */}

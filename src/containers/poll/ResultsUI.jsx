@@ -155,7 +155,7 @@ const styles = theme => ({
     width: "400px"
   }
 });
-class QuestionsUI extends Component {
+class ResultsUI extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -180,13 +180,13 @@ class QuestionsUI extends Component {
     return (
       <div>
         {this.renderUI()}
-        {this.props.user.permissions["write-groups"] === true
+        {/* {this.props.user.permissions["write-groups"] === true
           ? this.renderFabButton()
-          : void 0}
-        {this.renderAddDialog()}
-        {this.props.openedQuestion !== undefined ? (
+          : void 0} */}
+        {/* {this.renderAddDialog()} */}
+        {/* {this.props.openedQuestion !== undefined ? (
           <div>{this.renderEditDialog()}</div>
-        ) : null}
+        ) : null} */}
         {this.renderDeleteDialog()}
       </div>
     );
@@ -199,8 +199,8 @@ class QuestionsUI extends Component {
     return (
       <div>
         <form onSubmit={this.props.OnAddQuestion}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={6} md={6}>
               <TextField
                 error={this.props.errors.question}
                 helperText={this.props.errors.question}
@@ -214,7 +214,6 @@ class QuestionsUI extends Component {
                 InputLabelProps={{
                   className: classes.textFieldFormLabel
                 }}
-                style={{ marginTop: 10 }}
                 fullWidth
                 InputProps={{
                   className: classes.textFieldForm
@@ -223,7 +222,7 @@ class QuestionsUI extends Component {
               />
             </Grid>
             {console.log("type", this.props.question.type)}
-            <Grid item xs={12} md={3}>
+            <Grid item xs={6} md={3}>
               <FormControl
                 style={{ minWidth: 100 }}
                 className={classes.formControl}
@@ -289,8 +288,8 @@ class QuestionsUI extends Component {
     return (
       <div>
         <form onSubmit={this.props.OnEditQuestion}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={8} alignItems="flex-end">
+            <Grid item xs={6} md={6}>
               <TextField
                 error={this.props.errors.question}
                 helperText={this.props.errors.question}
@@ -304,7 +303,6 @@ class QuestionsUI extends Component {
                 InputLabelProps={{
                   className: classes.textFieldFormLabel
                 }}
-                style={{ marginTop: 10 }}
                 fullWidth
                 InputProps={{
                   className: classes.textFieldForm
@@ -313,7 +311,7 @@ class QuestionsUI extends Component {
               />
             </Grid>
 
-            <Grid item xs={12} md={3}>
+            <Grid item xs={6} md={3}>
               <FormControl
                 style={{ minWidth: 100 }}
                 className={classes.formControl}
@@ -641,17 +639,17 @@ class QuestionsUI extends Component {
                           ردیف
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          سوال
+                          شناسه کاربر
                         </CustomTableCell>
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          نوع سوال
+                          موبایل
                         </CustomTableCell>
 
-                        <CustomTableCell style={{ textAlign: "right" }}>
+                        {/* <CustomTableCell style={{ textAlign: "right" }}>
                           {this.props.user.permissions["edit-groups"] === true
                             ? "ویرایش"
                             : ""}
-                        </CustomTableCell>
+                        </CustomTableCell> */}
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -682,6 +680,7 @@ class QuestionsUI extends Component {
                                 }}
                               >
                                 <Checkbox
+                                  disabled
                                   checked={isSelected}
                                   style={{
                                     color: "#1daced",
@@ -706,16 +705,16 @@ class QuestionsUI extends Component {
                                 numeric
                                 style={{ textAlign: "right", padding: "0" }}
                               >
-                                {n.question}
+                                {n.uuid} {n.name ? "(" + n.name + ")" : void 0}
                               </CustomTableCell>
                               <CustomTableCell
                                 numeric
                                 style={{ textAlign: "right" }}
                               >
-                                {n.type === "SELECT" ? "انتخابی" : "تشریحی"}
+                                {n.mobile}
                               </CustomTableCell>
 
-                              <CustomTableCell
+                              {/* <CustomTableCell
                                 numeric
                                 style={{ textAlign: "right" }}
                               >
@@ -732,7 +731,7 @@ class QuestionsUI extends Component {
                                 >
                                   <Edit />
                                 </IconButton>
-                              </CustomTableCell>
+                              </CustomTableCell> */}
                             </TableRow>
                           );
                         })}
@@ -776,7 +775,7 @@ class QuestionsUI extends Component {
           <p
             style={{ fontSize: ".8rem", color: "#999999", textAlign: "center" }}
           >
-            لیست سوالات خالی است
+            لیست کاربران خالی است
           </p>
         </div>
       );
@@ -790,5 +789,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(QuestionsUI)
+  })(ResultsUI)
 );

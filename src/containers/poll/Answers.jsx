@@ -1,5 +1,5 @@
 /**
- * @description : Poll Component is main component for rendering PollUI related.
+ * @description : AnswersUI Component is main component for rendering AnswersUI related.
  *
  * @method load
  * @method handleOpen
@@ -31,9 +31,9 @@ import { OPERATION_FAILED } from "components/StatesIcons";
 import Grid from "@material-ui/core/Grid";
 import { browserHistory } from "react-router";
 
-import PollUI from "./PollUI";
+import AnswersUI from "./AnswersUI";
 
-class Poll extends Component {
+class Answers extends Component {
   constructor(props) {
     super(props);
 
@@ -51,16 +51,12 @@ class Poll extends Component {
       selected: [],
       busy: false,
 
-      poll: {
-        title: "",
-        status: 0
-      },
+      answers: "",
 
       errors: {
-        title: "",
-        status: ""
+        answers: ""
       },
-      openedPoll: undefined
+      openedAnswers: undefined
     };
     this.state = this.DEFAULT_STATE;
   }
@@ -69,14 +65,17 @@ class Poll extends Component {
   }
 
   /**
-   * @description : load poll from the server
+   * @description : load Questions from the server
    *
    * @author Ali Aryani
    */
   load = () => {
     this.setState(this.DEFAULT_STATE);
 
-    ItookApi.fetchPolls().then(
+    ItookApi.fetchAnswers(
+      this.props.routeParams.pollId,
+      this.props.routeParams.id
+    ).then(
       res => {
         this.setState({ isLoading: false });
 
@@ -84,12 +83,12 @@ class Poll extends Component {
 
         if (res && res.status && res.status === 200 && res.data) {
           var rowNumber = 1;
-          var poll = res.data;
-          for (var i = 0; i < poll.length; i++) poll[i].row = rowNumber++;
+          var answers = res.data;
+          for (var i = 0; i < answers.length; i++) answers[i].row = rowNumber++;
 
           this.setState({
-            data: poll,
-            // filteredData: this.filterData(res.data.poll, "CUSTOMER"),
+            data: answers,
+            // filteredData: this.filterData(res.data.Questions, "CUSTOMER"),
             isLoading: false
           });
         } else {
@@ -141,13 +140,10 @@ class Poll extends Component {
     this.setState({
       openModal: false,
       errors: {
-        title: "",
-        status: ""
+        answers: ""
       },
-      poll: {
-        title: "",
-        status: 0
-      }
+
+      answers: ""
     });
   };
 
@@ -155,8 +151,7 @@ class Poll extends Component {
     this.setState({
       OpenEditModal: false,
       errors: {
-        title: "",
-        status: ""
+        answers: ""
       }
     });
   };
@@ -166,21 +161,18 @@ class Poll extends Component {
    *
    * @author Ali Aryani
    *
-   * @param key (string)  : A string representing poll's property e.g : title, ...
+   * @param key (string)  : A string representing Questions's property e.g : title, ...
    * @param data (string) : New value of form's text field for specified property
    *
    */
-  handleTitleChange = title => {
+  handleAnswersChange = answers => {
     this.setState(
       {
-        errors: { ...this.state.errors, title: "" },
+        errors: { ...this.state.errors, answers: "" },
 
-        poll: {
-          ...this.state.poll,
-          title
-        }
+        answers
       },
-      () => console.log("poll", this.state.poll)
+      () => console.log("answers", this.state.answers)
     );
   };
 
@@ -189,65 +181,20 @@ class Poll extends Component {
    *
    * @author Ali Aryani
    *
-   * @param key (string)  : A string representing poll's property e.g : title, ...
+   * @param key (string)  : A string representing Questions's property e.g : title, ...
    * @param data (string) : New value of form's text field for specified property
    *
    */
-  handleEditTitleChange = title => {
-    console.log("title", title);
+  handleEditAnswersChange = answer => {
+    console.log("answers", answer);
     this.setState(
       {
         // errors: { ...this.state.errors },
-        errors: { ...this.state.errors, title: "" },
+        errors: { ...this.state.errors, question: "" },
 
-        openedPoll: { ...this.state.openedPoll, title }
+        openedAnswers: { ...this.state.openedAnswers, answer }
       },
-      () => console.log("openedPoll", this.state.openedPoll)
-    );
-  };
-
-  /**
-   * @description : Callback for form text fields data change
-   *
-   * @author Ali Aryani
-   *
-   * @param key (string)  : A string representing poll's property e.g : title, ...
-   * @param data (string) : New value of form's text field for specified property
-   *
-   */
-  handleDescriptionChange = description => {
-    this.setState(
-      {
-        errors: { ...this.state.errors, description: "" },
-
-        poll: {
-          ...this.state.poll,
-          description
-        }
-      },
-      () => console.log("poll", this.state.poll)
-    );
-  };
-
-  /**
-   * @description : Callback for form text fields data change
-   *
-   * @author Ali Aryani
-   *
-   * @param key (string)  : A string representing poll's property e.g : title, ...
-   * @param data (string) : New value of form's text field for specified property
-   *
-   */
-  handleEditDescriptionChange = description => {
-    console.log("description", description);
-    this.setState(
-      {
-        // errors: { ...this.state.errors },
-        errors: { ...this.state.errors, description: "" },
-
-        openedPoll: { ...this.state.openedPoll, description }
-      },
-      () => console.log("openedPoll", this.state.openedPoll)
+      () => console.log("openedAnswers", this.state.openedAnswers)
     );
   };
 
@@ -257,16 +204,20 @@ class Poll extends Component {
    * @author Ali Aryani
    *
    */
-  handleAddPoll = event => {
+  handleAddAnswers = event => {
     event.preventDefault();
 
     this.setState({ busy: true });
 
-    ItookApi.addPoll(this.state.poll).then(
+    ItookApi.addAnswers(
+      this.props.routeParams.pollId,
+      this.props.routeParams.id,
+      this.state.answers
+    ).then(
       res => {
         if (res && res.status && res.status === 200) {
           // var rowNumber = 1;
-          // var faqs = res.data.poll;
+          // var faqs = res.data.Questions;
           // for (var i = 0; i < faqs.length; i++) faqs[i].row = rowNumber++;
           this.load();
           this.setState({
@@ -294,6 +245,8 @@ class Poll extends Component {
 
           this.setState({ busy: false, errors });
         } else if (res && res.status && res.status === 500) {
+          console.log("RESERROR", res);
+
           this.setState({
             busy: false,
             isSnackOpen: true,
@@ -329,8 +282,6 @@ class Poll extends Component {
    * @param id (number) : The id of data presented on touched row
    */
   handleClick = (event, id) => {
-    console.log("event", event.target);
-
     if (event.target.tagName === "INPUT") {
       const { selected } = this.state;
       const selectedIndex = selected.indexOf(id);
@@ -351,37 +302,41 @@ class Poll extends Component {
 
       this.setState({ selected: newSelected });
     } else if (
-      (event.target.tagName === "path" || event.target.tagName === "svg") &&
-      event.target.tagName !== "BUTTON"
+      event.target.tagName === "path" ||
+      event.target.tagName === "svg" ||
+      event.target.tagName === "BUTTON"
     ) {
       // if (event.target.tagName === "path")
       console.log("ID", id);
 
-      var polls = this.state.data;
+      var answers = this.state.data;
 
-      for (var i = 0; i < polls.length; i++) {
-        if (polls[i].id === id) {
-          var poll = polls[i];
+      for (var i = 0; i < answers.length; i++) {
+        if (answers[i].id === id) {
+          var answer = answers[i];
           break;
         }
       }
       this.setState({
         OpenEditModal: true,
-        openedPoll: poll
+        openedAnswers: answer
       });
-    } else if (event.target.tagName === "BUTTON") {
-      browserHistory.push("Poll/" + id + "/results");
-    } else {
-      browserHistory.push("Poll/" + id + "/questions");
     }
+    //  else {
+    //   browserHistory.push("AnswersUI/" + id + "/questions");
+    // }
   };
 
-  handleEditPoll = event => {
+  handleEditAnswers = event => {
     event.preventDefault();
 
     this.setState({ busy: true });
 
-    ItookApi.editPoll(this.state.openedPoll.id, this.state.openedPoll).then(
+    ItookApi.editAnswers(
+      this.props.routeParams.pollId,
+      this.props.routeParams.id,
+      this.state.openedAnswers
+    ).then(
       res => {
         if (res && res.status === 200) {
           this.load();
@@ -408,6 +363,7 @@ class Poll extends Component {
 
           this.setState({ busy: false, errors });
         } else if (res && res.status && res.status === 500) {
+          console.log("res", res);
           this.setState({
             busy: false,
             isSnackOpen: true,
@@ -434,19 +390,23 @@ class Poll extends Component {
   };
 
   /**
-   * @description : Sends a request to remove poll
+   * @description : Sends a request to remove Questions
    *
    * @author Ali Aryani
    *
    * @return server response
    */
-  handleDeletePoll = () => {
+  handleDeleteAnswers = () => {
     this.setState({ busy: true });
 
     var idsToBeRemoved = this.state.selected;
     // var idxxxxx = { id: idsToBeRemoved };
     // console.log("ids to remove", idxxxxx);
-    ItookApi.removePoll(idsToBeRemoved).then(
+    ItookApi.removeAnswers(
+      this.props.routeParams.pollId,
+      this.props.routeParams.id,
+      idsToBeRemoved
+    ).then(
       res => {
         if (res && res.status && res.status === 200) {
           this.load();
@@ -502,26 +462,6 @@ class Poll extends Component {
     );
   };
 
-  handleChangeSelectFieldStatus = event => {
-    console.log("event", event);
-    this.setState(
-      {
-        poll: { ...this.state.poll, status: event }
-      },
-      () => console.log("groupId", this.state.groupId)
-    );
-  };
-
-  handleEditChangeSelectFieldStatus = event => {
-    console.log("groupId", event);
-    this.setState(
-      {
-        openedPoll: { ...this.state.openedPoll, status: event }
-      },
-      () => console.log("groupId", this.state.groupId)
-    );
-  };
-
   renderAppbarActionsButtons = () => {
     var actionButtons = [];
     if (this.state.data && this.state.selected.length > 0) {
@@ -558,32 +498,28 @@ class Poll extends Component {
       );
     } else {
       component = (
-        <PollUI
+        <AnswersUI
           OnClickOpen={this.handleClickOpen}
           OnClickDeleteOpen={this.handleClickDeleteOpen}
           OnCloseModalDelete={this.handleCloseDelete}
           OpenModal={this.state.openModal}
           OpenEditModal={this.state.OpenEditModal}
           OpenDeleteModal={this.state.OpenDeleteModal}
-          poll={this.state.poll}
+          answers={this.state.answers}
           busy={this.state.busy}
           data={this.state.data}
-          OnEditPoll={this.handleEditPoll}
+          OnEditAnswers={this.handleEditAnswers}
           OnCloseModal={this.handleClose}
           OnCloseEdit={this.handleEditClose}
           CloseEditModal={this.OpenEditModal}
-          OnAddPoll={this.handleAddPoll}
-          OnDeletePoll={this.handleDeletePoll}
+          OnAddAnswers={this.handleAddAnswers}
+          OnDeleteAnswers={this.handleDeleteAnswers}
+          onAnswersChange={this.handleAnswersChange}
           OnClick={this.handleClick}
           selected={this.state.selected}
-          openedPoll={this.state.openedPoll}
-          onTitleChange={this.handleTitleChange}
-          onEditTitleChange={this.handleEditTitleChange}
-          onDescriptionChange={this.handleDescriptionChange}
-          onEditDescriptionChange={this.handleEditDescriptionChange}
+          openedAnswers={this.state.openedAnswers}
+          onEditAnswersChange={this.handleEditAnswersChange}
           errors={this.state.errors}
-          onChangeSelectFieldStatus={this.handleChangeSelectFieldStatus}
-          onEditChangeSelectFieldStatus={this.handleEditChangeSelectFieldStatus}
         />
       );
     }
@@ -591,7 +527,7 @@ class Poll extends Component {
     return (
       <Fragment>
         <AppLayout
-          title="نظرسنجی"
+          title="جواب ها"
           actionButtons={this.renderAppbarActionsButtons()}
         >
           <Grid>
@@ -608,4 +544,4 @@ export default connect(state => {
   return {
     user: state.user
   };
-})(Poll);
+})(Answers);

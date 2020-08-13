@@ -24,7 +24,10 @@ import Select from "@material-ui/core/Select";
 import { Remove, AddMedia, Tik, Publish } from "components/Icons";
 import { connect } from "react-redux";
 import jMoment from "moment-jalaali";
-
+import Radio from "@material-ui/core/Radio";
+import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
+import { green } from "@material-ui/core/colors";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
@@ -125,11 +128,11 @@ class EditNewsUI extends Component {
             "categoryParentId->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
             this.props.subCategoryId
           )}
-          <Grid item xs={7}>
+          <Grid item xs={12} md={7}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>اطلاعات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={1}>
-                <Grid item xs={6} md={2}>
+                <Grid item xs={12} md={2}>
                   <FormControl
                     style={{ margin: 8 }}
                     // className={classes.formControl}
@@ -179,98 +182,80 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
-                  <FormControl
-                    className={classes.formControl}
-                    style={{ minWidth: 100 }}
-                  >
-                    <InputLabel
-                      htmlFor="type"
-                      style={{
-                        fontFamily: "iransans",
-                        fontSize: ".9rem"
-                      }}
-                    >
-                      دسته بندی
-                    </InputLabel>
-                    <Select
-                      value={this.props.categoryParentId}
-                      // error={this.props.errorsProducts.unitType}
-                      // formhelpertext={this.props.errorsProducts.unitType}
-                      onChange={this.props.onCategoriesChange}
-                      input={<Input id="type" />}
-                    >
-                      {this.props.categories
-                        ? this.props.categories.map(n => {
-                            return (
-                              <MenuItem
-                                value={n.id}
-                                key={n.id}
-                                style={{
-                                  fontFamily: "iransans",
-                                  fontSize: ".9rem",
-                                  right: 0,
-                                  left: "auto"
-                                }}
-                              >
-                                {n.name}
-                              </MenuItem>
-                            );
-                          })
-                        : void 0}
-                    </Select>
-                  </FormControl>
-                  <FormHelperText>
-                    {this.props.errors.categoryId}
-                  </FormHelperText>
-                </Grid>
 
-                <Grid item xs={6} md={3}>
-                  <FormControl
-                    className={classes.formControl}
-                    style={{ minWidth: 100 }}
-                  >
-                    <InputLabel
-                      htmlFor="type"
-                      style={{
-                        fontFamily: "iransans",
-                        fontSize: ".9rem"
-                      }}
-                    >
-                      زیرمجموعه{" "}
-                    </InputLabel>
-                    <Select
-                      value={this.props.subCategoryId}
-                      // error={this.props.errorsProducts.unitType}
-                      // formhelpertext={this.props.errorsProducts.unitType}
-                      onChange={this.props.onSubCategoryChange}
-                      input={<Input id="type" />}
-                    >
-                      {this.props.subCategories
-                        ? this.props.subCategories.map(n => {
-                            return (
-                              <MenuItem
-                                value={n.id}
-                                key={n.id}
-                                style={{
-                                  fontFamily: "iransans",
-                                  fontSize: ".9rem",
-                                  right: 0,
-                                  left: "auto"
-                                }}
-                              >
-                                {n.name}
-                              </MenuItem>
-                            );
-                          })
-                        : void 0}
-                    </Select>
-                  </FormControl>
-                  <FormHelperText>
-                    {this.props.errors.categoryId}
-                  </FormHelperText>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="search"
+                    label="جستجو دسته بندی اصلی"
+                    type="search"
+                    error={this.props.errors.categoryId}
+                    helperText={this.props.errors.categoryId}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    onChange={e => {
+                      this.props.search2(e.target.value);
+                    }}
+                    margin="normal"
+                  />
+                  <div style={{ height: 321, overflowY: "auto" }}>
+                    {this.renderCategories2(this.props.filteredCategories2)}
+                  </div>
                 </Grid>
-                <Grid item xs={6} md={2}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="search"
+                    label="جستجو دسته بندی "
+                    type="search"
+                    className={classes.textField}
+                    error={this.props.errors.categoryIds}
+                    helperText={this.props.errors.categoryIds}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    onChange={e => {
+                      this.props.search(e.target.value);
+                    }}
+                    margin="normal"
+                  />
+                  <div style={{ height: 321, overflowY: "auto" }}>
+                    {this.renderCategories(this.props.filteredCategories)}
+                  </div>
+                </Grid>
+                <Grid item xs={12} md={2}>
+                  <TextField
+                    error={this.props.errors.code}
+                    helperText={this.props.errors.code}
+                    disabled
+                    // id="required"
+                    type="text"
+                    label="کد خبر"
+                    value={this.props.newsData.code}
+                    onChange={e => {
+                      this.props.onChangeTextFieldData("code", e.target.value);
+                    }}
+                    InputLabelProps={{
+                      className: classes.textFieldFormLabel
+                    }}
+                    InputProps={{
+                      className: classes.textFieldForm
+                    }}
+                    margin="normal"
+                    style={{ width: "100%", marginTop: 9 }}
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={5}>
+            <p style={{ fontWeight: "bold", color: "#2196F3" }}>
+              اطلاعات افراد
+            </p>
+            <Paper className={classes.root}>
+              <Grid container justify="center" spacing={2}>
+                <Grid item xs={12} md={6}>
                   <FormControl
                     style={{ margin: 8, minWidth: 60 }}
                     // className={classes.formControl}
@@ -322,39 +307,7 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={2}>
-                  <TextField
-                    error={this.props.errors.code}
-                    helperText={this.props.errors.code}
-                    disabled
-                    // id="required"
-                    type="text"
-                    label="کد خبر"
-                    value={this.props.newsData.code}
-                    onChange={e => {
-                      this.props.onChangeTextFieldData("code", e.target.value);
-                    }}
-                    InputLabelProps={{
-                      className: classes.textFieldFormLabel
-                    }}
-                    InputProps={{
-                      className: classes.textFieldForm
-                    }}
-                    margin="normal"
-                    style={{ width: "100%", marginTop: 9 }}
-                  />
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={5}>
-            <p style={{ fontWeight: "bold", color: "#2196F3" }}>
-              اطلاعات افراد
-            </p>
-            <Paper className={classes.root}>
-              <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={6}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.userId}
@@ -449,7 +402,7 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid> */}
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={6}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.publisherId}
@@ -498,7 +451,7 @@ class EditNewsUI extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={4}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     disabled={
                       this.props.user.permissions["edit-news"] === false
@@ -532,14 +485,13 @@ class EditNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>جزئیات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     disabled={
                       this.props.user.permissions["edit-news"] === false
                     }
                     error={this.props.errors.preTitle}
                     helperText={this.props.errors.preTitle}
-                    autoFocus={true}
                     // id="required"
                     type="text"
                     label="روتیتر"
@@ -562,7 +514,7 @@ class EditNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.title}
                     helperText={this.props.errors.title}
@@ -588,7 +540,7 @@ class EditNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.postTitle}
                     helperText={this.props.errors.postTitle}
@@ -616,7 +568,7 @@ class EditNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={8}>
+                <Grid item xs={12} md={8}>
                   <TextField
                     error={this.props.errors.lead}
                     helperText={this.props.errors.lead}
@@ -642,7 +594,7 @@ class EditNewsUI extends Component {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     error={this.props.errors.source}
                     helperText={this.props.errors.source}
@@ -672,7 +624,7 @@ class EditNewsUI extends Component {
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={3}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>عکس اصلی</p>
             <input
               disabled={this.props.user.permissions["edit-news"] === false}
@@ -748,19 +700,29 @@ class EditNewsUI extends Component {
               </div>
             )}
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} md={9}>
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>متن خبر</p>
             <Editor
               disabled={this.props.user.permissions["edit-news"] === false}
               apiKey="YOUR_API_KEY"
               init={{
                 plugins:
-                  "print preview fullpage powerpaste searchreplace autolink directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount tinymcespellchecker a11ychecker imagetools textpattern help formatpainter permanentpen pageembed tinycomments mentions linkchecker",
+                  "fullpage image advcode code print preview  powerpaste searchreplace autolink directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount tinymcespellchecker a11ychecker imagetools textpattern help formatpainter permanentpen pageembed tinycomments mentions linkchecker",
                 language: "fa_IR",
+
+                // menubar: "tools",
+                valid_elements: "+*[*]",
+                extended_valid_elements: "+*[*]",
+                custom_elements: "*",
+                invalid_elements: "",
+                verify_html: false,
                 language_url: "/assets/tinymce/langs/fa_IR.js",
+                valid_children: "+body[style]",
                 toolbar:
-                  "formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link image media pageembed | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat | addcomment|ltr rtl",
+                  "media| image |code |formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link   pageembed | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent | removeformat | addcomment|ltr rtl",
                 image_advtab: true,
+                media_live_embeds: true,
+
                 content_css: [
                   "//fonts.googleapis.com/css?family=Lato:300,300i,400,400i",
                   "//www.tiny.cloud/css/codepen.min.css"
@@ -835,7 +797,9 @@ class EditNewsUI extends Component {
                 tinycomments_mode: "embedded",
                 content_style:
                   ".mce-annotation { background: #fff0b7; } .tc-active-annotation {background: #ffe168; color: black; }",
-                images_upload_url: "http://192.168.1.6:8000/upload"
+                images_upload_url:
+                  "http://golestan-fori.ir/api/upload",
+                automatic_uploads: true
               }}
               initialValue={this.props.newsData.body}
               // onChange={e => {
@@ -1002,7 +966,7 @@ class EditNewsUI extends Component {
             <p style={{ fontWeight: "bold", color: "#2196F3" }}>تنظیمات خبر</p>
             <Paper className={classes.root}>
               <Grid container justify="center" spacing={2}>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl
                     className={classes.formControl}
                     error={this.props.errors.groups}
@@ -1051,7 +1015,7 @@ class EditNewsUI extends Component {
                     <FormHelperText>{this.props.errors.groupId}</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl className={classes.formControl}>
                     <InputLabel
                       htmlFor="type"
@@ -1087,7 +1051,7 @@ class EditNewsUI extends Component {
                     {this.props.errors.groupPosition}
                   </FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <FormControl className={classes.formControl}>
                     <InputLabel
                       htmlFor="type"
@@ -1138,7 +1102,7 @@ class EditNewsUI extends Component {
                   </FormControl>
                   <FormHelperText>{this.props.errors.template}</FormHelperText>
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={12} md={3}>
                   <div style={{ marginTop: 24 }}>
                     <FormControlLabel
                       style={{ direction: "rtl" }}
@@ -1268,7 +1232,8 @@ class EditNewsUI extends Component {
           </Grid>
           <Grid
             item
-            xs={3}
+            xs={12}
+            md={3}
             style={{
               textAlign: "center",
               marginBottom: 16,
@@ -1298,7 +1263,8 @@ class EditNewsUI extends Component {
           {this.props.user.permissions["publish-news"] === true ? (
             <Grid
               item
-              xs={3}
+              xs={12}
+              md={3}
               style={{
                 textAlign: "center",
                 marginBottom: 16,
@@ -1695,7 +1661,12 @@ class EditNewsUI extends Component {
     return localGraphics;
   }
 
+  isSelected = id => this.props.selected.indexOf(id) !== -1;
+
   renderCategories(categories) {
+    console.log("data", categories);
+    // console.log("categoryId", categoryId);
+
     var rows = null;
 
     if (
@@ -1706,31 +1677,39 @@ class EditNewsUI extends Component {
       return rows; // null
     }
 
-    rows = this.createCategoryList(categories)
-      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-      .map(n => {
-        return (
-          <MenuItem
-            value={n.id}
-            key={n.id}
+    rows = this.createCategoriesList(categories).map(n => {
+      const isSelected = this.isSelected(n.id);
+
+      return (
+        // <MenuItem
+        //   value={n.id}
+        //   key={n.id}
+        //   style={{
+        //     fontFamily: "iransans",
+        //     fontSize: ".9rem"
+        //   }}
+        // >
+        <div onClick={() => this.props.onCategoriesChange(n.id)}>
+          <Checkbox
+            checked={isSelected}
             style={{
-              fontFamily: "iransans",
-              fontSize: ".9rem"
+              color: "#1daced",
+              display: "inline-block"
             }}
-          >
-            {n.name}
-          </MenuItem>
-        );
-      });
+          />
+
+          <p style={{ display: "inline-block" }}> {n.name}</p>
+        </div>
+        // </MenuItem>  </MenuItem>
+      );
+    });
 
     return rows;
   }
-  /**
-   * @description : halghe mizane bar rooye category ha va misazeshoon va harkodam ke zir majmooe dasht zir majmooeye anha ham sakhte mishe
-   *
-   * @author Ali Aryani
-   */
-  createCategoryList(categories) {
+
+  createCategoriesList(categories) {
+    console.log("categories", categories);
+
     var categoriesBundle = [];
 
     if (categories === undefined || categories === null) {
@@ -1738,33 +1717,143 @@ class EditNewsUI extends Component {
     }
 
     categories.map(category => {
+      // console.log("category.id", category.id, "categoryId", categoryId);
+
+      // if (category.id !== categoryId) {
       categoriesBundle.push({
         id: category.id,
-        productCount: category.productCount,
 
-        name: this.createCategoryNameByLevel(category.name, category.level),
-        postsCount: this.createCategoryNameByLevel(category.postsCount)
+        name: this.createCategoryNameByLevel(category.name, category.level)
       });
       if (category.subCategories != null && category.subCategories.length > 0) {
         categoriesBundle = [
           ...categoriesBundle,
-          ...this.createCategoryList(category.subCategories)
+          ...this.createCategoriesList(category.subCategories)
         ];
       }
+      // }
+
       return void 0;
     });
-
+    console.log("data", categoriesBundle);
     return categoriesBundle;
   }
 
-  /**
-   * @description : bad az sakhte shodan category ha ba in tabe anha ra ba khate tire joda karde
-   *
-   * @author Ali Aryani
-   */
   createCategoryNameByLevel(name, level) {
     if (level === 1) {
-      return name;
+      return (
+        <p
+          style={{
+            display: "inline-block",
+            color: "red",
+            marginTop: 0,
+            marginBottom: 0
+          }}
+        >
+          {" "}
+          {name}
+        </p>
+      );
+    }
+    var newName = "";
+    for (var i = 0; i < level - 1; i++) {
+      newName += "  |  ";
+    }
+    return newName + " ---- " + name;
+  }
+
+  renderCategories2(categories) {
+    console.log("data", categories);
+    // console.log("categoryId", categoryId);
+
+    var rows = null;
+
+    if (
+      categories === undefined ||
+      categories === null ||
+      categories.length === 0
+    ) {
+      return rows; // null
+    }
+
+    rows = this.createCategoriesList2(categories).map(n => {
+      return (
+        // <MenuItem
+        //   value={n.id}
+        //   key={n.id}
+        //   style={{
+        //     fontFamily: "iransans",
+        //     fontSize: ".9rem"
+        //   }}
+        // >
+        <div onClick={() => this.props.onCategoryChange(n.id)}>
+          <Radio
+            checked={this.props.newsData.categoryId === n.id}
+            onChange={() => this.props.onCategoryChange(n.id)}
+            value="a"
+            name="radio-button-demo"
+            style={{ display: "inline-block", cursor: "pointer" }}
+            inputProps={{ "aria-label": "A" }}
+          />
+          <p style={{ display: "inline-block", cursor: "pointer" }}>
+            {" "}
+            {n.name}
+          </p>
+        </div>
+        // </MenuItem>  </MenuItem>
+      );
+    });
+
+    return rows;
+  }
+
+  createCategoriesList2(categories) {
+    console.log("categories", categories);
+
+    var categoriesBundle = [];
+
+    if (categories === undefined || categories === null) {
+      return categoriesBundle;
+    }
+
+    categories.map(category => {
+      // console.log("category.id", category.id, "categoryId", categoryId);
+
+      // if (category.id !== categoryId) {
+      categoriesBundle.push({
+        id: category.id,
+
+        name: this.createCategoryNameByLevel2(category.name, category.level)
+      });
+      if (category.subCategories != null && category.subCategories.length > 0) {
+        categoriesBundle = [
+          ...categoriesBundle,
+          ...this.createCategoriesList2(category.subCategories)
+        ];
+      }
+      // }
+
+      return void 0;
+    });
+    console.log("data", categoriesBundle);
+    return categoriesBundle;
+  }
+
+  createCategoryNameByLevel2(name, level) {
+    if (level === 1) {
+      return (
+        <p
+          style={{
+            display: "inline-block",
+            color: "red",
+            marginTop: 0,
+            marginBottom: 0
+          }}
+        >
+          {" "}
+          {name}
+        </p>
+      );
     }
     var newName = "";
     for (var i = 0; i < level - 1; i++) {

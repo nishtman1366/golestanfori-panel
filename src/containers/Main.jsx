@@ -154,6 +154,8 @@ class Main extends Component {
       } else if (res && res.status === 401) {
         console.log("reserror", res);
         browserHistory.replace("/login");
+      } else {
+        console.log("error");
       }
     });
   }

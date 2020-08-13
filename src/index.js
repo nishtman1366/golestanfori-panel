@@ -55,13 +55,68 @@ const GroupPosts = Loadable({
   loading: Loading
 });
 
+const Content = Loadable({
+  loader: () => import("./containers/content/Content"),
+  loading: Loading
+});
+
+const Contents = Loadable({
+  loader: () => import("./containers/contents/Contents"),
+  loading: Loading
+});
+
+const AddContents = Loadable({
+  loader: () => import("./containers/contents/AddContents"),
+  loading: Loading
+});
+
+const EditContents = Loadable({
+  loader: () => import("./containers/contents/EditContents"),
+  loading: Loading
+});
+
+const Resumes = Loadable({
+  loader: () => import("./containers/resumes/Resumes"),
+  loading: Loading
+});
+
+const AddResume = Loadable({
+  loader: () => import("./containers/resumes/AddResume"),
+  loading: Loading
+});
+
+const EditResume = Loadable({
+  loader: () => import("./containers/resumes/EditResume"),
+  loading: Loading
+});
+
+const CategoriesResume = Loadable({
+  loader: () => import("./containers/categoriesResume/CategoriesResume"),
+  loading: Loading
+});
+
 const Poll = Loadable({
   loader: () => import("./containers/poll/Poll"),
   loading: Loading
 });
 
+const Results = Loadable({
+  loader: () => import("./containers/poll/Results"),
+  loading: Loading
+});
+
+const PollResult = Loadable({
+  loader: () => import("./containers/poll/PollResult"),
+  loading: Loading
+});
+
 const Questions = Loadable({
   loader: () => import("./containers/poll/Questions"),
+  loading: Loading
+});
+
+const Answers = Loadable({
+  loader: () => import("./containers/poll/Answers"),
   loading: Loading
 });
 
@@ -211,8 +266,32 @@ ReactDOM.render(
           <Route path="groups" component={Groups} />
           <Route path="users" component={Users} />
           <Route path="comments" component={Comments} />
+
           <Route path="poll" component={Poll} />
+
+          <Route path="content" component={Content} />
+          <Route path="contents" component={Contents} />
+          <Route path="addContents" component={AddContents} />
+          <Route path="editContents/:id" component={EditContents} />
+
+          <Route path="resumes" component={Resumes} />
+          <Route path="addResume" component={AddResume} />
+          <Route path="editResume/:id" component={EditResume} />
+          <Route path="categoriesResume" component={CategoriesResume} />
+
           <Route path="poll/:id/questions" component={Questions} />
+
+          <Route path="poll/:id/results" component={Results} />
+
+          <Route
+            path="poll/:pollId/results/:id/pollResult"
+            component={PollResult}
+          />
+
+          <Route
+            path="poll/:pollId/questions/:id/answers"
+            component={Answers}
+          />
 
           <Route path="editNews/:id/comments" component={Comments} />
 

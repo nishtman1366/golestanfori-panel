@@ -250,6 +250,8 @@ class Questions extends Component {
 
           this.setState({ busy: false, errors });
         } else if (res && res.status && res.status === 500) {
+          console.log("RESERROR", res);
+
           this.setState({
             busy: false,
             isSnackOpen: true,
@@ -285,6 +287,14 @@ class Questions extends Component {
    * @param id (number) : The id of data presented on touched row
    */
   handleClick = (event, id) => {
+    var questions = this.state.data;
+
+    for (var i = 0; i < questions.length; i++) {
+      if (questions[i].id === id) {
+        var question = questions[i];
+        break;
+      }
+    }
     if (event.target.tagName === "INPUT") {
       const { selected } = this.state;
       const selectedIndex = selected.indexOf(id);
@@ -312,20 +322,15 @@ class Questions extends Component {
       // if (event.target.tagName === "path")
       console.log("ID", id);
 
-      var questions = this.state.data;
-
-      for (var i = 0; i < questions.length; i++) {
-        if (questions[i].id === id) {
-          var question = questions[i];
-          break;
-        }
-      }
+      console.log("question", question);
       this.setState({
         OpenEditModal: true,
         openedQuestion: question
       });
-    } else {
-      browserHistory.push("QuestionsUI/" + id + "/questions");
+    } else if (question.type === "SELECT") {
+      browserHistory.push(
+        "/poll/" + this.props.routeParams.id + "/questions/" + id + "/answers"
+      );
     }
   };
 

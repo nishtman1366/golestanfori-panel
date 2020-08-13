@@ -11,11 +11,11 @@
 */
 
 import axios from "axios";
-var API_URL = "http://192.168.1.6:8001/api";
+var API_URL = "http://golestanfori/api";
+// var API_URL = "http://192.168.0.1:8000/api";
 
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
-// var API_URL = "http://localhost/eshop/public/api/v1";
 
 var requestUrl = "https://reqres.in/api/users/1";
 // var API_URL = "http://golestan-fori.itookis.com/api";
@@ -89,8 +89,9 @@ var ItookApi = {
         return response;
       })
       .catch(error => {
+        console.log("inja");
         console.log(error);
-        return error.response;
+        return error;
       });
   },
 
@@ -208,6 +209,110 @@ var ItookApi = {
    * @return server response object
    */
 
+  fetchContent() {
+    return axios
+      .get(API_URL + "/contents/categories")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchResumes() {
+    return axios
+      .get(API_URL + "/resume")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchCategoriesResume() {
+    return axios
+      .get(API_URL + "/resume/categories")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchEditResume(id) {
+    console.log("id", id);
+
+    return axios
+      .get(API_URL + "/resume/" + id)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchEditContents(id) {
+    console.log("id", id);
+
+    return axios
+      .get(API_URL + "/contents/" + id)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
   fetchCategries() {
     return axios
       .get(API_URL + "/categories")
@@ -230,7 +335,55 @@ var ItookApi = {
 
   fetchCategriesList() {
     return axios
-      .get(API_URL + "/categories/post")
+      .get(API_URL + "/categories")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addResumeCategries(category) {
+    for (var pair of category.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/resume/categories", category)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addContentCategries(category) {
+    for (var pair of category.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/contents/categories", category)
       .then(response => {
         return response;
       })
@@ -262,6 +415,59 @@ var ItookApi = {
         return error.response;
       });
   },
+
+  /**
+   * @description : edit category data to databse
+   *
+   * @author Ali Aryani
+   *
+   * @return server response
+   */
+  EditResumeCategory(id, category) {
+    console.log("id", id);
+    for (var pair of category.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/resume/categories/" + id, category)
+      .then(response => {
+        console.log(response);
+
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : edit category data to databse
+   *
+   * @author Ali Aryani
+   *
+   * @return server response
+   */
+  EditContentCategory(id, category) {
+    console.log("id", id);
+    for (var pair of category.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/contents/categories/" + id, category)
+      .then(response => {
+        console.log(response);
+
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
   /**
    * @description : edit category data to databse
    *
@@ -280,6 +486,52 @@ var ItookApi = {
       .then(response => {
         console.log(response);
 
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeResumeCategories(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/resume/categories", params)
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeContentCategories(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/contents/categories", params)
+      .then(response => {
+        console.log("Response : " + response);
         return response;
       })
       .catch(error => {
@@ -342,6 +594,101 @@ var ItookApi = {
   fetchPosition() {
     return axios
       .get(API_URL + "/advertisement/positions")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  EditResume(id, resume) {
+    for (var pair of resume.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+    console.log("id", id);
+    return axios
+      .post(API_URL + "/resume/" + id, resume)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  EditContent(id, content) {
+    for (var pair of content.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+    console.log("id", id);
+    return axios
+      .post(API_URL + "/contents/" + id, content)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addResume(resume) {
+    for (var pair of resume.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/resume", resume)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to add Category
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addContent(content) {
+    for (var pair of content.entries()) {
+      console.log("forrrmmmm", pair[0] + ", " + pair[1]);
+    }
+
+    return axios
+      .post(API_URL + "/contents", content)
       .then(response => {
         return response;
       })
@@ -487,6 +834,52 @@ var ItookApi = {
     console.log("IDs are : " + ids);
     return axios
       .delete(API_URL + "/posts", params)
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeResumes(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/resume", params)
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple users.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeContents(ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(API_URL + "/contents", params)
       .then(response => {
         console.log("Response : " + response);
         return response;
@@ -728,9 +1121,160 @@ var ItookApi = {
    * @return server response object
    */
 
+  fetchPollResults(pollId, id) {
+    console.log("pollId", pollId);
+    console.log("id", id);
+
+    return axios
+      .get(API_URL + "/polls/" + pollId + "/viewResults/" + id)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchAnswers(pollId, id) {
+    console.log("pollId", pollId);
+    console.log("id", id);
+
+    return axios
+      .get(API_URL + "/polls/" + pollId + "/questions/" + id + "/answers")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  addAnswers(pollId, id, answers) {
+    console.log("answers", answers);
+    console.log("pollId", pollId);
+    console.log("id", id);
+
+    return axios
+      .post(API_URL + "/polls/" + pollId + "/questions/" + id + "/answers", {
+        answer: answers
+      })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  editAnswers(pollId, id, answer) {
+    console.log("id", id);
+    console.log("answers", answer);
+    console.log("pollId", pollId);
+
+    return axios
+      .put(
+        API_URL +
+          "/polls/" +
+          pollId +
+          "/questions/" +
+          id +
+          "/answers/" +
+          answer.id,
+        answer
+      )
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /** @description : Sends a request to the server to remove one or multiple groups.
+   *
+   * @author Ali Aryani
+   *
+   * @param ids (array) : Messages ids to be removed
+   *
+   * @return server response as object
+   */
+  removeAnswers(pollId, id, ids) {
+    var params = { params: { ids } };
+    console.log("IDs are : " + ids);
+    return axios
+      .delete(
+        API_URL + "/polls/" + pollId + "/questions/" + id + "/answers",
+        params
+      )
+      .then(response => {
+        console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
   fetchQuestions(id) {
     return axios
       .get(API_URL + "/polls/" + id + "/questions")
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchResults(id) {
+    return axios
+      .get(API_URL + "/polls/" + id)
       .then(response => {
         return response;
       })
@@ -968,6 +1512,29 @@ var ItookApi = {
       .post(API_URL + "/groups/" + id, params)
       .then(response => {
         console.log("Response : " + response);
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        return error.response;
+      });
+  },
+
+  /**
+   * @description : Sends a request to fetch Categries
+   *
+   * @author Ali Aryani
+   *
+   * @return server response object
+   */
+
+  fetchContents(url, filter) {
+    var apiUrl = url === null ? API_URL + "/contents" : url;
+
+    console.log("filter", filter);
+    return axios
+      .get(apiUrl, filter)
+      .then(response => {
         return response;
       })
       .catch(error => {

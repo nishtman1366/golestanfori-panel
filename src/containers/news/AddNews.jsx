@@ -42,6 +42,9 @@ class AddNews extends Component {
         open: false,
         snackbarMessage: ""
       },
+      filteredCategories: undefined,
+      filteredCategories2: undefined,
+
       tags: undefined,
       tag: [],
       FilterTags: undefined,
@@ -55,6 +58,7 @@ class AddNews extends Component {
 
       news: {
         categoryId: "", //dastebandi
+        categoryIds: [],
         // editorId: "", //virastar
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
@@ -79,13 +83,14 @@ class AddNews extends Component {
         tag: [],
         source: ""
       },
+      selected: [],
       newsImage: null,
       galleryImages: [],
       graphics: [],
       subCategoryId: null,
       errors: {
         categoryId: "", //dastebandi
-        // editorId: "", //virastar
+        categoryIds: "",
         postsCreateTypeId: "", //shiveye tolid
         postsTypeId: "", //noe khabar
         publisherId: "", //montasher konande
@@ -204,8 +209,9 @@ class AddNews extends Component {
 
           this.setState(
             {
-              categories: res.data.categories,
-              subCategoriesList: res.data.subCategories,
+              categories: res.data,
+              filteredCategories: res.data,
+              filteredCategories2: res.data,
 
               isLoadingCategories: false
             },
@@ -225,6 +231,86 @@ class AddNews extends Component {
       }
     );
   };
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  handleTextFildeSearch = event => {
+    var filteredData = [];
+
+    if (event === "") {
+      filteredData = this.state.categories;
+    } else if (this.state.categories) {
+      filteredData = this.createSearchData(this.state.categories, event);
+    }
+
+    // console.log("filteredData", filteredData);
+
+    this.setState(
+      {
+        filteredCategories: filteredData
+      }
+      // () => console.log("search", this.state.filteredData)
+    );
+  };
+
+  createSearchData(categories, query, result = []) {
+    for (var key in categories) {
+      if (categories[key].name.indexOf(query) >= 0) {
+        // Save
+        result.push(categories[key]);
+      }
+      if (categories[key].subCategories != null)
+        this.createSearchData(categories[key].subCategories, query, result);
+    }
+    return result;
+  }
+
+  /**
+   * @description : Callback for form text field user search change
+   *
+   * @author Ali Aryani
+   *
+   * @param event (string) : New value of  text field for search value
+   *
+   */
+
+  handleTextFildeSearch2 = event => {
+    var filteredData = [];
+
+    if (event === "") {
+      filteredData = this.state.categories;
+    } else if (this.state.categories) {
+      filteredData = this.createSearchData2(this.state.categories, event);
+    }
+
+    // console.log("filteredData", filteredData);
+
+    this.setState(
+      {
+        filteredCategories2: filteredData
+      }
+      // () => console.log("search", this.state.filteredData)
+    );
+  };
+
+  createSearchData2(categories, query, result = []) {
+    for (var key in categories) {
+      if (categories[key].name.indexOf(query) >= 0) {
+        // Save
+        result.push(categories[key]);
+      }
+      if (categories[key].subCategories != null)
+        this.createSearchData2(categories[key].subCategories, query, result);
+    }
+    return result;
+  }
 
   fetchKhabarNegar = () => {
     console.log("res");
@@ -369,10 +455,21 @@ class AddNews extends Component {
 
     formData.append(
       "categoryId",
-      this.state.subCategoryId !== null
-        ? this.state.subCategoryId
-        : this.state.news.categoryId
+
+      this.state.news.categoryId
     );
+
+    for (var k in this.state.news.categoryIds) {
+      if (this.state.news.categoryIds.hasOwnProperty(k)) {
+        if (this.state.news.categoryIds[k] !== "") {
+          formData.append(
+            "categoryIds[" + k + "]",
+            this.state.news.categoryIds[k]
+          );
+        }
+      }
+    }
+
     formData.append("editorId", this.state.news.editorId);
     formData.append("postsCreateTypeId", this.state.news.postsCreateTypeId);
     formData.append("postsTypeId", this.state.news.postsTypeId);
@@ -430,51 +527,57 @@ class AddNews extends Component {
     return formData;
   };
 
-  handleCategoriesChange = event => {
-    console.log("event", event);
+  handleCategoriesChange = id => {
+    console.log("id", id);
 
-    // var id =
-    //   this.state.data.provinceId !== null
-    //     ? this.state.data.provinceId
-    //     : event.target.value;
+    // const categories = this.state.categories;
+    // const selected = [];
 
-    var id = event.target.value;
+    // for (let i = 0; i < categories.length; i++) {
+    //   if (categories[i].id === event.target.value) {
+    //     selected.push(categories[i].id);
+    //   }
+    // }
 
-    console.log("this.state.subCategories", this.state.subCategoriesList);
-    var subCategories = [];
+    const { selected } = this.state;
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
 
-    for (let i = 0; i < this.state.subCategoriesList.length; i++) {
-      if (id === this.state.subCategoriesList[i].parentId) {
-        subCategories.push(this.state.subCategoriesList[i]);
-      }
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
     }
-
-    console.log("subCategories", subCategories);
 
     this.setState(
       {
-        subCategories,
-        news: {
-          ...this.state.news,
-          categoryId: id
-          // subCategories: id === null ? null : this.state.data.subCategories
-        },
-        subCategoryId: null
+        selected: newSelected,
+        news: { ...this.state.news, categoryIds: newSelected }
+        // content: {
+        //   ...this.state.content,
+        //   categoryId: event.target.value
+        // }
+        // errors: { ...this.state.errors, type: "" }
       },
-      () => console.log("data", this.state.news)
+      () => {
+        console.log("this.state.content", this.state.news);
+      }
     );
   };
 
-  handleSubCategoryChange = event => {
-    console.log("event", event.target.value);
-
-    var id = event.target.value;
-
+  handleCategoryChange = id => {
     this.setState(
       {
-        subCategoryId: id
+        news: { ...this.state.news, categoryId: id }
       },
-      () => console.log("subCategoryId", this.state.subCategoryId)
+      () => console.log("subCategoryId", this.state.news)
     );
   };
 
@@ -1144,6 +1247,8 @@ class AddNews extends Component {
           errors={this.state.errors}
           postType={this.state.postType}
           categories={this.state.categories}
+          filteredCategories={this.state.filteredCategories}
+          filteredCategories2={this.state.filteredCategories2}
           subCategories={this.state.subCategories}
           khabarnegar={this.state.khabarnegar}
           virastar={this.state.virastar}
@@ -1171,8 +1276,11 @@ class AddNews extends Component {
           onAddNewTag={this.handleAddNewTag}
           newTag={this.state.newTag}
           onCategoriesChange={this.handleCategoriesChange}
-          onSubCategoryChange={this.handleSubCategoryChange}
+          onCategoryChange={this.handleCategoryChange}
           subCategoryId={this.state.subCategoryId}
+          selected={this.state.selected}
+          search={this.handleTextFildeSearch}
+          search2={this.handleTextFildeSearch2}
         />
       );
     }

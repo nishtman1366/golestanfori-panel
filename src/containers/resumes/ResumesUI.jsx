@@ -14,36 +14,30 @@ import Fab from "@material-ui/core/Fab";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
-import TextField from "@material-ui/core/TextField";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { USERS } from "components/StatesIcons";
+import { Edit, Warning, AddCategory, Trash } from "components/Icons";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { connect } from "react-redux";
+import Card from "@material-ui/core/Card";
+import CardMedia from "@material-ui/core/CardMedia";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { USERS } from "components/StatesIcons";
-import {
-  Edit,
-  Warning,
-  AddCategory,
-  EditUser,
-  Enseraf,
-  Tik
-} from "components/Icons";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { connect } from "react-redux";
 
 const CustomTableCell = withStyles(theme => ({
   head: {
     backgroundColor: "#2196F3",
-    color: "#fff",
+    color: theme.palette.common.white,
     fontSize: 14,
     fontFamily: "iransans"
   },
@@ -56,7 +50,7 @@ const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
     color: theme.palette.text.secondary,
-    marginLeft: theme.spacing(2.5)
+    marginLeft: theme.spacing.unit * 2.5
   }
 });
 
@@ -116,12 +110,21 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, {
 const styles = theme => ({
   root: {
     width: "100%",
-    marginTop: theme.spacing(1),
-    overflowX: "auto",
-    fontFamily: "iransans"
+    // marginTop: theme.spacing.unit * 3,
+    overflowX: "auto"
+  },
+  bigAvatar: {
+    width: 76,
+    height: 76
   },
   table: {
     width: "100%"
+  },
+  card: {
+    maxWidth: 200
+  },
+  media: {
+    height: 60
   },
   tableWrapper: {
     overflowX: "auto"
@@ -132,7 +135,7 @@ const styles = theme => ({
     }
   },
   formControl: {
-    margin: theme.spacing(1),
+    margin: theme.spacing.unit,
     minWidth: 120
   },
   textFieldFormLabel: {
@@ -149,19 +152,15 @@ const styles = theme => ({
   },
   fab: {
     margin: theme.spacing(1)
-  },
-  dialogPaper: {
-    maxHeight: "500px",
-    width: "400px"
   }
 });
-class QuestionsUI extends Component {
+class ResumesUI extends Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
       page: 0,
-      rowsPerPage: 10
+      rowsPerPage: 100
     };
   }
   handleKeyPress = e => {
@@ -178,146 +177,124 @@ class QuestionsUI extends Component {
   };
   render() {
     return (
-      <div>
+      <div style={{ marginTop: 16, marginBottom: 16 }}>
         {this.renderUI()}
-        {this.props.user.permissions["write-groups"] === true
+
+        {this.props.user.permissions["write-news"] === true
           ? this.renderFabButton()
           : void 0}
-        {this.renderAddDialog()}
-        {this.props.openedQuestion !== undefined ? (
-          <div>{this.renderEditDialog()}</div>
-        ) : null}
+
         {this.renderDeleteDialog()}
+        {this.renderAddNewsToGroupDialog()}
       </div>
     );
   }
   isSelected = id => this.props.selected.indexOf(id) !== -1;
 
-  renderAddDialogBody = () => {
+  renderAddNewsToGroupDialog = () => {
     const { classes } = this.props;
 
     return (
-      <div>
-        <form onSubmit={this.props.OnAddQuestion}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                error={this.props.errors.question}
-                helperText={this.props.errors.question}
-                required
-                id="required"
-                label="سوال"
-                defaultValue={this.props.question.question}
-                onChange={e => {
-                  this.props.onQuestionChange(e.target.value);
-                }}
-                InputLabelProps={{
-                  className: classes.textFieldFormLabel
-                }}
-                style={{ marginTop: 10 }}
-                fullWidth
-                InputProps={{
-                  className: classes.textFieldForm
-                }}
-                margin="normal"
-              />
-            </Grid>
-            {console.log("type", this.props.question.type)}
-            <Grid item xs={12} md={3}>
-              <FormControl
-                style={{ minWidth: 100 }}
-                className={classes.formControl}
-                error={this.props.errors.type}
-              >
-                <InputLabel
-                  htmlFor="type"
-                  style={{
-                    fontFamily: "iransans",
-                    fontSize: ".9rem"
-                  }}
-                >
-                  نوع سوال
-                </InputLabel>
-                <Select
-                  value={this.props.question.type}
-                  // error={this.props.errorsProducts.unitType}
-                  // formhelpertext={this.props.errorsProducts.unitType}
-                  onChange={e => {
-                    this.props.onChangeSelectFieldType(e.target.value);
-                  }}
-                  input={<Input id="type" />}
-                >
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"TEXT"}
-                  >
-                    تشریحی
-                  </MenuItem>
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"SELECT"}
-                  >
-                    چند گزینه ای
-                  </MenuItem>
-                </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {this.props.errors.type}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-          </Grid>
+      <Dialog
+        classes={{ paper: classes.dialogPaper }}
+        open={this.props.OpenAddToGroupModal}
+        // onClose={this.props.OnCloseModalDelete}
+        aria-labelledby="responsive-title"
+      >
+        <DialogTitle id="delet" style={{ textAlign: "center" }}>
+          {/* <AddIcon /> */}
+          <p>لطفا یکی از گروه‌های زیر را انتخاب کنید</p>
+        </DialogTitle>
 
-          <button type="submit" hidden />
-        </form>
-      </div>
+        <DialogContent>{this.renderAddToGroupDialogBody()}</DialogContent>
+        <Grid
+          container
+          alignItems="center"
+          justify="space-around"
+          style={{ marginBottom: "8px" }}
+        >
+          <Button
+            disabled={this.props.busy}
+            onClick={this.props.OnCloseAddToGroup}
+            style={{
+              fontFamily: "iransans",
+              fontSize: ".9rem",
+              background: "#f44336",
+              color: "#fff"
+            }}
+          >
+            انصراف
+          </Button>
+          {this.props.busy ? (
+            <CircularProgress size={30} />
+          ) : (
+            <Button
+              onClick={this.props.OnAddToGroup}
+              style={{
+                fontFamily: "iransans",
+                fontSize: ".9rem",
+                background: "#4caf50",
+                color: "#fff"
+              }}
+            >
+              بلی
+            </Button>
+          )}
+        </Grid>
+      </Dialog>
     );
   };
 
-  renderEditDialogBody = () => {
+  renderAddToGroupDialogBody = () => {
     const { classes } = this.props;
 
     return (
       <div>
-        <form onSubmit={this.props.OnEditQuestion}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                error={this.props.errors.question}
-                helperText={this.props.errors.question}
-                required
-                id="required"
-                label="سوال"
-                defaultValue={this.props.openedQuestion.question}
-                onChange={e => {
-                  this.props.onEditQuestionChange(e.target.value);
-                }}
-                InputLabelProps={{
-                  className: classes.textFieldFormLabel
-                }}
-                style={{ marginTop: 10 }}
-                fullWidth
-                InputProps={{
-                  className: classes.textFieldForm
-                }}
-                margin="normal"
-              />
+        <DialogContent>
+          <Grid container className={classes.root} justify="center">
+            <Grid item xs={12} md={12}>
+              <FormControl className={classes.formControl}>
+                <InputLabel
+                  htmlFor="type"
+                  style={{
+                    fontFamily: "iransans",
+                    fontSize: ".9rem"
+                  }}
+                >
+                  گروه ها
+                </InputLabel>
+                <Select
+                  value={this.props.groupId}
+                  onChange={e => {
+                    this.props.onChangeSelectFieldGroups(e.target.value);
+                  }}
+                  input={<Input id="name-error" />}
+                >
+                  {this.props.groups
+                    ? this.props.groups.map(n => {
+                        return (
+                          <MenuItem
+                            value={n.id}
+                            key={n.id}
+                            style={{
+                              fontFamily: "iransans",
+                              fontSize: ".9rem",
+                              right: 0,
+                              left: "auto"
+                            }}
+                          >
+                            {n.name}
+                          </MenuItem>
+                        );
+                      })
+                    : void 0}
+                </Select>
+              </FormControl>
             </Grid>
-
-            <Grid item xs={12} md={3}>
+            {/* <Grid item xs={6} md={4}>
               <FormControl
-                style={{ minWidth: 100 }}
                 className={classes.formControl}
-                error={this.props.errors.type}
+                error={this.props.errors.editorId}
               >
                 <InputLabel
                   htmlFor="type"
@@ -326,49 +303,42 @@ class QuestionsUI extends Component {
                     fontSize: ".9rem"
                   }}
                 >
-                  نوع سوال
+                  ویراستار
                 </InputLabel>
                 <Select
-                  value={this.props.openedQuestion.type}
-                  // error={this.props.errorsProducts.unitType}
-                  // formhelpertext={this.props.errorsProducts.unitType}
+                  value={this.props.news.editorId}
                   onChange={e => {
-                    this.props.onEditChangeSelectFieldType(e.target.value);
+                    this.props.onChangeSelectFieldData(
+                      "editorId",
+                      e.target.value
+                    );
                   }}
-                  input={<Input id="type" />}
+                  input={<Input id="name-error" />}
                 >
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"TEXT"}
-                  >
-                    تشریحی
-                  </MenuItem>
-                  <MenuItem
-                    style={{
-                      fontFamily: "iransans",
-                      fontSize: ".9rem",
-                      right: 0,
-                      left: "auto"
-                    }}
-                    value={"SELECT"}
-                  >
-                    چند گزینه ای
-                  </MenuItem>
+                  {this.props.virastar
+                    ? this.props.virastar.map(n => {
+                        return (
+                          <MenuItem
+                            value={n.id}
+                            key={n.id}
+                            style={{
+                              fontFamily: "iransans",
+                              fontSize: ".9rem",
+                              right: 0,
+                              left: "auto"
+                            }}
+                          >
+                            {n.name}
+                          </MenuItem>
+                        );
+                      })
+                    : void 0}
                 </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {this.props.errors.type}
-                </FormHelperText>
+                <FormHelperText>{this.props.errors.editorId}</FormHelperText>
               </FormControl>
-            </Grid>
+            </Grid> */}
           </Grid>
-
-          <button type="submit" hidden />
-        </form>
+        </DialogContent>
       </div>
     );
   };
@@ -389,120 +359,6 @@ class QuestionsUI extends Component {
           </DialogContentText>
         </DialogContent>
       </div>
-    );
-  };
-  renderAddDialog = () => {
-    const { classes } = this.props;
-
-    return (
-      <Dialog
-        classes={{ paper: classes.dialogPaper }}
-        // fullScreen={fullScreen}
-        open={this.props.OpenModal}
-        // onClose={this.props.OnCloseModal}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogTitle id="add" style={{ textAlign: "center" }}>
-          <AddCategory />
-        </DialogTitle>
-        <DialogContent>{this.renderAddDialogBody()}</DialogContent>
-        <Grid
-          container
-          alignItems="center"
-          justify="space-around"
-          style={{ marginBottom: "8px" }}
-        >
-          <Button
-            disabled={this.props.busy}
-            onClick={this.props.OnCloseModal}
-            style={{
-              fontFamily: "iransans",
-              color: "#fff",
-              fontSize: ".9rem",
-              background: "#f44336"
-            }}
-          >
-            انصراف
-            <Enseraf style={{ marginRight: 8 }} />
-          </Button>
-
-          {this.props.busy ? (
-            <CircularProgress size={30} />
-          ) : (
-            <Button
-              onClick={this.props.OnAddQuestion}
-              style={{
-                color: "#fff",
-
-                fontFamily: "iransans",
-                fontSize: ".9rem",
-                background: "#4caf50"
-              }}
-            >
-              بلی
-              <Tik style={{ marginRight: 8 }} />
-            </Button>
-          )}
-        </Grid>
-      </Dialog>
-    );
-  };
-
-  renderEditDialog = () => {
-    const { classes } = this.props;
-
-    return (
-      <Dialog
-        classes={{ paper: classes.dialogPaper }}
-        open={this.props.OpenEditModal}
-        // onClose={this.props.OnCloseEdit}
-        aria-labelledby="dialog-title"
-      >
-        <DialogTitle id="edit" style={{ textAlign: "center" }}>
-          <AddCategory />
-        </DialogTitle>
-        <DialogContent>{this.renderEditDialogBody()}</DialogContent>
-        <Grid
-          container
-          alignItems="center"
-          justify="space-around"
-          style={{ marginBottom: "8px" }}
-        >
-          <Button
-            disabled={this.props.busy}
-            onClick={this.props.OnCloseEdit}
-            style={{
-              fontFamily: "iransans",
-              color: "#fff",
-              fontSize: ".9rem",
-              background: "#f44336"
-            }}
-          >
-            انصراف
-            <Enseraf style={{ marginRight: 8 }} />
-          </Button>
-
-          <div>
-            {this.props.busy ? (
-              <CircularProgress size={30} />
-            ) : (
-              <Button
-                onClick={this.props.OnEditQuestion}
-                style={{
-                  color: "#fff",
-
-                  fontFamily: "iransans",
-                  fontSize: ".9rem",
-                  background: "#4caf50"
-                }}
-              >
-                بلی
-                <Tik style={{ marginRight: 8 }} />
-              </Button>
-            )}
-          </div>
-        </Grid>
-      </Dialog>
     );
   };
 
@@ -532,30 +388,26 @@ class QuestionsUI extends Component {
             onClick={this.props.OnCloseModalDelete}
             style={{
               fontFamily: "iransans",
-              color: "#fff",
               fontSize: ".9rem",
-              background: "#f44336"
+              background: "#f44336",
+              color: "#fff"
             }}
           >
             انصراف
-            <Enseraf style={{ marginRight: 8 }} />
           </Button>
-
           {this.props.busy ? (
             <CircularProgress size={30} />
           ) : (
             <Button
-              onClick={this.props.OnDeleteQuestion}
+              onClick={this.props.OnDeleteResumes}
               style={{
-                color: "#fff",
-
                 fontFamily: "iransans",
                 fontSize: ".9rem",
-                background: "#4caf50"
+                background: "#4caf50",
+                color: "#fff"
               }}
             >
               بلی
-              <Tik style={{ marginRight: 8 }} />
             </Button>
           )}
         </Grid>
@@ -567,11 +419,11 @@ class QuestionsUI extends Component {
 
     return (
       <Fab
-        onClick={this.props.OnClickOpen}
+        href={"/AddResume"}
         color="primary"
         aria-label="Add"
         style={{
-          margin: 0,
+          margin: 2,
           top: "auto",
           bottom: 20,
           left: "auto",
@@ -586,6 +438,7 @@ class QuestionsUI extends Component {
       </Fab>
     );
   };
+
   renderUI = () => {
     console.log("pagein");
     const { onSelectAllClick, numSelected, rowCount } = this.props;
@@ -594,10 +447,10 @@ class QuestionsUI extends Component {
     const { rowsPerPage, page } = this.state;
     const emptyRows =
       rowsPerPage -
-      Math.min(rowsPerPage, this.props.data.length - page * rowsPerPage);
+      Math.min(rowsPerPage, this.props.news.length - page * rowsPerPage);
 
     var component;
-    if (this.props.data.length > 0) {
+    if (this.props.news.length > 0) {
       component = (
         <div>
           {/* <Grid item xs={12} md={4}>
@@ -627,36 +480,57 @@ class QuestionsUI extends Component {
                   <Table className={classes.table}>
                     <TableHead>
                       <TableRow>
-                        <CustomTableCell style={{ textAlign: "right" }}>
+                        <CustomTableCell
+                          // padding="checkbox"
+                          style={{
+                            textAlign: "right",
+                            padding: "0"
+                          }}
+                        >
                           <Checkbox
                             style={{
                               color: "#1daced",
-                              display: "none"
+                              display: "none",
+                              padding: 0
                             }}
                           />
                         </CustomTableCell>
                         <CustomTableCell
-                          style={{ textAlign: "right", padding: 0 }}
+                          style={{
+                            textAlign: "right",
+                            paddingRight: 2,
+                            paddingLeft: 2
+                          }}
                         >
                           ردیف
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          سوال
+
+                        <CustomTableCell
+                          style={{ textAlign: "center", padding: 0 }}
+                        >
+                          نام
                         </CustomTableCell>
-                        <CustomTableCell style={{ textAlign: "right" }}>
-                          نوع سوال
+
+                        <CustomTableCell
+                          style={{ textAlign: "center", padding: 4 }}
+                        >
+                          سمت فعلی
+                        </CustomTableCell>
+
+                        <CustomTableCell
+                          style={{ textAlign: "center", padding: 4 }}
+                        >
+                          تاریخ
                         </CustomTableCell>
 
                         <CustomTableCell style={{ textAlign: "right" }}>
-                          {this.props.user.permissions["edit-groups"] === true
-                            ? "ویرایش"
-                            : ""}
+                          ویرایش
                         </CustomTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {console.log("data", this.props.data)}
-                      {this.props.data
+                      {console.log("news", this.props.news)}
+                      {this.props.news
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
@@ -687,7 +561,7 @@ class QuestionsUI extends Component {
                                     color: "#1daced",
                                     display:
                                       this.props.user.permissions[
-                                        "delete-groups"
+                                        "delete-news"
                                       ] === false
                                         ? "none"
                                         : "inline-flex"
@@ -697,37 +571,43 @@ class QuestionsUI extends Component {
                               <CustomTableCell
                                 component="th"
                                 scope="row"
-                                style={{ textAlign: "right", padding: 0 }}
+                                style={{
+                                  textAlign: "right",
+                                  paddingRight: 2,
+                                  paddingLeft: 2
+                                }}
                               >
                                 {n.row}
                               </CustomTableCell>
 
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right", padding: "0" }}
+                                style={{ textAlign: "center", padding: 0 }}
                               >
-                                {n.question}
+                                {n.name}
                               </CustomTableCell>
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right" }}
+                                style={{ textAlign: "center", padding: 4 }}
                               >
-                                {n.type === "SELECT" ? "انتخابی" : "تشریحی"}
+                                {n.lastJob}
                               </CustomTableCell>
 
                               <CustomTableCell
                                 numeric
-                                style={{ textAlign: "right" }}
+                                style={{ textAlign: "center", padding: 4 }}
+                              >
+                                {n.updatedDate}
+                              </CustomTableCell>
+
+                              <CustomTableCell
+                                numeric
+                                style={{ textAlign: "center", padding: 0 }}
                               >
                                 <IconButton
                                   aria-label="edit"
                                   style={{
-                                    display:
-                                      this.props.user.permissions[
-                                        "edit-groups"
-                                      ] === false
-                                        ? "none"
-                                        : "inline-flex"
+                                    display: "inline-flex"
                                   }}
                                 >
                                   <Edit />
@@ -742,11 +622,12 @@ class QuestionsUI extends Component {
                         </TableRow>
                       )} */}
                     </TableBody>
+
                     <TableFooter style={{ direction: "ltr" }}>
                       <TableRow>
                         <TablePagination
                           colSpan={3}
-                          count={this.props.data.length}
+                          count={this.props.news.length}
                           rowsPerPage={rowsPerPage}
                           labelDisplayedRows={({ from, to, count }) =>
                             from + "-" + to + "از " + count
@@ -761,6 +642,92 @@ class QuestionsUI extends Component {
                     </TableFooter>
                   </Table>
                 </div>
+                {this.props.links ? (
+                  <div style={{ textAlign: "center" }}>
+                    <Grid
+                      container
+                      justify="center"
+                      style={{ marginTop: 8, marginBottom: 8 }}
+                    >
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.prevPageUrl === null}
+                          size="small"
+                          style={{
+                            background:
+                              this.props.links.prevPageUrl === null
+                                ? "#959595"
+                                : "#1daced",
+                            color: "#fff"
+                          }}
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.firstPageUrl)
+                          }
+                        >
+                          صفحه اول
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          style={{
+                            color:
+                              this.props.links.prevPageUrl === null
+                                ? "#959595"
+                                : "#1daced"
+                          }}
+                          disabled={this.props.links.prevPageUrl === null}
+                          size="small"
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.prevPageUrl)
+                          }
+                        >
+                          صفحه قبل
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.nextPageUrl === null}
+                          size="small"
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.nextPageUrl)
+                          }
+                          style={{
+                            color:
+                              this.props.links.nextPageUrl === null
+                                ? "#959595"
+                                : "#1daced"
+                          }}
+                        >
+                          صفحه بعد
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button
+                          disabled={this.props.links.nextPageUrl === null}
+                          size="small"
+                          style={{
+                            background:
+                              this.props.links.nextPageUrl === null
+                                ? "#959595"
+                                : "#1daced",
+                            color: "#fff"
+                          }}
+                          className={classes.margin}
+                          onClick={event =>
+                            this.props.OnFetch(this.props.links.lastPageUrl)
+                          }
+                        >
+                          صفحه آخر
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </div>
+                ) : (
+                  void 0
+                )}
               </Paper>
             </Grid>
           </Grid>
@@ -776,7 +743,7 @@ class QuestionsUI extends Component {
           <p
             style={{ fontSize: ".8rem", color: "#999999", textAlign: "center" }}
           >
-            لیست سوالات خالی است
+            لیست خالی است
           </p>
         </div>
       );
@@ -790,5 +757,5 @@ export default withStyles(styles)(
     return {
       user: state.user
     };
-  })(QuestionsUI)
+  })(ResumesUI)
 );

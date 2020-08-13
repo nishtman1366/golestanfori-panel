@@ -40,8 +40,26 @@ export const MenuDown = props => (
 export const MenuUp = props => (
   <SvgIcon {...props}>
     <path
-      fill="#000"
+      fill="#fff"
       d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"
+    />
+  </SvgIcon>
+);
+
+export const Content = props => (
+  <SvgIcon {...props}>
+    <path
+      fill="#fff"
+      d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"
+    />
+  </SvgIcon>
+);
+
+export const Resume = props => (
+  <SvgIcon {...props}>
+    <path
+      fill="#fff"
+      d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M14,20V19C14,17.67 11.33,17 10,17C8.67,17 6,17.67 6,19V20H14M10,12A2,2 0 0,0 8,14A2,2 0 0,0 10,16A2,2 0 0,0 12,14A2,2 0 0,0 10,12Z"
     />
   </SvgIcon>
 );
@@ -370,6 +388,15 @@ export const Categpry = props => (
     <path
       fill="#fff"
       d="M11,13.5V21.5H3V13.5H11M12,2L17.5,11H6.5L12,2M17.5,13C20,13 22,15 22,17.5C22,20 20,22 17.5,22C15,22 13,20 13,17.5C13,15 15,13 17.5,13Z"
+    />
+  </SvgIcon>
+);
+
+export const Poll = props => (
+  <SvgIcon {...props}>
+    <path
+      fill="#fff"
+      d="M17,17H15V13H17M13,17H11V7H13M9,17H7V10H9M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"
     />
   </SvgIcon>
 );

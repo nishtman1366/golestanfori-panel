@@ -213,7 +213,8 @@ class UserAccesUI extends Component {
                     return (
                       <Grid
                         item
-                        xs={3}
+                        xs={6}
+                        md={3}
                         selected={isSelected}
                         key={n.id}
                         onClick={event => this.props.OnClick(event, n.id)}
