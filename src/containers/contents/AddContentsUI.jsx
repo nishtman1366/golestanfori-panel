@@ -362,7 +362,7 @@ class AddContentsUI extends Component {
                 content_style:
                   ".mce-annotation { background: #fff0b7; } .tc-active-annotation {background: #ffe168; color: black; }",
                 images_upload_url:
-                  "http://golestan-fori.ir/api/upload",
+                  "http://golestanfori.ir/api/upload",
                 automatic_uploads: true
               }}
               initialValue={this.props.content.body}

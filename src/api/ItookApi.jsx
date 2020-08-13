@@ -11,7 +11,7 @@
 */
 
 import axios from "axios";
-var API_URL = "http://golestanfori/api";
+var API_URL = "http://golestanfori.ir/api";
 // var API_URL = "http://192.168.0.1:8000/api";
 
 axios.defaults.headers.common["Accept"] = "application/json";
